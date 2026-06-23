@@ -53,7 +53,7 @@
             --radius-xl: 14px;
         }
 
-        .dark-mode, [data-theme="dark"] {
+        [data-theme="dark"] {
             --bg-primary: #111318;
             --bg-secondary: #1a1d24;
             --bg-tertiary: #252830;
@@ -75,6 +75,7 @@
             transition: background 0.3s, color 0.3s;
         }
 
+        /* ========== LOGIN ========== */
         .login-container {
             min-height: 100vh;
             display: flex;
@@ -94,10 +95,7 @@
             animation: slideUp 0.5s ease;
         }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
         .login-header {
             background: var(--brand-gradient);
@@ -113,7 +111,6 @@
             display: flex; align-items: center; justify-content: center;
             font-size: 28px; font-weight: 700;
             margin: 0 auto 16px;
-            backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.3);
         }
 
@@ -124,17 +121,17 @@
         .login-body h2 { font-size: 20px; font-weight: 500; margin-bottom: 8px; color: var(--text-primary); }
         .login-body p { font-size: 13px; color: var(--text-tertiary); margin-bottom: 24px; }
 
-        .form-group { margin-bottom: 16px; }
+        .form-group { margin-bottom: 14px; }
         .form-group label {
             display: block; font-size: 12px; font-weight: 600;
             text-transform: uppercase; letter-spacing: 0.05em;
-            color: var(--text-secondary); margin-bottom: 6px;
+            color: var(--text-secondary); margin-bottom: 5px;
         }
 
         .form-input {
-            width: 100%; padding: 12px 14px;
+            width: 100%; padding: 10px 12px;
             border: 1px solid var(--border); border-radius: var(--radius);
-            font-size: 14px; font-family: inherit;
+            font-size: 13.5px; font-family: inherit;
             background: var(--bg-secondary); color: var(--text-primary);
             transition: all 0.2s;
         }
@@ -144,52 +141,53 @@
             box-shadow: 0 0 0 3px rgba(8,145,178,0.1); background: var(--bg-primary);
         }
 
-        textarea.form-input { resize: vertical; min-height: 80px; font-family: inherit; }
+        textarea.form-input { resize: vertical; min-height: 70px; font-family: inherit; }
 
         select.form-input {
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='%238b9099' stroke-width='2' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right 12px center;
-            background-size: 16px; padding-right: 36px; cursor: pointer;
+            background-repeat: no-repeat; background-position: right 10px center;
+            background-size: 14px; padding-right: 32px; cursor: pointer;
         }
 
         .input-icon { position: relative; }
-        .input-icon .form-input { padding-left: 40px; }
+        .input-icon .form-input { padding-left: 38px; }
         .input-icon svg {
-            position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
-            width: 18px; height: 18px; stroke: var(--text-tertiary);
+            position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+            width: 17px; height: 17px; stroke: var(--text-tertiary);
         }
 
         .btn-login {
-            width: 100%; padding: 14px;
+            width: 100%; padding: 13px;
             background: var(--brand-gradient); color: white;
             border: none; border-radius: var(--radius);
-            font-size: 15px; font-weight: 500; cursor: pointer;
+            font-size: 14px; font-weight: 500; cursor: pointer;
             transition: all 0.2s; font-family: inherit;
-            letter-spacing: -0.01em; margin-top: 8px; box-shadow: var(--shadow-md);
+            margin-top: 8px; box-shadow: var(--shadow-md);
         }
 
         .btn-login:hover { box-shadow: var(--shadow-lg); transform: translateY(-1px); }
         .btn-login:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
         .alert {
-            padding: 12px 14px; border-radius: var(--radius-sm);
-            font-size: 13px; margin-bottom: 16px; display: none;
+            padding: 10px 12px; border-radius: var(--radius-sm);
+            font-size: 12.5px; margin-bottom: 14px; display: none;
         }
 
         .alert.show { display: block; }
         .alert-danger { background: var(--danger-light); color: #991b1b; border-left: 3px solid var(--danger); }
         .alert-success { background: var(--success-light); color: #065f46; border-left: 3px solid var(--success); }
-        .login-footer { text-align: center; padding: 0 32px 24px; font-size: 12px; color: var(--text-tertiary); }
+        .login-footer { text-align: center; padding: 0 32px 20px; font-size: 11px; color: var(--text-tertiary); }
 
         .spinner {
-            display: inline-block; width: 18px; height: 18px;
+            display: inline-block; width: 16px; height: 16px;
             border: 2px solid rgba(255,255,255,0.3); border-top-color: white;
             border-radius: 50%; animation: spin 0.6s linear infinite;
         }
 
         @keyframes spin { to { transform: rotate(360deg); } }
 
+        /* ========== PAINEL ========== */
         .app-layout { display: none; min-height: 100vh; }
         .app-layout.show { display: flex; }
 
@@ -199,40 +197,38 @@
             border-right: 1px solid var(--border);
             display: flex; flex-direction: column;
             position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
-            transition: width 0.3s cubic-bezier(0.4,0,0.2,1);
-            box-shadow: var(--shadow-xs); overflow: hidden;
+            transition: width 0.3s; box-shadow: var(--shadow-xs); overflow: hidden;
         }
 
         .sidebar.collapsed { width: var(--sidebar-collapsed); }
 
         .sidebar-logo {
-            padding: 18px 16px; border-bottom: 1px solid var(--border);
+            padding: 16px; border-bottom: 1px solid var(--border);
             display: flex; align-items: center; gap: 10px;
-            min-height: 74px; position: relative;
+            min-height: 70px; position: relative;
         }
 
         .sidebar-logo-icon {
-            width: 36px; height: 36px; min-width: 36px;
+            width: 34px; height: 34px; min-width: 34px;
             background: var(--brand-gradient); border-radius: var(--radius);
             display: flex; align-items: center; justify-content: center;
-            color: white; font-weight: 700; font-size: 16px;
+            color: white; font-weight: 700; font-size: 15px;
             box-shadow: 0 2px 8px rgba(8,145,178,0.3);
         }
 
         .sidebar-logo-text {
-            font-size: 16px; font-weight: 400; color: var(--text-primary);
-            letter-spacing: -0.02em; white-space: nowrap;
-            opacity: 1; transition: opacity 0.2s;
+            font-size: 15px; font-weight: 400; color: var(--text-primary);
+            white-space: nowrap; opacity: 1; transition: opacity 0.2s;
         }
 
         .sidebar.collapsed .sidebar-logo-text,
         .sidebar.collapsed .sidebar-logo-sub { opacity: 0; pointer-events: none; }
         .sidebar-logo-text span { font-weight: 600; color: var(--brand); }
-        .sidebar-logo-sub { font-size: 10px; color: var(--text-tertiary); letter-spacing: 0.05em; font-weight: 400; white-space: nowrap; opacity: 1; transition: opacity 0.2s; }
+        .sidebar-logo-sub { font-size: 10px; color: var(--text-tertiary); white-space: nowrap; opacity: 1; transition: opacity 0.2s; }
 
         .sidebar-toggle {
             position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
-            width: 28px; height: 28px; border-radius: 50%;
+            width: 26px; height: 26px; border-radius: 50%;
             background: var(--bg-primary); border: 1px solid var(--border);
             display: flex; align-items: center; justify-content: center;
             cursor: pointer; z-index: 10; color: var(--text-tertiary);
@@ -240,20 +236,22 @@
         }
 
         .sidebar-toggle:hover { background: var(--bg-tertiary); border-color: var(--border-hover); color: var(--text-primary); }
-        .sidebar-toggle svg { width: 14px; height: 14px; transition: transform 0.3s; }
+        .sidebar-toggle svg { width: 13px; height: 13px; transition: transform 0.3s; }
         .sidebar.collapsed .sidebar-toggle { right: 50%; transform: translate(50%, -50%); }
         .sidebar.collapsed .sidebar-toggle svg { transform: rotate(180deg); }
 
-        .sidebar-nav { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 8px 10px; }
-        .sidebar-section { margin-bottom: 4px; }
+        .sidebar-nav { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 6px 8px; }
+
+        .sidebar-section { margin-bottom: 3px; }
 
         .sidebar-section-header {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 4px 12px; cursor: pointer; border-radius: var(--radius-sm);
+            padding: 3px 10px; cursor: pointer; border-radius: var(--radius-sm);
             transition: background 0.15s; user-select: none;
         }
 
         .sidebar-section-header:hover { background: var(--bg-tertiary); }
+
         .sidebar-section-title {
             font-size: 10px; font-weight: 600; text-transform: uppercase;
             letter-spacing: 0.08em; color: var(--text-tertiary);
@@ -264,26 +262,26 @@
         .sidebar.collapsed .sidebar-section-arrow { opacity: 0; pointer-events: none; }
 
         .sidebar-section-arrow {
-            width: 16px; height: 16px; display: flex;
+            width: 14px; height: 14px; display: flex;
             align-items: center; justify-content: center;
-            transition: transform 0.25s; color: var(--text-tertiary); opacity: 1;
+            transition: transform 0.25s; color: var(--text-tertiary);
         }
 
-        .sidebar-section-arrow svg { width: 14px; height: 14px; }
+        .sidebar-section-arrow svg { width: 12px; height: 12px; }
         .sidebar-section.collapsed-section .sidebar-section-arrow { transform: rotate(-90deg); }
 
         .sidebar-section-links {
             overflow: hidden; transition: max-height 0.3s, opacity 0.2s;
-            max-height: 500px; opacity: 1;
+            max-height: 400px; opacity: 1;
         }
 
         .sidebar-section.collapsed-section .sidebar-section-links { max-height: 0; opacity: 0; }
 
         .sidebar-link {
-            display: flex; align-items: center; gap: 10px;
-            padding: 8px 12px; border-radius: var(--radius-sm);
+            display: flex; align-items: center; gap: 9px;
+            padding: 7px 10px; border-radius: var(--radius-sm);
             color: var(--text-secondary); text-decoration: none;
-            font-size: 13.5px; font-weight: 400;
+            font-size: 13px; font-weight: 400;
             transition: all 0.15s; cursor: pointer;
             position: relative; white-space: nowrap;
         }
@@ -292,12 +290,12 @@
         .sidebar-link.active { background: var(--brand-light); color: var(--brand-dark); font-weight: 500; }
 
         .sidebar-link.active::before {
-            content: ''; position: absolute; left: 0; top: 8px; bottom: 8px;
+            content: ''; position: absolute; left: 0; top: 6px; bottom: 6px;
             width: 3px; background: var(--brand); border-radius: 0 2px 2px 0;
         }
 
-        .sidebar-link-icon { width: 20px; height: 20px; min-width: 20px; display: flex; align-items: center; justify-content: center; }
-        .sidebar-link-icon svg { width: 18px; height: 18px; stroke: currentColor; }
+        .sidebar-link-icon { width: 18px; height: 18px; min-width: 18px; display: flex; align-items: center; justify-content: center; }
+        .sidebar-link-icon svg { width: 16px; height: 16px; stroke: currentColor; }
         .sidebar-link-icon .icon-fill { fill: currentColor; stroke: none; }
 
         .sidebar-link-text, .sidebar-link-badge { opacity: 1; transition: opacity 0.2s; }
@@ -306,145 +304,291 @@
 
         .sidebar-link-badge {
             margin-left: auto; background: var(--danger); color: white;
-            font-size: 10.5px; font-weight: 600; padding: 2px 7px;
-            border-radius: 10px; min-width: 20px; text-align: center;
+            font-size: 10px; font-weight: 600; padding: 1px 6px;
+            border-radius: 8px; min-width: 18px; text-align: center;
         }
 
         .sidebar.collapsed .sidebar-link[data-tooltip]:hover::after {
             content: attr(data-tooltip);
-            position: absolute; left: calc(100% + 10px); top: 50%; transform: translateY(-50%);
+            position: absolute; left: calc(100% + 8px); top: 50%; transform: translateY(-50%);
             background: var(--text-primary); color: var(--bg-primary);
-            font-size: 12px; font-weight: 500; padding: 6px 10px;
+            font-size: 11px; font-weight: 500; padding: 5px 8px;
             border-radius: var(--radius-sm); white-space: nowrap;
             z-index: 200; box-shadow: var(--shadow-md); pointer-events: none;
         }
 
-        .sidebar-footer { padding: 12px 14px; border-top: 1px solid var(--border); }
-        .sidebar-user { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: var(--radius); cursor: pointer; transition: background 0.15s; }
+        .sidebar-footer { padding: 10px 12px; border-top: 1px solid var(--border); }
+
+        .sidebar-user {
+            display: flex; align-items: center; gap: 8px;
+            padding: 6px 8px; border-radius: var(--radius);
+            cursor: pointer; transition: background 0.15s;
+        }
+
         .sidebar-user:hover { background: var(--bg-tertiary); }
-        .sidebar-user-avatar { width: 34px; height: 34px; min-width: 34px; border-radius: 50%; background: var(--brand-gradient); display: flex; align-items: center; justify-content: center; color: white; font-weight: 500; font-size: 13px; }
+        .sidebar-user-avatar {
+            width: 30px; height: 30px; min-width: 30px; border-radius: 50%;
+            background: var(--brand-gradient); display: flex;
+            align-items: center; justify-content: center;
+            color: white; font-weight: 500; font-size: 12px;
+        }
+
         .sidebar-user-info { flex: 1; min-width: 0; opacity: 1; transition: opacity 0.2s; }
         .sidebar.collapsed .sidebar-user-info,
         .sidebar.collapsed .sidebar-user-arrow { opacity: 0; pointer-events: none; }
-        .sidebar-user-name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
-        .sidebar-user-role { font-size: 11px; color: var(--text-tertiary); }
+        .sidebar-user-name { font-size: 12px; font-weight: 500; color: var(--text-primary); }
+        .sidebar-user-role { font-size: 10px; color: var(--text-tertiary); }
         .sidebar-user-arrow { color: var(--text-tertiary); opacity: 1; transition: opacity 0.2s; }
 
+        /* ========== MAIN CONTENT ========== */
         .main-content {
             margin-left: var(--sidebar-width);
             flex: 1; min-width: 0;
-            transition: margin-left 0.3s cubic-bezier(0.4,0,0.2,1);
+            transition: margin-left 0.3s;
         }
 
         .header {
             height: var(--header-height); background: var(--bg-primary);
             border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; padding: 0 22px;
-            gap: 14px; position: sticky; top: 0; z-index: 50;
+            display: flex; align-items: center; padding: 0 20px;
+            gap: 12px; position: sticky; top: 0; z-index: 50;
         }
 
-        .header-search { flex: 1; max-width: 380px; position: relative; }
-        .header-search svg { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); width: 17px; height: 17px; stroke: var(--text-tertiary); }
+        .header-search { flex: 1; max-width: 350px; position: relative; }
+        .header-search svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; stroke: var(--text-tertiary); }
         .header-search input {
-            width: 100%; padding: 9px 14px 9px 38px;
+            width: 100%; padding: 8px 12px 8px 36px;
             border: 1px solid var(--border); border-radius: var(--radius-lg);
-            background: var(--bg-secondary); font-size: 13.5px; font-family: inherit;
+            background: var(--bg-secondary); font-size: 13px; font-family: inherit;
             color: var(--text-primary); transition: all 0.2s;
         }
         .header-search input:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px rgba(8,145,178,0.08); background: var(--bg-primary); }
-        .header-actions { display: flex; align-items: center; gap: 6px; margin-left: auto; }
-        .header-btn { width: 38px; height: 38px; border-radius: 50%; border: 1px solid transparent; background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-secondary); transition: all 0.15s; position: relative; }
-        .header-btn svg { width: 19px; height: 19px; stroke: currentColor; }
-        .header-btn:hover { background: var(--bg-tertiary); border-color: var(--border); color: var(--text-primary); }
-        .header-btn-badge { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; background: var(--danger); border-radius: 50%; border: 2px solid var(--bg-primary); }
 
-        .breadcrumb { padding: 13px 22px; display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-tertiary); }
+        .header-actions { display: flex; align-items: center; gap: 4px; margin-left: auto; }
+
+        .header-btn {
+            width: 36px; height: 36px; border-radius: 50%;
+            border: 1px solid transparent; background: transparent;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: var(--text-secondary);
+            transition: all 0.15s; position: relative;
+        }
+
+        .header-btn svg { width: 18px; height: 18px; stroke: currentColor; }
+        .header-btn:hover { background: var(--bg-tertiary); border-color: var(--border); color: var(--text-primary); }
+
+        .breadcrumb { padding: 11px 20px; display: flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--text-tertiary); }
         .breadcrumb a { color: var(--text-secondary); text-decoration: none; }
         .breadcrumb a:hover { color: var(--brand); }
-        .breadcrumb-separator { font-size: 10px; }
         .breadcrumb-current { color: var(--text-primary); font-weight: 500; }
-        .content-container { padding: 0 22px 22px; }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; margin-bottom: 22px; }
-        .stat-card { background: var(--bg-primary); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; box-shadow: var(--shadow-xs); transition: all 0.2s; }
-        .stat-card:hover { box-shadow: var(--shadow-md); border-color: var(--border-hover); }
-        .stat-card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
-        .stat-card-label { font-size: 12.5px; font-weight: 500; color: var(--text-secondary); }
-        .stat-card-icon { width: 34px; height: 34px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .stat-card-icon svg { width: 17px; height: 17px; }
+        .content-container { padding: 0 20px 20px; }
+
+        /* ========== CARDS ========== */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 20px; }
+
+        .stat-card {
+            background: var(--bg-primary); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); padding: 16px 18px;
+            box-shadow: var(--shadow-xs); transition: all 0.2s; cursor: default;
+        }
+
+        .stat-card.clickable { cursor: pointer; }
+        .stat-card.clickable:hover { box-shadow: var(--shadow-md); border-color: var(--brand); transform: translateY(-1px); }
+
+        .stat-card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+        .stat-card-label { font-size: 12px; font-weight: 500; color: var(--text-secondary); }
+        .stat-card-icon { width: 30px; height: 30px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .stat-card-icon svg { width: 15px; height: 15px; }
         .stat-card-icon.blue { background: var(--brand-light); } .stat-card-icon.blue svg { stroke: var(--brand); }
         .stat-card-icon.green { background: var(--success-light); } .stat-card-icon.green svg { stroke: var(--success); }
         .stat-card-icon.red { background: var(--danger-light); } .stat-card-icon.red svg { stroke: var(--danger); }
         .stat-card-icon.amber { background: var(--warning-light); } .stat-card-icon.amber svg { stroke: var(--warning); }
-        .stat-card-value { font-size: 27px; font-weight: 600; color: var(--text-primary); margin-bottom: 3px; letter-spacing: -0.03em; }
-        .stat-card-change { font-size: 12px; font-weight: 500; display: flex; align-items: center; gap: 4px; }
+        .stat-card-value { font-size: 24px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; letter-spacing: -0.02em; }
+        .stat-card-change { font-size: 11px; font-weight: 500; display: flex; align-items: center; gap: 3px; }
         .stat-card-change.positive { color: var(--success); }
         .stat-card-change.negative { color: var(--danger); }
 
-        .content-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 22px; }
-        .card { background: var(--bg-primary); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-xs); }
-        .card-header { padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-        .card-title { font-size: 15px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
-        .card-title svg { width: 18px; height: 18px; stroke: var(--text-secondary); }
-        .card-body { padding: 0; }
-        .card-body-padded { padding: 16px 20px; }
+        .content-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
 
+        .card {
+            background: var(--bg-primary); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-xs);
+        }
+
+        .card-header {
+            padding: 14px 18px; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+
+        .card-title { font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 7px; }
+        .card-title svg { width: 16px; height: 16px; stroke: var(--text-secondary); }
+        .card-body-padded { padding: 14px 18px; }
+
+        /* ========== TABLE ========== */
         .table { width: 100%; border-collapse: collapse; }
-        .table th { padding: 11px 16px; text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-tertiary); background: var(--bg-secondary); border-bottom: 1px solid var(--border); }
-        .table td { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 13.5px; }
+        .table th {
+            padding: 10px 14px; text-align: left; font-size: 10.5px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.05em;
+            color: var(--text-tertiary); background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+        .table td { padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 13px; }
         .table tr:last-child td { border-bottom: none; }
         .table tbody tr:hover td { background: var(--bg-secondary); }
+        .table tbody tr { cursor: default; }
 
-        .badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 20px; font-size: 11.5px; font-weight: 500; }
+        .badge {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 3px 8px; border-radius: 14px;
+            font-size: 11px; font-weight: 500; white-space: nowrap;
+        }
         .badge-success { background: var(--success-light); color: #065f46; }
         .badge-info { background: var(--info-light); color: #3730a3; }
         .badge-warning { background: var(--warning-light); color: #92400e; }
         .badge-danger { background: var(--danger-light); color: #991b1b; }
-        .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; display: inline-block; }
+        .badge-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; display: inline-block; }
 
-        .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: all 0.15s; text-decoration: none; font-family: inherit; white-space: nowrap; }
-        .btn svg { width: 15px; height: 15px; }
+        /* ========== BUTTONS ========== */
+        .btn {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 7px 14px; border-radius: var(--radius-sm);
+            font-size: 12.5px; font-weight: 500; cursor: pointer;
+            border: none; transition: all 0.15s; text-decoration: none;
+            font-family: inherit; white-space: nowrap;
+        }
+        .btn svg { width: 14px; height: 14px; }
         .btn-primary { background: var(--brand); color: white; box-shadow: var(--shadow-sm); }
-        .btn-primary:hover { background: var(--brand-dark); box-shadow: var(--shadow-md); }
+        .btn-primary:hover { background: var(--brand-dark); }
         .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); }
         .btn-outline:hover { background: var(--bg-tertiary); border-color: var(--border-hover); }
-        .btn-sm { padding: 5px 10px; font-size: 12px; }
-        .btn-link { color: var(--brand); cursor: pointer; background: none; padding: 0; font-size: 13px; font-weight: 500; border: none; }
+        .btn-sm { padding: 4px 9px; font-size: 11.5px; }
+        .btn-link { color: var(--brand); cursor: pointer; background: none; padding: 0; font-size: 12.5px; font-weight: 500; border: none; }
         .btn-link:hover { color: var(--brand-dark); text-decoration: underline; }
         .btn-danger { color: var(--danger); }
         .btn-danger:hover { color: #991b1b; }
 
-        .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        /* ========== FORMS ========== */
+        .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
         .form-grid-3 { grid-template-columns: repeat(3, 1fr); }
-        .form-grid-full { grid-template-columns: 1fr; }
-        .form-section { margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+        .form-grid-4 { grid-template-columns: repeat(4, 1fr); }
+        .form-section { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
         .form-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .form-section-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-        .form-section-title svg { width: 18px; height: 18px; stroke: var(--brand); }
+        .form-section-title {
+            font-size: 13px; font-weight: 600; color: var(--text-primary);
+            margin-bottom: 14px; display: flex; align-items: center; gap: 7px;
+        }
+        .form-section-title svg { width: 16px; height: 16px; stroke: var(--brand); }
 
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; }
+        /* ========== MODAL ========== */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); z-index: 200;
+            align-items: center; justify-content: center;
+        }
         .modal-overlay.show { display: flex; }
-        .modal { background: var(--bg-primary); border-radius: var(--radius-xl); width: 90%; max-width: 800px; max-height: 85vh; overflow-y: auto; box-shadow: var(--shadow-xl); animation: slideUp 0.3s ease; }
-        .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--bg-primary); z-index: 10; border-radius: var(--radius-xl) var(--radius-xl) 0 0; }
-        .modal-title { font-size: 18px; font-weight: 500; }
-        .modal-close { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); transition: all 0.15s; }
+
+        .modal {
+            background: var(--bg-primary); border-radius: var(--radius-xl);
+            width: 92%; max-width: 750px; max-height: 85vh; overflow-y: auto;
+            box-shadow: var(--shadow-xl); animation: slideUp 0.3s ease;
+        }
+
+        .modal-header {
+            padding: 18px 22px; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; background: var(--bg-primary); z-index: 10;
+            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+        }
+
+        .modal-title { font-size: 16px; font-weight: 500; }
+        .modal-close {
+            width: 30px; height: 30px; border-radius: 50%;
+            border: 1px solid var(--border); background: transparent;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            color: var(--text-secondary); transition: all 0.15s;
+        }
         .modal-close:hover { background: var(--bg-tertiary); color: var(--text-primary); }
-        .modal-body { padding: 24px; }
-        .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; position: sticky; bottom: 0; background: var(--bg-primary); border-radius: 0 0 var(--radius-xl) var(--radius-xl); }
+        .modal-body { padding: 22px; }
+        .modal-footer {
+            padding: 14px 22px; border-top: 1px solid var(--border);
+            display: flex; justify-content: flex-end; gap: 8px;
+            position: sticky; bottom: 0; background: var(--bg-primary);
+            border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+        }
 
-        .tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
-        .tab { padding: 10px 20px; cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text-tertiary); border-bottom: 2px solid transparent; transition: all 0.2s; }
-        .tab:hover { color: var(--text-primary); }
-        .tab.active { color: var(--brand); border-bottom-color: var(--brand); }
+        /* ========== TAGS / CHECKBOX GROUP ========== */
+        .tag-group { display: flex; flex-wrap: wrap; gap: 6px; }
+        .tag {
+            padding: 6px 12px; border-radius: 20px; cursor: pointer;
+            font-size: 12px; font-weight: 500; border: 1px solid var(--border);
+            background: var(--bg-secondary); color: var(--text-secondary);
+            transition: all 0.15s; user-select: none;
+        }
+        .tag:hover { border-color: var(--border-hover); background: var(--bg-tertiary); }
+        .tag.active { background: var(--brand); color: white; border-color: var(--brand); }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade-in { animation: fadeIn 0.35s ease-out; }
+        /* ========== CALENDAR ========== */
+        .calendar-grid {
+            display: grid; grid-template-columns: repeat(7, 1fr);
+            gap: 2px; text-align: center;
+        }
+        .calendar-day-header {
+            font-size: 11px; font-weight: 600; color: var(--text-tertiary);
+            padding: 8px 4px; text-transform: uppercase;
+        }
+        .calendar-day {
+            padding: 8px 4px; border-radius: var(--radius-sm);
+            cursor: pointer; font-size: 13px; min-height: 40px;
+            display: flex; flex-direction: column; align-items: center;
+            transition: all 0.15s; position: relative;
+        }
+        .calendar-day:hover { background: var(--bg-tertiary); }
+        .calendar-day.today { background: var(--brand-light); font-weight: 600; color: var(--brand-dark); }
+        .calendar-day.other-month { color: var(--text-tertiary); opacity: 0.4; }
+        .calendar-day.has-event { font-weight: 600; }
+        .calendar-day .event-dot {
+            width: 5px; height: 5px; border-radius: 50%;
+            background: var(--brand); margin-top: 2px;
+        }
 
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        .calendar-nav {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .calendar-nav button {
+            background: none; border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 6px 12px;
+            cursor: pointer; color: var(--text-secondary);
+            font-family: inherit; font-size: 13px;
+        }
+        .calendar-nav button:hover { background: var(--bg-tertiary); }
+        .calendar-nav .month-year { font-size: 16px; font-weight: 500; }
 
-        @media (max-width: 1200px) { .content-grid { grid-template-columns: 1fr; } .form-grid-3 { grid-template-columns: repeat(2, 1fr); } }
+        /* ========== ROTAS ========== */
+        .rotas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+        .rota-dia {
+            background: var(--bg-primary); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); overflow: hidden;
+        }
+        .rota-dia-header {
+            padding: 12px 16px; font-weight: 600; font-size: 13px;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .rota-dia-header.hoje { background: var(--brand-light); color: var(--brand-dark); }
+        .rota-dia-body { padding: 8px; min-height: 80px; }
+        .rota-cliente {
+            padding: 8px 12px; margin: 4px 0; border-radius: var(--radius-sm);
+            background: var(--bg-secondary); font-size: 12.5px;
+            display: flex; align-items: center; justify-content: space-between;
+            cursor: pointer; transition: all 0.15s;
+        }
+        .rota-cliente:hover { background: var(--bg-tertiary); }
+        .rota-empty { text-align: center; color: var(--text-tertiary); font-size: 12px; padding: 20px; }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 1200px) { .content-grid { grid-template-columns: 1fr; } .form-grid-3, .form-grid-4 { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 1024px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 768px) {
             .sidebar { transform: translateX(-100%); width: var(--sidebar-expanded) !important; }
@@ -455,19 +599,26 @@
             .sidebar .sidebar-user-info, .sidebar .sidebar-user-arrow { opacity: 1 !important; pointer-events: auto !important; }
             .main-content { margin-left: 0 !important; }
             .stats-grid { grid-template-columns: 1fr; }
-            .header { padding: 0 14px; }
-            .content-container { padding: 0 14px 14px; }
-            .header-search { max-width: 180px; }
+            .header { padding: 0 12px; }
+            .content-container { padding: 0 12px 12px; }
+            .header-search { max-width: 160px; }
             .sidebar-toggle { display: none; }
-            .form-grid, .form-grid-3 { grid-template-columns: 1fr; }
-            .modal { width: 95%; max-width: 95%; }
+            .form-grid, .form-grid-3, .form-grid-4 { grid-template-columns: 1fr; }
+            .modal { width: 98%; max-width: 98%; }
+            .rotas-grid { grid-template-columns: 1fr; }
         }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out; }
+
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
     </style>
 </head>
 <body>
-    <!-- ============================================ -->
-    <!-- TELA DE LOGIN -->
-    <!-- ============================================ -->
+
+    <!-- ==================== LOGIN ==================== -->
     <div id="loginScreen" class="login-container">
         <div class="login-card">
             <div class="login-header">
@@ -501,10 +652,10 @@
         </div>
     </div>
 
-    <!-- ============================================ -->
-    <!-- PAINEL ADMINISTRATIVO -->
-    <!-- ============================================ -->
+    <!-- ==================== PAINEL ==================== -->
     <div id="appScreen" class="app-layout">
+        
+        <!-- SIDEBAR -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-logo">
                 <div class="sidebar-logo-icon">AP</div>
@@ -516,38 +667,70 @@
                     <svg viewBox="-4.5 0 19 19"><path d="M8.4 17.269a1.026 1.026 0 0 1-.727-.302l-6.801-6.8a1.03 1.03 0 0 1 0-1.456l6.8-6.8a1.03 1.03 0 0 1 1.456 1.455L3.055 9.439l6.073 6.073A1.03 1.03 0 0 1 8.4 17.27z" fill="currentColor"/></svg>
                 </button>
             </div>
+            
             <nav class="sidebar-nav">
+                <!-- Principal -->
                 <div class="sidebar-section" id="section-principal">
-                    <div class="sidebar-section-header" data-section="principal"><span class="sidebar-section-title">Principal</span><span class="sidebar-section-arrow"><svg viewBox="0 0 48 48"><path d="M13 30L25 18L37 30" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span></div>
+                    <div class="sidebar-section-header" data-section="principal">
+                        <span class="sidebar-section-title">Principal</span>
+                        <span class="sidebar-section-arrow"><svg viewBox="0 0 48 48"><path d="M13 30L25 18L37 30" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>
+                    </div>
                     <div class="sidebar-section-links">
                         <a href="#" class="sidebar-link" data-tooltip="Dashboard" data-page="dashboard"><span class="sidebar-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span><span class="sidebar-link-text">Dashboard</span></a>
-                        <a href="#" class="sidebar-link" data-tooltip="Agenda" data-page="agenda"><span class="sidebar-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span><span class="sidebar-link-text">Agenda</span></a>
                         <a href="#" class="sidebar-link" data-tooltip="Rotas" data-page="rotas"><span class="sidebar-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z"/></svg></span><span class="sidebar-link-text">Rotas</span></a>
+                        <a href="#" class="sidebar-link" data-tooltip="Agenda" data-page="agenda"><span class="sidebar-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span><span class="sidebar-link-text">Agenda</span></a>
                     </div>
                 </div>
+                
+                <!-- Gestão -->
                 <div class="sidebar-section" id="section-gestao">
-                    <div class="sidebar-section-header" data-section="gestao"><span class="sidebar-section-title">Gestão</span><span class="sidebar-section-arrow"><svg viewBox="0 0 48 48"><path d="M13 30L25 18L37 30" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span></div>
+                    <div class="sidebar-section-header" data-section="gestao">
+                        <span class="sidebar-section-title">Gestão</span>
+                        <span class="sidebar-section-arrow"><svg viewBox="0 0 48 48"><path d="M13 30L25 18L37 30" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>
+                    </div>
                     <div class="sidebar-section-links">
                         <a href="#" class="sidebar-link" data-tooltip="Clientes" data-page="clientes"><span class="sidebar-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span class="sidebar-link-text">Clientes</span></a>
-                        <a href="#" class="sidebar-link active" data-tooltip="Funcionários" data-page="funcionarios"><span class="sidebar-link-icon"><svg viewBox="0 0 480.16 480.16" class="icon-fill"><rect x="221.837" y="383.75" width="58.118" height="20"/><path d="M394.438,330.221c-11.215-3.841-28.098-10.968-35.499-16.463v-18.566c25.231-14.443,42.65-39.743,48.906-70.967c16.126-3.851,27.455-19.682,27.455-34.038c0-13.424-9.503-22.888-24.922-25.686v-11.417c0.137-4.198,1.055-53.931-30.314-86.589c-17.506-18.226-41.394-27.467-71-27.467c-29.555,0-53.291,9.076-70.72,27.005c-17.404-17.926-41.069-27.005-70.538-27.005c-29.699,0-53.638,9.263-71.151,27.532c-31.279,32.627-30.31,82.223-30.163,86.527v11.414c-15.418,2.798-24.922,12.262-24.922,25.686c0,14.36,11.335,30.197,27.469,34.042c6.16,30.474,22.974,55.408,47.197,69.997v16.367c-7.242,6.294-22.037,15.04-31.184,19.878C1.877,357.64,0.039,407.985,0.002,410.122v20.835c0,5.523,4.478,10,10,10h460.16c5.522,0,10-4.477,10-10v-20.878C480.15,408.093,478.96,357.045,394.438,330.221z"/><rect x="362.995" y="383.75" width="58.118" height="20"/></svg></span><span class="sidebar-link-text">Funcionários</span></a>
+                        <a href="#" class="sidebar-link" data-tooltip="Funcionários" data-page="funcionarios"><span class="sidebar-link-icon"><svg viewBox="0 0 480.16 480.16" class="icon-fill"><rect x="221.837" y="383.75" width="58.118" height="20"/><path d="M394.438,330.221c-11.215-3.841-28.098-10.968-35.499-16.463v-18.566c25.231-14.443,42.65-39.743,48.906-70.967c16.126-3.851,27.455-19.682,27.455-34.038c0-13.424-9.503-22.888-24.922-25.686v-11.417c0.137-4.198,1.055-53.931-30.314-86.589-17.506-18.226-41.394-27.467-71-27.467-29.555,0-53.291,9.076-70.72,27.005-17.404-17.926-41.069-27.005-70.538-27.005-29.699,0-53.638,9.263-71.151,27.532-31.279,32.627-30.31,82.223-30.163,86.527v11.414c-15.418,2.798-24.922,12.262-24.922,25.686 0,14.36,11.335,30.197,27.469,34.042 6.16,30.474,22.974,55.408,47.197,69.997v16.367c-7.242,6.294-22.037,15.04-31.184,19.878C1.877,357.64,0.039,407.985,0.002,410.122v20.835c0,5.523,4.478,10,10,10h460.16c5.522,0,10-4.477,10-10v-20.878C480.15,408.093,478.96,357.045,394.438,330.221z"/><rect x="362.995" y="383.75" width="58.118" height="20"/></svg></span><span class="sidebar-link-text">Funcionários</span></a>
                         <a href="#" class="sidebar-link" data-tooltip="Piscinas" data-page="piscinas"><span class="sidebar-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h2a4 4 0 0 0 4-4V6a4 4 0 0 1 8 0v2a4 4 0 0 0 4 4h2"/><path d="M6 12v2a6 6 0 0 0 12 0v-2"/><circle cx="12" cy="4" r="2"/></svg></span><span class="sidebar-link-text">Piscinas</span></a>
-                        <a href="#" class="sidebar-link" data-tooltip="Estoque" data-page="estoque"><span class="sidebar-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></span><span class="sidebar-link-text">Estoque</span></a>
                     </div>
                 </div>
+                
+                <!-- Estoque -->
+                <div class="sidebar-section" id="section-estoque">
+                    <div class="sidebar-section-header" data-section="estoque">
+                        <span class="sidebar-section-title">Estoque</span>
+                        <span class="sidebar-section-arrow"><svg viewBox="0 0 48 48"><path d="M13 30L25 18L37 30" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>
+                    </div>
+                    <div class="sidebar-section-links">
+                        <a href="#" class="sidebar-link" data-tooltip="Estoque da Empresa" data-page="estoque-empresa"><span class="sidebar-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></span><span class="sidebar-link-text">Estoque/Empresa</span></a>
+                        <a href="#" class="sidebar-link" data-tooltip="Estoque dos Clientes" data-page="estoque-clientes"><span class="sidebar-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></span><span class="sidebar-link-text">Estoque/Clientes</span></a>
+                    </div>
+                </div>
+                
+                <!-- Financeiro -->
                 <div class="sidebar-section" id="section-financeiro">
-                    <div class="sidebar-section-header" data-section="financeiro"><span class="sidebar-section-title">Financeiro</span><span class="sidebar-section-arrow"><svg viewBox="0 0 48 48"><path d="M13 30L25 18L37 30" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span></div>
+                    <div class="sidebar-section-header" data-section="financeiro">
+                        <span class="sidebar-section-title">Financeiro</span>
+                        <span class="sidebar-section-arrow"><svg viewBox="0 0 48 48"><path d="M13 30L25 18L37 30" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>
+                    </div>
                     <div class="sidebar-section-links">
                         <a href="#" class="sidebar-link" data-tooltip="Financeiro" data-page="financeiro"><span class="sidebar-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span><span class="sidebar-link-text">Financeiro</span></a>
                         <a href="#" class="sidebar-link" data-tooltip="Contratos" data-page="contratos"><span class="sidebar-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span><span class="sidebar-link-text">Contratos</span></a>
                     </div>
                 </div>
+                
+                <!-- Sistema -->
                 <div class="sidebar-section" id="section-sistema">
-                    <div class="sidebar-section-header" data-section="sistema"><span class="sidebar-section-title">Sistema</span><span class="sidebar-section-arrow"><svg viewBox="0 0 48 48"><path d="M13 30L25 18L37 30" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span></div>
+                    <div class="sidebar-section-header" data-section="sistema">
+                        <span class="sidebar-section-title">Sistema</span>
+                        <span class="sidebar-section-arrow"><svg viewBox="0 0 48 48"><path d="M13 30L25 18L37 30" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>
+                    </div>
                     <div class="sidebar-section-links">
                         <a href="#" class="sidebar-link" data-tooltip="Perfis de Acesso" data-page="perfis"><span class="sidebar-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v2a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10V8a7 7 0 0 0-14 0v2"/><path d="M5 10h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2z"/><circle cx="12" cy="15" r="2"/></svg></span><span class="sidebar-link-text">Perfis de Acesso</span></a>
                     </div>
                 </div>
             </nav>
+            
             <div class="sidebar-footer">
                 <div class="sidebar-user">
                     <div class="sidebar-user-avatar" id="sidebarAvatar">AP</div>
@@ -555,11 +738,12 @@
                         <div class="sidebar-user-name" id="sidebarUserName">Administrador</div>
                         <div class="sidebar-user-role" id="sidebarUserRole">Admin Principal</div>
                     </div>
-                    <div class="sidebar-user-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+                    <div class="sidebar-user-arrow"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
                 </div>
             </div>
         </aside>
         
+        <!-- MAIN CONTENT -->
         <main class="main-content" id="mainContent">
             <header class="header">
                 <button class="header-btn mobile-menu-btn" id="mobileMenuBtn" title="Menu" style="display:none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
@@ -574,10 +758,12 @@
         </main>
     </div>
 
+    <!-- MODAL -->
     <div class="modal-overlay" id="modalOverlay"><div class="modal" id="modalContent"></div></div>
 
+    <!-- ==================== SCRIPTS ==================== -->
     <script>
-        // ==================== CONFIGURAÇÃO FIREBASE ====================
+        // ==================== FIREBASE ====================
         const firebaseConfig = {
             apiKey: "AIzaSyByxj9418BYG26MpB1h9GZAFUmRiu_3HZc",
             authDomain: "aquaplusspiscinas.firebaseapp.com",
@@ -610,501 +796,635 @@
         const modalContent = document.getElementById('modalContent');
         
         // ==================== UI FUNCTIONS ====================
-        function showAlert(message, type = 'danger') {
-            loginAlert.textContent = message;
-            loginAlert.className = `alert alert-${type} show`;
-        }
+        function showAlert(msg, type = 'danger') { loginAlert.textContent = msg; loginAlert.className = `alert alert-${type} show`; }
         function hideAlert() { loginAlert.className = 'alert'; }
         function setLoading(loading) {
-            if (loading) { loginBtn.disabled = true; loginBtn.innerHTML = '<span class="spinner"></span> Entrando...'; }
-            else { loginBtn.disabled = false; loginBtn.innerHTML = 'Entrar'; }
+            loginBtn.disabled = loading;
+            loginBtn.innerHTML = loading ? '<span class="spinner"></span> Entrando...' : 'Entrar';
         }
-        function openModal(title, bodyHTML, footerHTML = '') {
-            modalContent.innerHTML = `<div class="modal-header"><h3 class="modal-title">${title}</h3><button class="modal-close" onclick="closeModal()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body">${bodyHTML}</div>${footerHTML ? `<div class="modal-footer">${footerHTML}</div>` : ''}`;
+        function openModal(title, body, footer = '') {
+            modalContent.innerHTML = `<div class="modal-header"><h3 class="modal-title">${title}</h3><button class="modal-close" onclick="closeModal()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body">${body}</div>${footer ? `<div class="modal-footer">${footer}</div>` : ''}`;
             modalOverlay.classList.add('show');
         }
         function closeModal() { modalOverlay.classList.remove('show'); }
-        modalOverlay.addEventListener('click', function(e) { if (e.target === modalOverlay) closeModal(); });
+        modalOverlay.addEventListener('click', e => { if (e.target === modalOverlay) closeModal(); });
         
         // ==================== LOGIN ====================
         loginForm.addEventListener('submit', async function(e) {
             e.preventDefault(); hideAlert();
             const email = emailInput.value.trim();
-            const password = passwordInput.value;
-            if (!email || !password) { showAlert('Preencha todos os campos.'); return; }
+            const pw = passwordInput.value;
+            if (!email || !pw) { showAlert('Preencha todos os campos.'); return; }
             setLoading(true);
             try {
-                const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                const user = userCredential.user;
-                console.log('✅ Login:', user.email);
+                const uc = await auth.signInWithEmailAndPassword(email, pw);
+                const user = uc.user;
                 const userDoc = await db.collection('usuarios').doc(user.uid).get();
                 if (userDoc.exists) {
-                    const userData = userDoc.data();
-                    sidebarUserName.textContent = userData.nome || 'Usuário';
-                    sidebarUserRole.textContent = userData.cargo || userData.perfil || 'Usuário';
-                    sidebarAvatar.textContent = (userData.nome || 'U').substring(0, 2).toUpperCase();
-                    localStorage.setItem('aquapluss-user', JSON.stringify({ uid: user.uid, email: user.email, ...userData }));
+                    const d = userDoc.data();
+                    sidebarUserName.textContent = d.nome || 'Usuário';
+                    sidebarUserRole.textContent = d.cargo || d.perfil || 'Usuário';
+                    sidebarAvatar.textContent = (d.nome || 'U').substring(0,2).toUpperCase();
+                    localStorage.setItem('aquapluss-user', JSON.stringify({uid:user.uid, email:user.email, ...d}));
                 } else {
                     await db.collection('usuarios').doc(user.uid).set({
-                        nome: user.email.split('@')[0], email: user.email, perfil: 'admin', cargo: 'Administrador',
+                        nome: email.split('@')[0], email, perfil:'admin', cargo:'Administrador',
                         criadoEm: firebase.firestore.FieldValue.serverTimestamp(),
                         ultimoLogin: firebase.firestore.FieldValue.serverTimestamp()
                     });
-                    sidebarUserName.textContent = user.email.split('@')[0];
+                    sidebarUserName.textContent = email.split('@')[0];
                     sidebarUserRole.textContent = 'Administrador';
-                    sidebarAvatar.textContent = user.email.substring(0, 2).toUpperCase();
+                    sidebarAvatar.textContent = email.substring(0,2).toUpperCase();
                 }
-                await db.collection('usuarios').doc(user.uid).update({ ultimoLogin: firebase.firestore.FieldValue.serverTimestamp() });
+                await db.collection('usuarios').doc(user.uid).update({ultimoLogin: firebase.firestore.FieldValue.serverTimestamp()});
                 showApp();
-            } catch (error) {
-                console.error('❌ Erro login:', error);
-                let mensagem = 'Erro ao fazer login.';
-                switch (error.code) {
-                    case 'auth/user-not-found': mensagem = 'Usuário não encontrado.'; break;
-                    case 'auth/wrong-password': mensagem = 'Senha incorreta.'; break;
-                    case 'auth/invalid-email': mensagem = 'E-mail inválido.'; break;
-                    case 'auth/too-many-requests': mensagem = 'Muitas tentativas. Aguarde.'; break;
-                }
-                showAlert(mensagem);
+            } catch(err) {
+                let msg = 'Erro ao fazer login.';
+                if (err.code === 'auth/user-not-found') msg = 'Usuário não encontrado.';
+                else if (err.code === 'auth/wrong-password') msg = 'Senha incorreta.';
+                else if (err.code === 'auth/invalid-email') msg = 'E-mail inválido.';
+                showAlert(msg);
             }
             setLoading(false);
         });
         
-        logoutBtn.addEventListener('click', async function() {
-            await auth.signOut();
-            localStorage.removeItem('aquapluss-user');
-            showLogin();
-        });
+        logoutBtn.addEventListener('click', async () => { await auth.signOut(); localStorage.removeItem('aquapluss-user'); showLogin(); });
         
-        function showApp() { loginScreen.style.display = 'none'; appScreen.style.display = 'flex'; appScreen.classList.add('show'); loadPage('funcionarios'); }
-        function showLogin() { appScreen.style.display = 'none'; appScreen.classList.remove('show'); loginScreen.style.display = 'flex'; emailInput.value = ''; passwordInput.value = ''; hideAlert(); }
+        function showApp() { loginScreen.style.display='none'; appScreen.style.display='flex'; appScreen.classList.add('show'); loadPage('dashboard'); }
+        function showLogin() { appScreen.style.display='none'; appScreen.classList.remove('show'); loginScreen.style.display='flex'; emailInput.value=''; passwordInput.value=''; hideAlert(); }
         
+        // ==================== NAVEGAÇÃO ====================
         function loadPage(page) {
-            const titles = { dashboard: 'Dashboard', clientes: 'Clientes', funcionarios: 'Funcionários', piscinas: 'Piscinas', estoque: 'Estoque', financeiro: 'Financeiro', contratos: 'Contratos', perfis: 'Perfis de Acesso', agenda: 'Agenda', rotas: 'Rotas' };
+            const titles = {
+                dashboard:'Dashboard', clientes:'Clientes', funcionarios:'Funcionários',
+                piscinas:'Piscinas', 'estoque-empresa':'Estoque/Empresa', 'estoque-clientes':'Estoque/Clientes',
+                financeiro:'Financeiro', contratos:'Contratos', perfis:'Perfis de Acesso',
+                agenda:'Agenda', rotas:'Rotas'
+            };
             breadcrumbPage.textContent = titles[page] || page;
             switch(page) {
                 case 'dashboard': loadDashboard(); break;
                 case 'clientes': loadClientes(); break;
                 case 'funcionarios': loadFuncionarios(); break;
                 case 'piscinas': loadPiscinas(); break;
-                case 'estoque': loadEstoque(); break;
-                case 'financeiro': loadFinanceiro(); break;
-                case 'contratos': loadContratos(); break;
-                case 'perfis': loadPerfis(); break;
+                case 'estoque-empresa': loadEstoqueEmpresa(); break;
+                case 'estoque-clientes': loadEstoqueClientes(); break;
+                case 'financeiro': pageContent.innerHTML = cardPlaceholder('💰 Financeiro', 'faturas', 'Parte 4'); break;
+                case 'contratos': pageContent.innerHTML = cardPlaceholder('📄 Contratos', 'contratos'); break;
+                case 'perfis': pageContent.innerHTML = cardPlaceholder('🔐 Perfis de Acesso', 'usuarios'); break;
                 case 'agenda': loadAgenda(); break;
                 case 'rotas': loadRotas(); break;
                 default: pageContent.innerHTML = '<p>Página em construção...</p>';
             }
         }
         
-        // ==================== DASHBOARD ====================
+        function cardPlaceholder(title, collection, extra='') {
+            return `<div class="card"><div class="card-header"><h3 class="card-title">${title}</h3></div><div class="card-body-padded"><p style="color:var(--text-secondary);">📂 Coleção: <code>${collection}</code> ${extra ? '• '+extra : ''}</p></div></div>`;
+        }
+        
+        // ==================== DASHBOARD (com alertas clicáveis) ====================
         async function loadDashboard() {
-            pageContent.innerHTML = '<p style="padding:40px;text-align:center;color:var(--text-tertiary);">Carregando dashboard...</p>';
+            pageContent.innerHTML = '<p style="padding:40px;text-align:center;color:var(--text-tertiary);">Carregando...</p>';
             try {
-                const [clientesSnap, funcSnap, visitasSnap] = await Promise.all([
-                    db.collection('clientes').where('status', '==', 'ativo').get(),
-                    db.collection('funcionarios').where('status', '==', 'ativo').get(),
-                    db.collection('visitas').where('data', '==', new Date().toISOString().split('T')[0]).get()
+                const [clientesSnap, funcSnap, piscinasSnap, estoqueSnap, piscinasCritSnap] = await Promise.all([
+                    db.collection('clientes').where('status','==','ativo').get(),
+                    db.collection('funcionarios').where('status','==','ativo').get(),
+                    db.collection('piscinas').get(),
+                    db.collection('estoque').get(),
+                    db.collection('piscinas').where('status','==','critica').get()
                 ]);
-                const totalClientes = clientesSnap.size;
-                const totalFuncionarios = funcSnap.size;
-                const visitasHoje = visitasSnap.size;
-                const concluidas = visitasSnap.docs.filter(d => d.data().status === 'concluido').length;
-                const hoje = new Date();
-                const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1).toISOString().split('T')[0];
-                const faturasSnap = await db.collection('faturas').where('data', '>=', inicioMes).where('status', '==', 'pago').get();
-                let faturamento = 0;
-                faturasSnap.forEach(doc => { faturamento += doc.data().valor || 0; });
+                
+                // Estoque baixo
+                const estoqueBaixo = estoqueSnap.docs.filter(d => {
+                    const e = d.data();
+                    return (e.quantidade || 0) <= (e.quantidadeMinima || 5);
+                });
+                
                 pageContent.innerHTML = `
                     <div class="stats-grid">
-                        <div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Clientes Ativos</span><div class="stat-card-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div><div class="stat-card-value">${totalClientes}</div><span class="stat-card-change positive">✅ Conectado</span></div>
-                        <div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Visitas Hoje</span><div class="stat-card-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div></div><div class="stat-card-value">${visitasHoje}</div><span class="stat-card-change positive">${concluidas} concluídas</span></div>
-                        <div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Funcionários</span><div class="stat-card-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div><div class="stat-card-value">${totalFuncionarios}</div><span class="stat-card-change positive">Equipe ativa</span></div>
-                        <div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Faturamento Mensal</span><div class="stat-card-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div></div><div class="stat-card-value">R$ ${faturamento.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div><span class="stat-card-change positive">Mês atual</span></div>
+                        <div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Clientes Ativos</span><div class="stat-card-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div><div class="stat-card-value">${clientesSnap.size}</div></div>
+                        <div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Funcionários</span><div class="stat-card-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div><div class="stat-card-value">${funcSnap.size}</div></div>
+                        <div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Piscinas</span><div class="stat-card-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h2a4 4 0 0 0 4-4V6a4 4 0 0 1 8 0v2a4 4 0 0 0 4 4h2"/></svg></div></div><div class="stat-card-value">${piscinasSnap.size}</div></div>
+                        <div class="stat-card clickable" onclick="loadPage('estoque-empresa')" title="Clique para ver o estoque"><div class="stat-card-header"><span class="stat-card-label">⚠️ Estoque Baixo</span><div class="stat-card-icon amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div></div><div class="stat-card-value">${estoqueBaixo.length}</div><span class="stat-card-change negative">Clique para ver</span></div>
+                    </div>
+                    <div class="content-grid">
+                        <div class="card">
+                            <div class="card-header"><h3 class="card-title">🏊 Piscinas Críticas</h3></div>
+                            <div class="card-body-padded">
+                                ${piscinasCritSnap.empty ? '<p style="color:var(--text-tertiary);">Nenhuma piscina em estado crítico</p>' :
+                                    piscinasCritSnap.docs.map(d => {
+                                        const p = d.data();
+                                        return `<div class="alert-item danger" style="cursor:pointer;" onclick="loadPage('piscinas')"><div class="alert-item-title">${p.clienteNome || 'Piscina '+d.id.substring(0,6)}</div><div class="alert-item-desc">Código: ${p.codigo || 'N/A'} • ${p.observacoes || 'Necessita atenção'}</div></div>`;
+                                    }).join('')
+                                }
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header"><h3 class="card-title">📦 Estoque Baixo</h3></div>
+                            <div class="card-body-padded">
+                                ${estoqueBaixo.length === 0 ? '<p style="color:var(--text-tertiary);">Estoque OK</p>' :
+                                    estoqueBaixo.map(d => {
+                                        const e = d.data();
+                                        return `<div class="alert-item warning" style="cursor:pointer;" onclick="loadPage('estoque-empresa')"><div class="alert-item-title">${e.nome}</div><div class="alert-item-desc">${e.quantidade} ${e.unidade || 'un'} restantes</div></div>`;
+                                    }).join('')
+                                }
+                            </div>
+                        </div>
                     </div>`;
-            } catch (error) {
-                pageContent.innerHTML = `<div class="card"><div class="card-header"><h3 class="card-title">❌ Erro</h3></div><div class="card-body-padded"><p style="color:var(--danger);">${error.message}</p></div></div>`;
+            } catch(err) {
+                pageContent.innerHTML = `<div class="card"><div class="card-header"><h3 class="card-title">❌ Erro</h3></div><div class="card-body-padded"><p style="color:var(--danger);">${err.message}</p></div></div>`;
             }
         }
         
-        // ==================== CLIENTES ====================
+        // ==================== CLIENTES (com plano, dias, funcionário, CEP automático) ====================
         async function loadClientes() {
-            pageContent.innerHTML = '<p style="padding:40px;text-align:center;color:var(--text-tertiary);">Carregando clientes...</p>';
+            pageContent.innerHTML = '<p style="padding:40px;text-align:center;color:var(--text-tertiary);">Carregando...</p>';
             try {
-                const snapshot = await db.collection('clientes').orderBy('nome').get();
-                let rows = '';
-                if (snapshot.empty) {
-                    rows = '<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--text-tertiary);">Nenhum cliente cadastrado</td></tr>';
-                } else {
-                    snapshot.forEach(doc => {
-                        const c = doc.data();
-                        rows += `<tr><td><strong>${c.nome || '-'}</strong><br><span style="font-size:12px;color:var(--text-tertiary);">${c.cpfCnpj || ''}</span></td><td>${c.telefone || '-'}<br><span style="font-size:12px;color:var(--text-tertiary);">${c.email || ''}</span></td><td><span class="badge ${c.status === 'ativo' ? 'badge-success' : 'badge-danger'}"><span class="badge-dot"></span>${c.status || 'inativo'}</span></td><td><button class="btn-link" onclick="verCliente('${doc.id}')">Ver</button><button class="btn-link btn-danger" onclick="excluirCliente('${doc.id}')" style="margin-left:8px;">Excluir</button></td></tr>`;
-                    });
-                }
-                pageContent.innerHTML = `<div class="card"><div class="card-header"><h3 class="card-title">👥 Clientes (${snapshot.size})</h3><button class="btn btn-primary btn-sm" onclick="novoCliente()">+ Novo Cliente</button></div><div class="card-body"><table class="table"><thead><tr><th>Nome / CPF</th><th>Contato</th><th>Status</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
-            } catch (error) {
-                pageContent.innerHTML = `<div class="card"><div class="card-header"><h3 class="card-title">❌ Erro</h3></div><div class="card-body-padded"><p style="color:var(--danger);">${error.message}</p></div></div>`;
-            }
+                const snap = await db.collection('clientes').orderBy('nome').get();
+                let rows = snap.empty ? '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-tertiary);">Nenhum cliente</td></tr>' :
+                    snap.docs.map(d => {
+                        const c = d.data();
+                        const dias = c.diasSemana || [];
+                        return `<tr><td><strong>${c.nome || '-'}</strong><br><span style="font-size:11px;color:var(--text-tertiary);">${c.cpfCnpj || ''}</span></td><td>${c.telefone || '-'}</td><td>R$ ${(c.plano || 0).toFixed(2)}<br><span style="font-size:11px;color:var(--text-tertiary);">${dias.join(', ') || 'N/D'}</span></td><td><span class="badge ${c.status==='ativo'?'badge-success':'badge-danger'}"><span class="badge-dot"></span>${c.status||'inativo'}</span></td><td><button class="btn-link" onclick="verCliente('${d.id}')">Ver</button><button class="btn-link btn-danger" onclick="excluirCliente('${d.id}')" style="margin-left:6px;">Excluir</button></td></tr>`;
+                    }).join('');
+                pageContent.innerHTML = `<div class="card"><div class="card-header"><h3 class="card-title">👥 Clientes (${snap.size})</h3><button class="btn btn-primary btn-sm" onclick="novoCliente()">+ Novo Cliente</button></div><div class="card-body"><table class="table"><thead><tr><th>Nome/CPF</th><th>Telefone</th><th>Plano/Dias</th><th>Status</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+            } catch(err) { pageContent.innerHTML = errCard(err.message); }
         }
         
-        function novoCliente(clienteData = null) {
-            const isEdit = !!clienteData;
-            const title = isEdit ? 'Editar Cliente' : 'Novo Cliente';
-            const bodyHTML = `
+        async function novoCliente(data = null) {
+            const isEdit = !!data;
+            // Buscar funcionários ativos
+            let funcOptions = '<option value="">Selecione...</option>';
+            try {
+                const fSnap = await db.collection('funcionarios').where('status','==','ativo').get();
+                fSnap.forEach(d => funcOptions += `<option value="${d.id}" ${data?.funcionarioId === d.id ? 'selected' : ''}>${d.data().nome}</option>`);
+            } catch(e) {}
+            
+            const diasSemana = data?.diasSemana || [];
+            const diasLabels = ['Seg','Ter','Qua','Qui','Sex','Sáb'];
+            const diasTags = diasLabels.map(d => `<span class="tag ${diasSemana.includes(d) ? 'active' : ''}" onclick="this.classList.toggle('active')" data-dia="${d}">${d}</span>`).join('');
+            
+            const body = `
                 <form id="clienteForm">
                     <div class="form-section"><div class="form-section-title">📋 Dados Pessoais</div>
                         <div class="form-grid">
-                            <div class="form-group"><label>Nome Completo *</label><input type="text" class="form-input" name="nome" value="${clienteData?.nome || ''}" required></div>
-                            <div class="form-group"><label>CPF/CNPJ</label><input type="text" class="form-input" name="cpfCnpj" value="${clienteData?.cpfCnpj || ''}"></div>
-                            <div class="form-group"><label>Telefone *</label><input type="text" class="form-input" name="telefone" value="${clienteData?.telefone || ''}" required></div>
-                            <div class="form-group"><label>E-mail</label><input type="email" class="form-input" name="email" value="${clienteData?.email || ''}"></div>
-                            <div class="form-group"><label>Status</label><select class="form-input" name="status"><option value="ativo" ${clienteData?.status === 'ativo' ? 'selected' : ''}>Ativo</option><option value="inativo" ${clienteData?.status === 'inativo' ? 'selected' : ''}>Inativo</option></select></div>
+                            <div class="form-group"><label>Nome *</label><input type="text" class="form-input" name="nome" value="${data?.nome || ''}" required></div>
+                            <div class="form-group"><label>CPF/CNPJ</label><input type="text" class="form-input" name="cpfCnpj" value="${data?.cpfCnpj || ''}"></div>
+                            <div class="form-group"><label>Telefone *</label><input type="text" class="form-input" name="telefone" value="${data?.telefone || ''}" required></div>
+                            <div class="form-group"><label>E-mail</label><input type="email" class="form-input" name="email" value="${data?.email || ''}"></div>
+                            <div class="form-group"><label>Status</label><select class="form-input" name="status"><option value="ativo" ${data?.status==='ativo'?'selected':''}>Ativo</option><option value="inativo" ${data?.status==='inativo'?'selected':''}>Inativo</option></select></div>
                         </div>
+                    </div>
+                    <div class="form-section"><div class="form-section-title">💰 Plano</div>
+                        <div class="form-grid">
+                            <div class="form-group"><label>Valor do Plano (R$) *</label><input type="number" class="form-input" name="plano" value="${data?.plano || ''}" step="0.01" required></div>
+                            <div class="form-group"><label>Funcionário Responsável</label><select class="form-input" name="funcionarioId">${funcOptions}</select></div>
+                        </div>
+                        <div class="form-group" style="margin-top:12px;"><label>Dias da Semana</label><div class="tag-group" id="diasTags">${diasTags}</div></div>
                     </div>
                     <div class="form-section"><div class="form-section-title">📍 Endereço</div>
                         <div class="form-grid">
-                            <div class="form-group"><label>CEP</label><input type="text" class="form-input" name="cep" value="${clienteData?.cep || ''}"></div>
-                            <div class="form-group"><label>Logradouro</label><input type="text" class="form-input" name="logradouro" value="${clienteData?.logradouro || ''}"></div>
-                            <div class="form-group"><label>Número</label><input type="text" class="form-input" name="numero" value="${clienteData?.numero || ''}"></div>
-                            <div class="form-group"><label>Cidade</label><input type="text" class="form-input" name="cidade" value="${clienteData?.cidade || ''}"></div>
-                            <div class="form-group"><label>Estado</label><input type="text" class="form-input" name="estado" value="${clienteData?.estado || ''}" maxlength="2"></div>
-                            <div class="form-group"><label>GPS</label><input type="text" class="form-input" name="gps" value="${clienteData?.gps || ''}" placeholder="-23.5505,-46.6333"></div>
+                            <div class="form-group"><label>CEP</label><input type="text" class="form-input" name="cep" id="cepInput" value="${data?.cep || ''}" onblur="buscarCEP()"></div>
+                            <div class="form-group"><label>Logradouro</label><input type="text" class="form-input" name="logradouro" id="logradouroInput" value="${data?.logradouro || ''}"></div>
+                            <div class="form-group"><label>Número</label><input type="text" class="form-input" name="numero" value="${data?.numero || ''}"></div>
+                            <div class="form-group"><label>Bairro</label><input type="text" class="form-input" name="bairro" id="bairroInput" value="${data?.bairro || ''}"></div>
+                            <div class="form-group"><label>Cidade</label><input type="text" class="form-input" name="cidade" id="cidadeInput" value="${data?.cidade || ''}"></div>
+                            <div class="form-group"><label>Estado</label><input type="text" class="form-input" name="estado" id="estadoInput" value="${data?.estado || ''}" maxlength="2"></div>
+                            <div class="form-group"><label>Coordenadas GPS</label><input type="text" class="form-input" name="gps" value="${data?.gps || ''}" placeholder="Ex: -23.5505,-46.6333"></div>
                         </div>
                     </div>
-                    <div class="form-section"><div class="form-section-title">🏊 Piscina</div>
-                        <div class="form-grid">
-                            <div class="form-group"><label>Tamanho (m²)</label><input type="number" class="form-input" name="tamanhoPiscina" value="${clienteData?.tamanhoPiscina || ''}" step="0.1"></div>
-                            <div class="form-group"><label>Volume (L)</label><input type="number" class="form-input" name="volumeLitros" value="${clienteData?.volumeLitros || ''}"></div>
-                            <div class="form-group"><label>Material</label><select class="form-input" name="materialPiscina"><option value="">Selecione...</option><option value="azulejo" ${clienteData?.materialPiscina === 'azulejo' ? 'selected' : ''}>Azulejo</option><option value="vinil" ${clienteData?.materialPiscina === 'vinil' ? 'selected' : ''}>Vinil</option><option value="fibra" ${clienteData?.materialPiscina === 'fibra' ? 'selected' : ''}>Fibra</option><option value="concreto" ${clienteData?.materialPiscina === 'concreto' ? 'selected' : ''}>Concreto</option></select></div>
-                            <div class="form-group"><label>Tipo Água</label><select class="form-input" name="tipoAgua"><option value="">Selecione...</option><option value="doce" ${clienteData?.tipoAgua === 'doce' ? 'selected' : ''}>Doce</option><option value="salgada" ${clienteData?.tipoAgua === 'salgada' ? 'selected' : ''}>Salgada</option></select></div>
-                        </div>
-                    </div>
-                    <div class="form-group"><label>Observações</label><textarea class="form-input" name="observacoes" rows="2">${clienteData?.observacoes || ''}</textarea></div>
+                    <div class="form-group"><label>Observações</label><textarea class="form-input" name="observacoes" rows="2">${data?.observacoes || ''}</textarea></div>
                 </form>`;
-            const footerHTML = `<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarCliente('${clienteData?.id || ''}')">${isEdit ? 'Atualizar' : 'Salvar'} Cliente</button>`;
-            openModal(title, bodyHTML, footerHTML);
+            const footer = `<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarCliente('${data?.id || ''}')">${isEdit?'Atualizar':'Salvar'} Cliente</button>`;
+            openModal(isEdit?'Editar Cliente':'Novo Cliente', body, footer);
+        }
+        
+        async function buscarCEP() {
+            const cep = document.getElementById('cepInput')?.value.replace(/\D/g,'');
+            if (cep.length !== 8) return;
+            try {
+                const resp = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                const dados = await resp.json();
+                if (!dados.erro) {
+                    document.getElementById('logradouroInput').value = dados.logradouro || '';
+                    document.getElementById('bairroInput').value = dados.bairro || '';
+                    document.getElementById('cidadeInput').value = dados.localidade || '';
+                    document.getElementById('estadoInput').value = dados.uf || '';
+                }
+            } catch(e) { console.log('CEP não encontrado'); }
         }
         
         async function salvarCliente(id) {
             const form = document.getElementById('clienteForm');
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
+            const fd = new FormData(form);
+            const data = Object.fromEntries(fd.entries());
+            // Coletar dias da semana
+            const diasAtivos = [];
+            document.querySelectorAll('#diasTags .tag.active').forEach(t => diasAtivos.push(t.getAttribute('data-dia')));
+            data.diasSemana = diasAtivos;
             data.atualizadoEm = firebase.firestore.FieldValue.serverTimestamp();
             try {
                 if (id) { await db.collection('clientes').doc(id).update(data); }
                 else { data.criadoEm = firebase.firestore.FieldValue.serverTimestamp(); data.status = data.status || 'ativo'; await db.collection('clientes').add(data); }
                 closeModal(); loadClientes();
-            } catch (error) { alert('Erro ao salvar: ' + error.message); }
+            } catch(err) { alert('Erro: '+err.message); }
         }
         
         async function verCliente(id) {
-            try {
-                const doc = await db.collection('clientes').doc(id).get();
-                if (doc.exists) {
-                    const c = doc.data();
-                    openModal(`Cliente: ${c.nome}`, `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;"><div><strong>Nome:</strong> ${c.nome}</div><div><strong>CPF/CNPJ:</strong> ${c.cpfCnpj || '-'}</div><div><strong>Telefone:</strong> ${c.telefone || '-'}</div><div><strong>E-mail:</strong> ${c.email || '-'}</div><div><strong>Status:</strong> <span class="badge ${c.status === 'ativo' ? 'badge-success' : 'badge-danger'}">${c.status}</span></div><div><strong>Piscina:</strong> ${c.tamanhoPiscina || '-'}m² • ${c.volumeLitros || '-'}L</div></div>`, `<button class="btn btn-primary" onclick="closeModal();novoCliente({id:'${id}',...${JSON.stringify(c).replace(/"/g, '&quot;')}})">Editar</button>`);
-                }
-            } catch (error) { console.error('Erro:', error); }
+            const doc = await db.collection('clientes').doc(id).get();
+            if (!doc.exists) return;
+            const c = doc.data();
+            let funcNome = 'N/D';
+            if (c.funcionarioId) {
+                try { const fDoc = await db.collection('funcionarios').doc(c.funcionarioId).get(); if (fDoc.exists) funcNome = fDoc.data().nome; } catch(e) {}
+            }
+            openModal(`Cliente: ${c.nome}`,
+                `<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                    <div><strong>Nome:</strong> ${c.nome}</div><div><strong>CPF/CNPJ:</strong> ${c.cpfCnpj||'-'}</div>
+                    <div><strong>Telefone:</strong> ${c.telefone||'-'}</div><div><strong>E-mail:</strong> ${c.email||'-'}</div>
+                    <div><strong>Plano:</strong> R$ ${(c.plano||0).toFixed(2)}</div><div><strong>Dias:</strong> ${(c.diasSemana||[]).join(', ')||'N/D'}</div>
+                    <div><strong>Funcionário:</strong> ${funcNome}</div><div><strong>Status:</strong> <span class="badge ${c.status==='ativo'?'badge-success':'badge-danger'}">${c.status}</span></div>
+                    <div><strong>Endereço:</strong> ${c.logradouro||''}, ${c.numero||''} - ${c.bairro||''}</div><div><strong>Cidade/UF:</strong> ${c.cidade||''}/${c.estado||''}</div>
+                </div>`,
+                `<button class="btn btn-primary" onclick="closeModal();novoCliente({id:'${id}',...${JSON.stringify(c).replace(/"/g,'&quot;')}})">Editar</button>`);
         }
         
         async function excluirCliente(id) {
-            if (confirm('Excluir este cliente?')) { try { await db.collection('clientes').doc(id).delete(); loadClientes(); } catch (error) { alert('Erro: ' + error.message); } }
+            if (confirm('Excluir este cliente?')) { await db.collection('clientes').doc(id).delete(); loadClientes(); }
         }
         
-        // ==================== FUNCIONÁRIOS (NOVO) ====================
+        // ==================== FUNCIONÁRIOS ====================
         async function loadFuncionarios() {
-            pageContent.innerHTML = '<p style="padding:40px;text-align:center;color:var(--text-tertiary);">Carregando funcionários...</p>';
+            pageContent.innerHTML = '<p style="padding:40px;text-align:center;color:var(--text-tertiary);">Carregando...</p>';
             try {
-                const snapshot = await db.collection('funcionarios').orderBy('nome').get();
-                let rows = '';
-                if (snapshot.empty) {
-                    rows = '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-tertiary);">Nenhum funcionário cadastrado</td></tr>';
-                } else {
-                    snapshot.forEach(doc => {
-                        const f = doc.data();
-                        rows += `<tr><td><strong>${f.nome || '-'}</strong></td><td>${f.cargo || '-'}</td><td>${f.telefone || '-'}<br><span style="font-size:12px;color:var(--text-tertiary);">${f.email || ''}</span></td><td><span class="badge ${f.status === 'ativo' ? 'badge-success' : 'badge-danger'}"><span class="badge-dot"></span>${f.status || 'inativo'}</span></td><td><button class="btn-link" onclick="verFuncionario('${doc.id}')">Ver</button><button class="btn-link btn-danger" onclick="excluirFuncionario('${doc.id}')" style="margin-left:8px;">Excluir</button></td></tr>`;
-                    });
-                }
-                pageContent.innerHTML = `<div class="card"><div class="card-header"><h3 class="card-title">👷 Funcionários (${snapshot.size})</h3><button class="btn btn-primary btn-sm" onclick="novoFuncionario()">+ Novo Funcionário</button></div><div class="card-body"><table class="table"><thead><tr><th>Nome</th><th>Cargo</th><th>Contato</th><th>Status</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
-            } catch (error) {
-                pageContent.innerHTML = `<div class="card"><div class="card-header"><h3 class="card-title">❌ Erro</h3></div><div class="card-body-padded"><p style="color:var(--danger);">${error.message}</p></div></div>`;
-            }
+                const snap = await db.collection('funcionarios').orderBy('nome').get();
+                let rows = snap.empty ? '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-tertiary);">Nenhum funcionário</td></tr>' :
+                    snap.docs.map(d => {
+                        const f = d.data();
+                        return `<tr><td><strong>${f.nome||'-'}</strong></td><td>${f.cargo||'-'}</td><td>${f.telefone||'-'}</td><td><span class="badge ${f.status==='ativo'?'badge-success':'badge-danger'}"><span class="badge-dot"></span>${f.status||'inativo'}</span></td><td><button class="btn-link" onclick="verFuncionario('${d.id}')">Ver</button><button class="btn-link btn-danger" onclick="excluirFuncionario('${d.id}')" style="margin-left:6px;">Excluir</button></td></tr>`;
+                    }).join('');
+                pageContent.innerHTML = `<div class="card"><div class="card-header"><h3 class="card-title">👷 Funcionários (${snap.size})</h3><button class="btn btn-primary btn-sm" onclick="novoFuncionario()">+ Novo</button></div><div class="card-body"><table class="table"><thead><tr><th>Nome</th><th>Cargo</th><th>Telefone</th><th>Status</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+            } catch(err) { pageContent.innerHTML = errCard(err.message); }
         }
         
-        function novoFuncionario(funcData = null) {
-            const isEdit = !!funcData;
-            const bodyHTML = `
-                <form id="funcionarioForm">
-                    <div class="form-section"><div class="form-section-title">👤 Dados Pessoais</div>
-                        <div class="form-grid">
-                            <div class="form-group"><label>Nome Completo *</label><input type="text" class="form-input" name="nome" value="${funcData?.nome || ''}" required></div>
-                            <div class="form-group"><label>CPF *</label><input type="text" class="form-input" name="cpf" value="${funcData?.cpf || ''}" required></div>
-                            <div class="form-group"><label>Telefone *</label><input type="text" class="form-input" name="telefone" value="${funcData?.telefone || ''}" required></div>
-                            <div class="form-group"><label>E-mail</label><input type="email" class="form-input" name="email" value="${funcData?.email || ''}"></div>
-                            <div class="form-group"><label>Cargo</label><select class="form-input" name="cargo"><option value="Piscineiro" ${funcData?.cargo === 'Piscineiro' ? 'selected' : ''}>Piscineiro</option><option value="Técnico" ${funcData?.cargo === 'Técnico' ? 'selected' : ''}>Técnico</option><option value="Supervisor" ${funcData?.cargo === 'Supervisor' ? 'selected' : ''}>Supervisor</option><option value="Gestor" ${funcData?.cargo === 'Gestor' ? 'selected' : ''}>Gestor</option></select></div>
-                            <div class="form-group"><label>Status</label><select class="form-input" name="status"><option value="ativo" ${funcData?.status === 'ativo' ? 'selected' : ''}>Ativo</option><option value="inativo" ${funcData?.status === 'inativo' ? 'selected' : ''}>Inativo</option></select></div>
-                        </div>
-                    </div>
-                    <div class="form-section"><div class="form-section-title">📄 Documentos</div>
-                        <div class="form-grid">
-                            <div class="form-group"><label>RG</label><input type="text" class="form-input" name="rg" value="${funcData?.rg || ''}"></div>
-                            <div class="form-group"><label>CTPS</label><input type="text" class="form-input" name="ctps" value="${funcData?.ctps || ''}"></div>
-                            <div class="form-group"><label>CNH</label><input type="text" class="form-input" name="cnh" value="${funcData?.cnh || ''}"></div>
-                            <div class="form-group"><label>Data Admissão</label><input type="date" class="form-input" name="dataAdmissao" value="${funcData?.dataAdmissao || ''}"></div>
-                        </div>
-                    </div>
-                    <div class="form-section"><div class="form-section-title">💰 Remuneração</div>
-                        <div class="form-grid">
-                            <div class="form-group"><label>Salário Base (R$)</label><input type="number" class="form-input" name="salario" value="${funcData?.salario || ''}" step="0.01"></div>
-                            <div class="form-group"><label>Comissão (%)</label><input type="number" class="form-input" name="comissao" value="${funcData?.comissao || ''}" step="0.1" placeholder="Ex: 10"></div>
-                        </div>
-                    </div>
-                    <div class="form-section"><div class="form-section-title">📍 Endereço</div>
-                        <div class="form-grid">
-                            <div class="form-group"><label>CEP</label><input type="text" class="form-input" name="cep" value="${funcData?.cep || ''}"></div>
-                            <div class="form-group"><label>Logradouro</label><input type="text" class="form-input" name="logradouro" value="${funcData?.logradouro || ''}"></div>
-                            <div class="form-group"><label>Número</label><input type="text" class="form-input" name="numero" value="${funcData?.numero || ''}"></div>
-                            <div class="form-group"><label>Cidade</label><input type="text" class="form-input" name="cidade" value="${funcData?.cidade || ''}"></div>
-                        </div>
-                    </div>
-                    <div class="form-group"><label>Observações</label><textarea class="form-input" name="observacoes" rows="2">${funcData?.observacoes || ''}</textarea></div>
-                </form>`;
-            const footerHTML = `<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarFuncionario('${funcData?.id || ''}')">${isEdit ? 'Atualizar' : 'Salvar'} Funcionário</button>`;
-            openModal(isEdit ? 'Editar Funcionário' : 'Novo Funcionário', bodyHTML, footerHTML);
+        function novoFuncionario(data = null) {
+            const isEdit = !!data;
+            const body = `<form id="funcionarioForm">
+                <div class="form-grid">
+                    <div class="form-group"><label>Nome *</label><input type="text" class="form-input" name="nome" value="${data?.nome||''}" required></div>
+                    <div class="form-group"><label>CPF *</label><input type="text" class="form-input" name="cpf" value="${data?.cpf||''}" required></div>
+                    <div class="form-group"><label>Telefone *</label><input type="text" class="form-input" name="telefone" value="${data?.telefone||''}" required></div>
+                    <div class="form-group"><label>E-mail</label><input type="email" class="form-input" name="email" value="${data?.email||''}"></div>
+                    <div class="form-group"><label>Cargo</label><select class="form-input" name="cargo"><option value="Piscineiro" ${data?.cargo==='Piscineiro'?'selected':''}>Piscineiro</option><option value="Técnico" ${data?.cargo==='Técnico'?'selected':''}>Técnico</option><option value="Supervisor" ${data?.cargo==='Supervisor'?'selected':''}>Supervisor</option></select></div>
+                    <div class="form-group"><label>Status</label><select class="form-input" name="status"><option value="ativo" ${data?.status==='ativo'?'selected':''}>Ativo</option><option value="inativo" ${data?.status==='inativo'?'selected':''}>Inativo</option></select></div>
+                </div>
+                <div class="form-section"><div class="form-section-title">💰 Remuneração</div><div class="form-grid">
+                    <div class="form-group"><label>Salário (R$)</label><input type="number" class="form-input" name="salario" value="${data?.salario||''}" step="0.01"></div>
+                    <div class="form-group"><label>Comissão (%)</label><input type="number" class="form-input" name="comissao" value="${data?.comissao||''}" step="0.1"></div>
+                </div></div>
+            </form>`;
+            const footer = `<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarFuncionario('${data?.id||''}')">${isEdit?'Atualizar':'Salvar'}</button>`;
+            openModal(isEdit?'Editar Funcionário':'Novo Funcionário', body, footer);
         }
         
         async function salvarFuncionario(id) {
             const form = document.getElementById('funcionarioForm');
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
+            const fd = new FormData(form);
+            const data = Object.fromEntries(fd.entries());
             data.atualizadoEm = firebase.firestore.FieldValue.serverTimestamp();
-            try {
-                if (id) { await db.collection('funcionarios').doc(id).update(data); }
-                else { data.criadoEm = firebase.firestore.FieldValue.serverTimestamp(); data.status = data.status || 'ativo'; await db.collection('funcionarios').add(data); }
-                closeModal(); loadFuncionarios();
-            } catch (error) { alert('Erro ao salvar: ' + error.message); }
+            if (id) { await db.collection('funcionarios').doc(id).update(data); }
+            else { data.criadoEm = firebase.firestore.FieldValue.serverTimestamp(); data.status = data.status || 'ativo'; await db.collection('funcionarios').add(data); }
+            closeModal(); loadFuncionarios();
         }
         
         async function verFuncionario(id) {
             const doc = await db.collection('funcionarios').doc(id).get();
-            if (doc.exists) {
-                const f = doc.data();
-                openModal(`Funcionário: ${f.nome}`, `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;"><div><strong>Nome:</strong> ${f.nome}</div><div><strong>CPF:</strong> ${f.cpf || '-'}</div><div><strong>Cargo:</strong> ${f.cargo || '-'}</div><div><strong>Salário:</strong> R$ ${f.salario || '0'}</div><div><strong>Comissão:</strong> ${f.comissao || '0'}%</div><div><strong>Status:</strong> <span class="badge ${f.status === 'ativo' ? 'badge-success' : 'badge-danger'}">${f.status}</span></div></div>`, `<button class="btn btn-primary" onclick="closeModal();novoFuncionario({id:'${id}',...${JSON.stringify(f).replace(/"/g, '&quot;')}})">Editar</button>`);
-            }
+            if (!doc.exists) return;
+            const f = doc.data();
+            openModal(`Funcionário: ${f.nome}`, `<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div><strong>Nome:</strong> ${f.nome}</div><div><strong>CPF:</strong> ${f.cpf||'-'}</div><div><strong>Cargo:</strong> ${f.cargo||'-'}</div><div><strong>Salário:</strong> R$ ${f.salario||'0'}</div><div><strong>Comissão:</strong> ${f.comissao||'0'}%</div></div>`, `<button class="btn btn-primary" onclick="closeModal();novoFuncionario({id:'${id}',...${JSON.stringify(f).replace(/"/g,'&quot;')}})">Editar</button>`);
         }
         
-        async function excluirFuncionario(id) {
-            if (confirm('Excluir este funcionário?')) { try { await db.collection('funcionarios').doc(id).delete(); loadFuncionarios(); } catch (error) { alert('Erro: ' + error.message); } }
-        }
+        async function excluirFuncionario(id) { if (confirm('Excluir?')) { await db.collection('funcionarios').doc(id).delete(); loadFuncionarios(); } }
         
-        // ==================== PISCINAS ====================
+        // ==================== PISCINAS (com código único) ====================
         async function loadPiscinas() {
-            pageContent.innerHTML = '<p style="padding:40px;text-align:center;color:var(--text-tertiary);">Carregando piscinas...</p>';
+            pageContent.innerHTML = '<p style="padding:40px;text-align:center;color:var(--text-tertiary);">Carregando...</p>';
             try {
-                const snapshot = await db.collection('piscinas').get();
-                let rows = '';
-                if (snapshot.empty) {
-                    rows = '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text-tertiary);">Nenhuma piscina cadastrada</td></tr>';
-                } else {
-                    snapshot.forEach(doc => {
-                        const p = doc.data();
-                        rows += `<tr><td><strong>${p.nomeCliente || p.clienteNome || '-'}</strong></td><td>${p.tamanho || '-'} m²</td><td>${p.volume || '-'} L</td><td>${p.material || '-'}</td><td><span class="badge ${p.status === 'ativa' ? 'badge-success' : 'badge-warning'}"><span class="badge-dot"></span>${p.status || 'pendente'}</span></td><td><button class="btn-link" onclick="verPiscina('${doc.id}')">Ver</button></td></tr>`;
-                    });
-                }
-                pageContent.innerHTML = `<div class="card"><div class="card-header"><h3 class="card-title">🏊 Piscinas Cadastradas (${snapshot.size})</h3><button class="btn btn-primary btn-sm" onclick="novaPiscina()">+ Nova Piscina</button></div><div class="card-body"><table class="table"><thead><tr><th>Cliente</th><th>Tamanho</th><th>Volume</th><th>Material</th><th>Status</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
-            } catch (error) {
-                pageContent.innerHTML = `<div class="card"><div class="card-header"><h3 class="card-title">❌ Erro</h3></div><div class="card-body-padded"><p style="color:var(--danger);">${error.message}</p></div></div>`;
-            }
+                const snap = await db.collection('piscinas').get();
+                let rows = snap.empty ? '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-tertiary);">Nenhuma piscina</td></tr>' :
+                    snap.docs.map(d => {
+                        const p = d.data();
+                        return `<tr><td><strong>${p.codigo||'PSC-XXXX'}</strong></td><td>${p.clienteNome||'-'}</td><td>${p.tamanho||'-'}m²</td><td>${p.volume||'-'}L</td><td><span class="badge ${p.status==='critica'?'badge-danger':p.status==='ativa'?'badge-success':'badge-warning'}"><span class="badge-dot"></span>${p.status||'pendente'}</span></td><td><button class="btn-link" onclick="verPiscina('${d.id}')">Ver</button></td></tr>`;
+                    }).join('');
+                pageContent.innerHTML = `<div class="card"><div class="card-header"><h3 class="card-title">🏊 Piscinas (${snap.size})</h3><button class="btn btn-primary btn-sm" onclick="novaPiscina()">+ Nova</button></div><div class="card-body"><table class="table"><thead><tr><th>Código</th><th>Cliente</th><th>Tamanho</th><th>Volume</th><th>Status</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+            } catch(err) { pageContent.innerHTML = errCard(err.message); }
         }
         
-        async function novaPiscina(piscinaData = null) {
-            const isEdit = !!piscinaData;
-            // Buscar clientes para o select
-            let clienteOptions = '<option value="">Selecione um cliente...</option>';
-            try {
-                const clientesSnap = await db.collection('clientes').where('status', '==', 'ativo').orderBy('nome').get();
-                clientesSnap.forEach(doc => {
-                    const c = doc.data();
-                    clienteOptions += `<option value="${doc.id}" ${piscinaData?.clienteId === doc.id ? 'selected' : ''}>${c.nome}</option>`;
-                });
-            } catch (e) { console.error('Erro ao buscar clientes:', e); }
+        async function novaPiscina(data = null) {
+            const isEdit = !!data;
+            let clienteOpts = '<option value="">Selecione...</option>';
+            try { const cSnap = await db.collection('clientes').where('status','==','ativo').orderBy('nome').get(); cSnap.forEach(d => clienteOpts += `<option value="${d.id}" ${data?.clienteId===d.id?'selected':''}>${d.data().nome}</option>`); } catch(e) {}
             
-            const bodyHTML = `
-                <form id="piscinaForm">
-                    <div class="form-section"><div class="form-section-title">👤 Cliente</div>
-                        <div class="form-group"><label>Cliente *</label><select class="form-input" name="clienteId" required>${clienteOptions}</select></div>
-                    </div>
-                    <div class="form-section"><div class="form-section-title">📏 Dimensões</div>
-                        <div class="form-grid">
-                            <div class="form-group"><label>Tamanho (m²) *</label><input type="number" class="form-input" name="tamanho" value="${piscinaData?.tamanho || ''}" step="0.1" required></div>
-                            <div class="form-group"><label>Volume (litros) *</label><input type="number" class="form-input" name="volume" value="${piscinaData?.volume || ''}" required></div>
-                            <div class="form-group"><label>Material *</label><select class="form-input" name="material" required><option value="">Selecione...</option><option value="azulejo" ${piscinaData?.material === 'azulejo' ? 'selected' : ''}>Azulejo</option><option value="vinil" ${piscinaData?.material === 'vinil' ? 'selected' : ''}>Vinil</option><option value="fibra" ${piscinaData?.material === 'fibra' ? 'selected' : ''}>Fibra de Vidro</option><option value="concreto" ${piscinaData?.material === 'concreto' ? 'selected' : ''}>Concreto</option></select></div>
-                        </div>
-                    </div>
-                    <div class="form-section"><div class="form-section-title">💧 Água</div>
-                        <div class="form-grid">
-                            <div class="form-group"><label>Tipo de Água</label><select class="form-input" name="tipoAgua"><option value="doce" ${piscinaData?.tipoAgua === 'doce' ? 'selected' : ''}>Doce</option><option value="salgada" ${piscinaData?.tipoAgua === 'salgada' ? 'selected' : ''}>Salgada</option></select></div>
-                            <div class="form-group"><label>Fonte de Abastecimento</label><input type="text" class="form-input" name="fonteAbastecimento" value="${piscinaData?.fonteAbastecimento || ''}"></div>
-                            <div class="form-group"><label>Possui Aquecimento?</label><select class="form-input" name="aquecimento"><option value="nao" ${piscinaData?.aquecimento === 'nao' ? 'selected' : ''}>Não</option><option value="sim" ${piscinaData?.aquecimento === 'sim' ? 'selected' : ''}>Sim</option></select></div>
-                            <div class="form-group"><label>Tipo de Filtragem</label><input type="text" class="form-input" name="tipoFiltragem" value="${piscinaData?.tipoFiltragem || ''}"></div>
-                        </div>
-                    </div>
-                    <div class="form-section"><div class="form-section-title">🔧 Manutenção</div>
-                        <div class="form-grid">
-                            <div class="form-group"><label>Qtd. Ideal de Produtos</label><input type="text" class="form-input" name="qtdIdealProdutos" value="${piscinaData?.qtdIdealProdutos || ''}"></div>
-                            <div class="form-group"><label>Status</label><select class="form-input" name="status"><option value="ativa" ${piscinaData?.status === 'ativa' ? 'selected' : ''}>Ativa</option><option value="critica" ${piscinaData?.status === 'critica' ? 'selected' : ''}>Crítica</option><option value="inativa" ${piscinaData?.status === 'inativa' ? 'selected' : ''}>Inativa</option></select></div>
-                        </div>
-                    </div>
-                    <div class="form-group"><label>Observações</label><textarea class="form-input" name="observacoes" rows="2">${piscinaData?.observacoes || ''}</textarea></div>
-                </form>`;
-            const footerHTML = `<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarPiscina('${piscinaData?.id || ''}')">${isEdit ? 'Atualizar' : 'Salvar'} Piscina</button>`;
-            openModal(isEdit ? 'Editar Piscina' : 'Nova Piscina', bodyHTML, footerHTML);
+            const body = `<form id="piscinaForm">
+                <div class="form-section"><div class="form-section-title">👤 Cliente</div><div class="form-group"><label>Cliente *</label><select class="form-input" name="clienteId" required>${clienteOpts}</select></div></div>
+                <div class="form-section"><div class="form-section-title">📏 Dimensões</div><div class="form-grid">
+                    <div class="form-group"><label>Tamanho (m²) *</label><input type="number" class="form-input" name="tamanho" value="${data?.tamanho||''}" step="0.1" required></div>
+                    <div class="form-group"><label>Volume (L) *</label><input type="number" class="form-input" name="volume" value="${data?.volume||''}" required></div>
+                    <div class="form-group"><label>Material *</label><select class="form-input" name="material" required><option value="">Selecione...</option><option value="azulejo" ${data?.material==='azulejo'?'selected':''}>Azulejo</option><option value="vinil" ${data?.material==='vinil'?'selected':''}>Vinil</option><option value="fibra" ${data?.material==='fibra'?'selected':''}>Fibra</option><option value="concreto" ${data?.material==='concreto'?'selected':''}>Concreto</option></select></div>
+                </div></div>
+                <div class="form-grid">
+                    <div class="form-group"><label>Tipo Água</label><select class="form-input" name="tipoAgua"><option value="doce" ${data?.tipoAgua==='doce'?'selected':''}>Doce</option><option value="salgada" ${data?.tipoAgua==='salgada'?'selected':''}>Salgada</option></select></div>
+                    <div class="form-group"><label>Aquecimento</label><select class="form-input" name="aquecimento"><option value="nao" ${data?.aquecimento==='nao'?'selected':''}>Não</option><option value="sim" ${data?.aquecimento==='sim'?'selected':''}>Sim</option></select></div>
+                    <div class="form-group"><label>Status</label><select class="form-input" name="status"><option value="ativa" ${data?.status==='ativa'?'selected':''}>Ativa</option><option value="critica" ${data?.status==='critica'?'selected':''}>Crítica</option></select></div>
+                </div>
+            </form>`;
+            const footer = `<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarPiscina('${data?.id||''}')">${isEdit?'Atualizar':'Salvar'}</button>`;
+            openModal(isEdit?'Editar Piscina':'Nova Piscina', body, footer);
         }
         
         async function salvarPiscina(id) {
             const form = document.getElementById('piscinaForm');
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
+            const fd = new FormData(form);
+            const data = Object.fromEntries(fd.entries());
             data.atualizadoEm = firebase.firestore.FieldValue.serverTimestamp();
+            
+            // Gerar código único se for nova
+            if (!id) {
+                const counterDoc = await db.collection('config').doc('piscina_counter').get();
+                let nextNum = 1;
+                if (counterDoc.exists) {
+                    nextNum = (counterDoc.data().ultimo || 0) + 1;
+                    await db.collection('config').doc('piscina_counter').update({ultimo: nextNum});
+                } else {
+                    await db.collection('config').doc('piscina_counter').set({ultimo: 1});
+                }
+                data.codigo = `PSC-${String(nextNum).padStart(4,'0')}`;
+                data.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
+            }
+            
             // Buscar nome do cliente
             if (data.clienteId) {
                 try {
-                    const clienteDoc = await db.collection('clientes').doc(data.clienteId).get();
-                    if (clienteDoc.exists) data.clienteNome = clienteDoc.data().nome;
-                } catch (e) { console.error('Erro ao buscar cliente:', e); }
+                    const cDoc = await db.collection('clientes').doc(data.clienteId).get();
+                    if (cDoc.exists) data.clienteNome = cDoc.data().nome;
+                } catch(e) {}
             }
-            try {
-                if (id) { await db.collection('piscinas').doc(id).update(data); }
-                else { data.criadoEm = firebase.firestore.FieldValue.serverTimestamp(); data.status = data.status || 'ativa'; await db.collection('piscinas').add(data); }
-                closeModal(); loadPiscinas();
-            } catch (error) { alert('Erro ao salvar: ' + error.message); }
+            
+            if (id) { await db.collection('piscinas').doc(id).update(data); }
+            else { await db.collection('piscinas').add(data); }
+            closeModal(); loadPiscinas();
         }
         
         async function verPiscina(id) {
             const doc = await db.collection('piscinas').doc(id).get();
-            if (doc.exists) {
-                const p = doc.data();
-                openModal(`Piscina: ${p.clienteNome || 'N/A'}`, `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;"><div><strong>Cliente:</strong> ${p.clienteNome || '-'}</div><div><strong>Tamanho:</strong> ${p.tamanho} m²</div><div><strong>Volume:</strong> ${p.volume} L</div><div><strong>Material:</strong> ${p.material}</div><div><strong>Tipo Água:</strong> ${p.tipoAgua || '-'}</div><div><strong>Aquecimento:</strong> ${p.aquecimento === 'sim' ? 'Sim' : 'Não'}</div><div><strong>Filtragem:</strong> ${p.tipoFiltragem || '-'}</div><div><strong>Status:</strong> <span class="badge ${p.status === 'ativa' ? 'badge-success' : 'badge-warning'}">${p.status}</span></div></div>`, `<button class="btn btn-primary" onclick="closeModal();novaPiscina({id:'${id}',...${JSON.stringify(p).replace(/"/g, '&quot;')}})">Editar</button>`);
-            }
+            if (!doc.exists) return;
+            const p = doc.data();
+            openModal(`Piscina: ${p.codigo}`,
+                `<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div><strong>Código:</strong> ${p.codigo}</div><div><strong>Cliente:</strong> ${p.clienteNome||'-'}</div><div><strong>Tamanho:</strong> ${p.tamanho}m²</div><div><strong>Volume:</strong> ${p.volume}L</div><div><strong>Material:</strong> ${p.material}</div><div><strong>Status:</strong> <span class="badge ${p.status==='critica'?'badge-danger':'badge-success'}">${p.status}</span></div></div>`,
+                `<button class="btn btn-primary" onclick="closeModal();novaPiscina({id:'${id}',...${JSON.stringify(p).replace(/"/g,'&quot;')}})">Editar</button>`);
         }
         
-        // ==================== ESTOQUE ====================
-        async function loadEstoque() {
-            pageContent.innerHTML = '<p style="padding:40px;text-align:center;color:var(--text-tertiary);">Carregando estoque...</p>';
+        // ==================== ESTOQUE EMPRESA ====================
+        async function loadEstoqueEmpresa() {
+            pageContent.innerHTML = '<p style="padding:40px;text-align:center;color:var(--text-tertiary);">Carregando...</p>';
             try {
-                const snapshot = await db.collection('estoque').orderBy('nome').get();
-                let rows = '';
-                if (snapshot.empty) {
-                    rows = '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text-tertiary);">Nenhum produto cadastrado</td></tr>';
-                } else {
-                    snapshot.forEach(doc => {
-                        const e = doc.data();
-                        const qtdAtual = e.quantidade || 0;
-                        const qtdMin = e.quantidadeMinima || 5;
-                        const status = qtdAtual <= 0 ? 'danger' : qtdAtual <= qtdMin ? 'warning' : 'success';
-                        const statusText = qtdAtual <= 0 ? 'Esgotado' : qtdAtual <= qtdMin ? 'Baixo' : 'OK';
-                        rows += `<tr>
-                            <td><strong>${e.nome || '-'}</strong></td>
-                            <td>${e.tipo || '-'}</td>
-                            <td>${e.quantidade || 0} ${e.unidade || 'un'}</td>
-                            <td>${e.quantidadeMinima || 5} ${e.unidade || 'un'}</td>
-                            <td><span class="badge badge-${status}"><span class="badge-dot"></span>${statusText}</span></td>
-                            <td><button class="btn-link" onclick="movimentarEstoque('${doc.id}')">Movimentar</button></td>
-                        </tr>`;
-                    });
-                }
-                pageContent.innerHTML = `<div class="card"><div class="card-header"><h3 class="card-title">📦 Estoque (${snapshot.size} itens)</h3><button class="btn btn-primary btn-sm" onclick="novoProduto()">+ Novo Produto</button></div><div class="card-body"><table class="table"><thead><tr><th>Produto</th><th>Tipo</th><th>Qtd. Atual</th><th>Qtd. Mínima</th><th>Status</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
-            } catch (error) {
-                pageContent.innerHTML = `<div class="card"><div class="card-header"><h3 class="card-title">❌ Erro</h3></div><div class="card-body-padded"><p style="color:var(--danger);">${error.message}</p></div></div>`;
-            }
+                const snap = await db.collection('estoque').orderBy('nome').get();
+                let rows = snap.empty ? '<tr><td colspan="6" style="text-align:center;padding:40px;">Nenhum produto</td></tr>' :
+                    snap.docs.map(d => {
+                        const e = d.data();
+                        const q = e.quantidade||0, min = e.quantidadeMinima||5;
+                        const status = q <= 0 ? 'danger' : q <= min ? 'warning' : 'success';
+                        const txt = q <= 0 ? 'Esgotado' : q <= min ? 'Baixo' : 'OK';
+                        return `<tr><td><strong>${e.nome}</strong></td><td>${e.tipo||'-'}</td><td>${q} ${e.unidade||'un'}</td><td>${min} ${e.unidade||'un'}</td><td><span class="badge badge-${status}"><span class="badge-dot"></span>${txt}</span></td><td><button class="btn-link" onclick="movimentarEstoque('${d.id}')">Mov.</button></td></tr>`;
+                    }).join('');
+                pageContent.innerHTML = `<div class="card"><div class="card-header"><h3 class="card-title">📦 Estoque da Empresa (${snap.size})</h3><button class="btn btn-primary btn-sm" onclick="novoProduto()">+ Novo</button></div><div class="card-body"><table class="table"><thead><tr><th>Produto</th><th>Tipo</th><th>Qtd</th><th>Mín.</th><th>Status</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+            } catch(err) { pageContent.innerHTML = errCard(err.message); }
         }
         
-        function novoProduto(produtoData = null) {
-            const isEdit = !!produtoData;
-            const bodyHTML = `
-                <form id="produtoForm">
-                    <div class="form-grid">
-                        <div class="form-group"><label>Nome do Produto *</label><input type="text" class="form-input" name="nome" value="${produtoData?.nome || ''}" required></div>
-                        <div class="form-group"><label>Tipo</label><select class="form-input" name="tipo"><option value="quimico" ${produtoData?.tipo === 'quimico' ? 'selected' : ''}>Químico</option><option value="equipamento" ${produtoData?.tipo === 'equipamento' ? 'selected' : ''}>Equipamento</option><option value="acessorio" ${produtoData?.tipo === 'acessorio' ? 'selected' : ''}>Acessório</option></select></div>
-                        <div class="form-group"><label>Quantidade Atual *</label><input type="number" class="form-input" name="quantidade" value="${produtoData?.quantidade || 0}" required></div>
-                        <div class="form-group"><label>Quantidade Mínima</label><input type="number" class="form-input" name="quantidadeMinima" value="${produtoData?.quantidadeMinima || 5}"></div>
-                        <div class="form-group"><label>Unidade</label><input type="text" class="form-input" name="unidade" value="${produtoData?.unidade || 'un'}"></div>
-                        <div class="form-group"><label>Validade</label><input type="date" class="form-input" name="validade" value="${produtoData?.validade || ''}"></div>
-                    </div>
-                </form>`;
-            const footerHTML = `<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarProduto('${produtoData?.id || ''}')">${isEdit ? 'Atualizar' : 'Salvar'} Produto</button>`;
-            openModal(isEdit ? 'Editar Produto' : 'Novo Produto', bodyHTML, footerHTML);
+        function novoProduto(data = null) {
+            const isEdit = !!data;
+            const body = `<form id="produtoForm"><div class="form-grid">
+                <div class="form-group"><label>Nome *</label><input type="text" class="form-input" name="nome" value="${data?.nome||''}" required></div>
+                <div class="form-group"><label>Tipo</label><select class="form-input" name="tipo"><option value="quimico" ${data?.tipo==='quimico'?'selected':''}>Químico</option><option value="equipamento" ${data?.tipo==='equipamento'?'selected':''}>Equipamento</option></select></div>
+                <div class="form-group"><label>Qtd Atual *</label><input type="number" class="form-input" name="quantidade" value="${data?.quantidade||0}" required></div>
+                <div class="form-group"><label>Qtd Mínima</label><input type="number" class="form-input" name="quantidadeMinima" value="${data?.quantidadeMinima||5}"></div>
+                <div class="form-group"><label>Unidade</label><input type="text" class="form-input" name="unidade" value="${data?.unidade||'un'}"></div>
+                <div class="form-group"><label>Validade</label><input type="date" class="form-input" name="validade" value="${data?.validade||''}"></div>
+            </div></form>`;
+            const footer = `<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarProduto('${data?.id||''}')">${isEdit?'Atualizar':'Salvar'}</button>`;
+            openModal(isEdit?'Editar Produto':'Novo Produto', body, footer);
         }
         
         async function salvarProduto(id) {
             const form = document.getElementById('produtoForm');
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
-            data.quantidade = parseInt(data.quantidade) || 0;
-            data.quantidadeMinima = parseInt(data.quantidadeMinima) || 5;
+            const fd = new FormData(form);
+            const data = Object.fromEntries(fd.entries());
+            data.quantidade = parseInt(data.quantidade)||0;
+            data.quantidadeMinima = parseInt(data.quantidadeMinima)||5;
             data.atualizadoEm = firebase.firestore.FieldValue.serverTimestamp();
-            try {
-                if (id) { await db.collection('estoque').doc(id).update(data); }
-                else { data.criadoEm = firebase.firestore.FieldValue.serverTimestamp(); await db.collection('estoque').add(data); }
-                closeModal(); loadEstoque();
-            } catch (error) { alert('Erro ao salvar: ' + error.message); }
+            if (id) { await db.collection('estoque').doc(id).update(data); }
+            else { data.criadoEm = firebase.firestore.FieldValue.serverTimestamp(); await db.collection('estoque').add(data); }
+            closeModal(); loadEstoqueEmpresa();
         }
         
         function movimentarEstoque(id) {
-            const bodyHTML = `
-                <form id="movimentacaoForm">
-                    <input type="hidden" name="produtoId" value="${id}">
-                    <div class="form-grid">
-                        <div class="form-group"><label>Tipo *</label><select class="form-input" name="tipo" required><option value="entrada">Entrada</option><option value="saida">Saída</option></select></div>
-                        <div class="form-group"><label>Quantidade *</label><input type="number" class="form-input" name="quantidade" required min="1"></div>
-                    </div>
-                    <div class="form-group"><label>Observação</label><input type="text" class="form-input" name="observacao" placeholder="Motivo da movimentação..."></div>
-                </form>`;
-            const footerHTML = `<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarMovimentacao()">Registrar</button>`;
-            openModal('Movimentar Estoque', bodyHTML, footerHTML);
+            const body = `<form id="movForm"><input type="hidden" name="produtoId" value="${id}"><div class="form-grid">
+                <div class="form-group"><label>Tipo</label><select class="form-input" name="tipo" required><option value="entrada">Entrada</option><option value="saida">Saída</option></select></div>
+                <div class="form-group"><label>Quantidade *</label><input type="number" class="form-input" name="quantidade" required min="1"></div>
+            </div><div class="form-group"><label>Obs.</label><input type="text" class="form-input" name="observacao"></div></form>`;
+            const footer = `<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarMovimentacao()">Registrar</button>`;
+            openModal('Movimentar Estoque', body, footer);
         }
         
         async function salvarMovimentacao() {
-            const form = document.getElementById('movimentacaoForm');
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
+            const form = document.getElementById('movForm');
+            const fd = new FormData(form);
+            const data = Object.fromEntries(fd.entries());
             const produtoId = data.produtoId;
-            const quantidade = parseInt(data.quantidade);
+            const qtd = parseInt(data.quantidade);
             const tipo = data.tipo;
-            
-            try {
-                const produtoRef = db.collection('estoque').doc(produtoId);
-                const produtoDoc = await produtoRef.get();
-                if (!produtoDoc.exists) { alert('Produto não encontrado!'); return; }
-                
-                const produtoData = produtoDoc.data();
-                const qtdAtual = produtoData.quantidade || 0;
-                const novaQtd = tipo === 'entrada' ? qtdAtual + quantidade : qtdAtual - quantidade;
-                
-                // Salvar movimentação
-                await db.collection('movimentacoes_estoque').add({
-                    produtoId, produtoNome: produtoData.nome,
-                    tipo, quantidade,
-                    quantidadeAnterior: qtdAtual,
-                    quantidadeNova: novaQtd,
-                    observacao: data.observacao || '',
-                    data: firebase.firestore.FieldValue.serverTimestamp(),
-                    usuario: auth.currentUser?.email || 'sistema'
-                });
-                
-                // Atualizar estoque
-                await produtoRef.update({ quantidade: novaQtd, atualizadoEm: firebase.firestore.FieldValue.serverTimestamp() });
-                
-                closeModal(); loadEstoque();
-            } catch (error) { alert('Erro: ' + error.message); }
+            const ref = db.collection('estoque').doc(produtoId);
+            const doc = await ref.get();
+            if (!doc.exists) { alert('Produto não encontrado!'); return; }
+            const atual = doc.data().quantidade||0;
+            const novo = tipo === 'entrada' ? atual + qtd : atual - qtd;
+            await db.collection('movimentacoes_estoque').add({produtoId, produtoNome:doc.data().nome, tipo, quantidade:qtd, quantidadeAnterior:atual, quantidadeNova:novo, observacao:data.observacao||'', data:firebase.firestore.FieldValue.serverTimestamp(), usuario:auth.currentUser?.email||'sistema'});
+            await ref.update({quantidade:novo, atualizadoEm:firebase.firestore.FieldValue.serverTimestamp()});
+            closeModal(); loadEstoqueEmpresa();
         }
         
-        // ==================== PLACEHOLDERS ====================
-        function loadFinanceiro() { pageContent.innerHTML = '<div class="card"><div class="card-header"><h3 class="card-title">💰 Financeiro</h3></div><div class="card-body-padded"><p style="color:var(--text-secondary);">📂 Coleção: <code>faturas</code> • Será desenvolvida na Parte 4</p></div></div>'; }
-        function loadContratos() { pageContent.innerHTML = '<div class="card"><div class="card-header"><h3 class="card-title">📄 Contratos</h3></div><div class="card-body-padded"><p style="color:var(--text-secondary);">📂 Coleção: <code>contratos</code></p></div></div>'; }
-        function loadPerfis() { pageContent.innerHTML = '<div class="card"><div class="card-header"><h3 class="card-title">🔐 Perfis de Acesso</h3></div><div class="card-body-padded"><p style="color:var(--text-secondary);">📂 Coleção: <code>usuarios</code> • Perfis: admin, gestor, funcionario, cliente</p></div></div>'; }
-        function loadAgenda() { pageContent.innerHTML = '<div class="card"><div class="card-header"><h3 class="card-title">📅 Agenda</h3></div><div class="card-body-padded"><p style="color:var(--text-secondary);">📂 Coleção: <code>visitas</code></p></div></div>'; }
-        function loadRotas() { pageContent.innerHTML = '<div class="card"><div class="card-header"><h3 class="card-title">🗺️ Rotas</h3></div><div class="card-body-padded"><p style="color:var(--text-secondary);">📂 Coleção: <code>rotas</code></p></div></div>'; }
+        // ==================== ESTOQUE CLIENTES (por piscina) ====================
+        async function loadEstoqueClientes() {
+            pageContent.innerHTML = '<p style="padding:40px;text-align:center;color:var(--text-tertiary);">Carregando...</p>';
+            try {
+                const piscinasSnap = await db.collection('piscinas').get();
+                if (piscinasSnap.empty) { pageContent.innerHTML = '<div class="card"><div class="card-body-padded"><p>Nenhuma piscina cadastrada.</p></div></div>'; return; }
+                
+                let html = '<div style="display:flex;flex-direction:column;gap:16px;">';
+                for (const pDoc of piscinasSnap.docs) {
+                    const p = pDoc.data();
+                    const estSnap = await db.collection('piscinas').doc(pDoc.id).collection('estoque').get();
+                    let estRows = estSnap.empty ? '<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text-tertiary);">Sem estoque</td></tr>' :
+                        estSnap.docs.map(d => {
+                            const e = d.data();
+                            const q = e.quantidade||0, min = e.quantidadeMinima||3;
+                            const status = q <= 0 ? 'danger' : q <= min ? 'warning' : 'success';
+                            const txt = q <= 0 ? 'Esgotado' : q <= min ? 'Baixo' : 'OK';
+                            return `<tr><td>${e.nome}</td><td>${q} ${e.unidade||'un'}</td><td><span class="badge badge-${status}"><span class="badge-dot"></span>${txt}</span></td><td><button class="btn-link" onclick="movimentarEstoqueCliente('${pDoc.id}','${d.id}')">Mov.</button></td></tr>`;
+                        }).join('');
+                    
+                    html += `<div class="card">
+                        <div class="card-header"><h3 class="card-title">🏊 ${p.codigo||'PSC-XXXX'} - ${p.clienteNome||'N/D'}</h3><button class="btn btn-primary btn-sm" onclick="novoProdutoCliente('${pDoc.id}')">+ Produto</button></div>
+                        <div class="card-body"><table class="table"><thead><tr><th>Produto</th><th>Qtd</th><th>Status</th><th></th></tr></thead><tbody>${estRows}</tbody></table></div>
+                    </div>`;
+                }
+                html += '</div>';
+                pageContent.innerHTML = html;
+            } catch(err) { pageContent.innerHTML = errCard(err.message); }
+        }
+        
+        function novoProdutoCliente(piscinaId, data = null) {
+            const body = `<form id="prodClienteForm"><input type="hidden" name="piscinaId" value="${piscinaId}"><div class="form-grid">
+                <div class="form-group"><label>Nome *</label><input type="text" class="form-input" name="nome" value="${data?.nome||''}" required></div>
+                <div class="form-group"><label>Qtd *</label><input type="number" class="form-input" name="quantidade" value="${data?.quantidade||0}" required></div>
+                <div class="form-group"><label>Qtd Mínima</label><input type="number" class="form-input" name="quantidadeMinima" value="${data?.quantidadeMinima||3}"></div>
+                <div class="form-group"><label>Unidade</label><input type="text" class="form-input" name="unidade" value="${data?.unidade||'un'}"></div>
+            </div></form>`;
+            const footer = `<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarProdutoCliente('${data?.id||''}')">Salvar</button>`;
+            openModal(data?'Editar Produto':'Novo Produto (Cliente)', body, footer);
+        }
+        
+        async function salvarProdutoCliente(id) {
+            const form = document.getElementById('prodClienteForm');
+            const fd = new FormData(form);
+            const data = Object.fromEntries(fd.entries());
+            const piscinaId = data.piscinaId;
+            delete data.piscinaId;
+            data.quantidade = parseInt(data.quantidade)||0;
+            data.quantidadeMinima = parseInt(data.quantidadeMinima)||3;
+            data.atualizadoEm = firebase.firestore.FieldValue.serverTimestamp();
+            if (id) { await db.collection('piscinas').doc(piscinaId).collection('estoque').doc(id).update(data); }
+            else { data.criadoEm = firebase.firestore.FieldValue.serverTimestamp(); await db.collection('piscinas').doc(piscinaId).collection('estoque').add(data); }
+            closeModal(); loadEstoqueClientes();
+        }
+        
+        function movimentarEstoqueCliente(piscinaId, produtoId) {
+            const body = `<form id="movClienteForm"><input type="hidden" name="piscinaId" value="${piscinaId}"><input type="hidden" name="produtoId" value="${produtoId}"><div class="form-grid">
+                <div class="form-group"><label>Tipo</label><select class="form-input" name="tipo" required><option value="entrada">Entrada</option><option value="saida">Saída</option></select></div>
+                <div class="form-group"><label>Quantidade *</label><input type="number" class="form-input" name="quantidade" required min="1"></div>
+            </div></form>`;
+            const footer = `<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarMovCliente()">Registrar</button>`;
+            openModal('Movimentar Estoque Cliente', body, footer);
+        }
+        
+        async function salvarMovCliente() {
+            const form = document.getElementById('movClienteForm');
+            const fd = new FormData(form);
+            const data = Object.fromEntries(fd.entries());
+            const ref = db.collection('piscinas').doc(data.piscinaId).collection('estoque').doc(data.produtoId);
+            const doc = await ref.get();
+            if (!doc.exists) { alert('Produto não encontrado!'); return; }
+            const atual = doc.data().quantidade||0;
+            const qtd = parseInt(data.quantidade);
+            const novo = data.tipo === 'entrada' ? atual + qtd : atual - qtd;
+            await ref.update({quantidade:novo, atualizadoEm:firebase.firestore.FieldValue.serverTimestamp()});
+            closeModal(); loadEstoqueClientes();
+        }
+        
+        // ==================== ROTAS (visão semanal) ====================
+        async function loadRotas() {
+            pageContent.innerHTML = '<p style="padding:40px;text-align:center;color:var(--text-tertiary);">Carregando rotas...</p>';
+            try {
+                const hoje = new Date();
+                const diaSemana = hoje.getDay(); // 0=Dom, 1=Seg, ..., 6=Sáb
+                const seg = new Date(hoje); seg.setDate(hoje.getDate() - (diaSemana === 0 ? 6 : diaSemana - 1));
+                
+                const diasLabels = ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+                const diasAbrev = ['Seg','Ter','Qua','Qui','Sex','Sáb'];
+                
+                // Buscar todos os clientes ativos com dias da semana
+                const clientesSnap = await db.collection('clientes').where('status','==','ativo').get();
+                
+                let html = '<div class="rotas-grid">';
+                for (let i = 0; i < 6; i++) {
+                    const dataDia = new Date(seg); dataDia.setDate(seg.getDate() + i);
+                    const diaAbrev = diasAbrev[i];
+                    const hojeStr = new Date().toISOString().split('T')[0];
+                    const dataStr = dataDia.toISOString().split('T')[0];
+                    const isHoje = dataStr === hojeStr;
+                    
+                    // Filtrar clientes deste dia
+                    const clientesDia = clientesSnap.docs.filter(d => {
+                        const dias = d.data().diasSemana || [];
+                        return dias.includes(diaAbrev);
+                    });
+                    
+                    let clientesHTML = clientesDia.length === 0 ? '<div class="rota-empty">Nenhum cliente</div>' :
+                        clientesDia.map(d => {
+                            const c = d.data();
+                            return `<div class="rota-cliente"><span><strong>${c.nome}</strong><br><span style="font-size:11px;color:var(--text-tertiary);">${c.logradouro||''} ${c.numero||''}</span></span><button class="btn-link btn-sm">Reagendar</button></div>`;
+                        }).join('');
+                    
+                    html += `<div class="rota-dia">
+                        <div class="rota-dia-header ${isHoje ? 'hoje' : ''}">${diasLabels[i]} - ${dataStr.split('-').reverse().join('/')}<span>${clientesDia.length} clientes</span></div>
+                        <div class="rota-dia-body">${clientesHTML}</div>
+                    </div>`;
+                }
+                html += '</div>';
+                pageContent.innerHTML = html;
+            } catch(err) { pageContent.innerHTML = errCard(err.message); }
+        }
+        
+        // ==================== AGENDA (calendário mensal) ====================
+        function loadAgenda() {
+            const hoje = new Date();
+            const mes = hoje.getMonth();
+            const ano = hoje.getFullYear();
+            renderCalendario(mes, ano);
+        }
+        
+        function renderCalendario(mes, ano) {
+            const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+            const diasSemana = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+            
+            const primeiroDia = new Date(ano, mes, 1).getDay();
+            const ultimoDia = new Date(ano, mes + 1, 0).getDate();
+            const ultimoDiaAnterior = new Date(ano, mes, 0).getDate();
+            const hoje = new Date();
+            
+            let html = `<div class="calendar-nav">
+                <button onclick="renderCalendario(${mes-1},${ano})">← Mês Anterior</button>
+                <span class="month-year">${meses[mes]} ${ano}</span>
+                <button onclick="renderCalendario(${mes+1},${ano})">Próximo Mês →</button>
+            </div>`;
+            
+            html += '<div class="calendar-grid">';
+            diasSemana.forEach(d => html += `<div class="calendar-day-header">${d}</div>`);
+            
+            // Dias do mês anterior
+            for (let i = primeiroDia - 1; i >= 0; i--) {
+                html += `<div class="calendar-day other-month">${ultimoDiaAnterior - i}</div>`;
+            }
+            
+            // Dias do mês atual
+            for (let dia = 1; dia <= ultimoDia; dia++) {
+                const isHoje = dia === hoje.getDate() && mes === hoje.getMonth() && ano === hoje.getFullYear();
+                html += `<div class="calendar-day ${isHoje ? 'today' : ''}" onclick="alert('Dia ${dia}/${mes+1}/${ano} - Clique para adicionar evento')">${dia}</div>`;
+            }
+            
+            // Dias do próximo mês
+            const totalCells = primeiroDia + ultimoDia;
+            const restante = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+            for (let i = 1; i <= restante; i++) {
+                html += `<div class="calendar-day other-month">${i}</div>`;
+            }
+            
+            html += '</div>';
+            pageContent.innerHTML = `<div class="card"><div class="card-header"><h3 class="card-title">📅 Agenda</h3></div><div class="card-body-padded">${html}</div></div>`;
+        }
+        
+        // ==================== HELPERS ====================
+        function errCard(msg) { return `<div class="card"><div class="card-header"><h3 class="card-title">❌ Erro</h3></div><div class="card-body-padded"><p style="color:var(--danger);">${msg}</p></div></div>`; }
         
         // ==================== EVENT LISTENERS ====================
         document.querySelectorAll('.sidebar-link').forEach(link => {
@@ -1118,35 +1438,37 @@
             });
         });
         
-        document.getElementById('sidebarToggle').addEventListener('click', function() {
-            const sidebar = document.getElementById('sidebar');
-            const main = document.getElementById('mainContent');
-            const collapsed = sidebar.classList.toggle('collapsed');
-            main.style.marginLeft = collapsed ? '68px' : '252px';
-            localStorage.setItem('aquapluss-sidebar-collapsed', collapsed);
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            const s = document.getElementById('sidebar');
+            const m = document.getElementById('mainContent');
+            const c = s.classList.toggle('collapsed');
+            m.style.marginLeft = c ? '68px' : '252px';
+            localStorage.setItem('aquapluss-sidebar-collapsed', c);
         });
         
-        document.querySelectorAll('.sidebar-section-header').forEach(header => {
-            header.addEventListener('click', function() { this.closest('.sidebar-section').classList.toggle('collapsed-section'); });
+        document.querySelectorAll('.sidebar-section-header').forEach(h => {
+            h.addEventListener('click', () => h.closest('.sidebar-section').classList.toggle('collapsed-section'));
         });
         
-        document.getElementById('themeToggle').addEventListener('click', function() {
+        document.getElementById('themeToggle').addEventListener('click', () => {
             const html = document.documentElement;
-            const newTheme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-            html.setAttribute('data-theme', newTheme);
-            localStorage.setItem('aquapluss-theme', newTheme);
+            const t = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', t);
+            localStorage.setItem('aquapluss-theme', t);
         });
         
-        document.getElementById('mobileMenuBtn').addEventListener('click', function() { document.getElementById('sidebar').classList.toggle('mobile-open'); });
+        document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('mobile-open');
+        });
         
-        auth.onAuthStateChanged(function(user) {
+        auth.onAuthStateChanged(user => {
             if (user) {
-                const savedUser = localStorage.getItem('aquapluss-user');
-                if (savedUser) {
-                    const userData = JSON.parse(savedUser);
-                    sidebarUserName.textContent = userData.nome || user.email.split('@')[0];
-                    sidebarUserRole.textContent = userData.cargo || 'Usuário';
-                    sidebarAvatar.textContent = (userData.nome || user.email).substring(0, 2).toUpperCase();
+                const saved = localStorage.getItem('aquapluss-user');
+                if (saved) {
+                    const d = JSON.parse(saved);
+                    sidebarUserName.textContent = d.nome || user.email.split('@')[0];
+                    sidebarUserRole.textContent = d.cargo || 'Usuário';
+                    sidebarAvatar.textContent = (d.nome || user.email).substring(0,2).toUpperCase();
                 }
                 showApp();
             } else { showLogin(); }
@@ -1158,7 +1480,7 @@
             document.getElementById('mainContent').style.marginLeft = '68px';
         }
         
-        console.log('🚀 AquaPlussPiscinas v1.0 - Parte 3');
+        console.log('🚀 AquaPlussPiscinas v1.0 - Completo');
     </script>
 </body>
 </html>
