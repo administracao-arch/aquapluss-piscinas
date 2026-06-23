@@ -1,0 +1,1558 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AquaPlussPiscinas - Plataforma de Gestão</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    
+    <style>
+        /* ============================================ */
+        /* RESET & VARIÁVEIS */
+        /* ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f6f8fa;
+            --bg-tertiary: #edf0f3;
+            --text-primary: #1a1d23;
+            --text-secondary: #5a5f6b;
+            --text-tertiary: #8b9099;
+            --border: #e2e5ea;
+            --border-hover: #cdd1d7;
+            
+            --brand: #0891b2;
+            --brand-light: #ecfeff;
+            --brand-dark: #0e7490;
+            --brand-gradient: linear-gradient(135deg, #0891b2, #22d3ee);
+            
+            --success: #059669;
+            --success-light: #ecfdf5;
+            --warning: #d97706;
+            --warning-light: #fffbeb;
+            --danger: #dc2626;
+            --danger-light: #fef2f2;
+            --info: #4f46e5;
+            --info-light: #eef2ff;
+            
+            --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+            --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 8px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
+            --shadow-lg: 0 12px 24px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04);
+            --shadow-xl: 0 20px 40px rgba(0,0,0,0.12);
+            
+            --sidebar-expanded: 252px;
+            --sidebar-collapsed: 68px;
+            --sidebar-width: var(--sidebar-expanded);
+            --header-height: 60px;
+            --radius-sm: 6px;
+            --radius: 8px;
+            --radius-lg: 10px;
+            --radius-xl: 14px;
+        }
+
+        .dark-mode,
+        [data-theme="dark"] {
+            --bg-primary: #111318;
+            --bg-secondary: #1a1d24;
+            --bg-tertiary: #252830;
+            --text-primary: #e8eaed;
+            --text-secondary: #9ca0a8;
+            --text-tertiary: #6b6f78;
+            --border: #2a2d35;
+            --border-hover: #3a3d47;
+            --brand-light: #0a2a33;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-weight: 300;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* ============================================ */
+        /* TELA DE LOGIN */
+        /* ============================================ */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0891b2 0%, #0e7490 50%, #164e63 100%);
+            padding: 20px;
+        }
+
+        .login-card {
+            background: var(--bg-primary);
+            border-radius: 20px;
+            box-shadow: var(--shadow-xl);
+            width: 100%;
+            max-width: 440px;
+            overflow: hidden;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-header {
+            background: var(--brand-gradient);
+            padding: 40px 32px;
+            text-align: center;
+            color: white;
+        }
+
+        .login-logo {
+            width: 64px;
+            height: 64px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 auto 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .login-brand {
+            font-size: 24px;
+            font-weight: 300;
+            letter-spacing: -0.02em;
+        }
+
+        .login-brand span { font-weight: 600; }
+        .login-subtitle { font-size: 13px; opacity: 0.8; margin-top: 4px; }
+
+        .login-body { padding: 32px; }
+        .login-body h2 { font-size: 20px; font-weight: 500; margin-bottom: 8px; color: var(--text-primary); }
+        .login-body p { font-size: 13px; color: var(--text-tertiary); margin-bottom: 24px; }
+
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--brand);
+            box-shadow: 0 0 0 3px rgba(8,145,178,0.1);
+            background: var(--bg-primary);
+        }
+
+        .form-input.error {
+            border-color: var(--danger);
+            box-shadow: 0 0 0 3px rgba(220,38,38,0.1);
+        }
+
+        textarea.form-input {
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+
+        select.form-input {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='%238b9099' stroke-width='2' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 36px;
+            cursor: pointer;
+        }
+
+        .input-icon { position: relative; }
+        .input-icon .form-input { padding-left: 40px; }
+        .input-icon svg {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            stroke: var(--text-tertiary);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: var(--brand-gradient);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            letter-spacing: -0.01em;
+            margin-top: 8px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-login:hover { box-shadow: var(--shadow-lg); transform: translateY(-1px); }
+        .btn-login:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        .alert {
+            padding: 12px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .alert.show { display: block; }
+        .alert-danger { background: var(--danger-light); color: #991b1b; border-left: 3px solid var(--danger); }
+        .alert-success { background: var(--success-light); color: #065f46; border-left: 3px solid var(--success); }
+
+        .login-footer { text-align: center; padding: 0 32px 24px; font-size: 12px; color: var(--text-tertiary); }
+
+        .spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ============================================ */
+        /* PAINEL */
+        /* ============================================ */
+        .app-layout {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .app-layout.show { display: flex; }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-primary);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 100;
+            transition: width 0.3s cubic-bezier(0.4,0,0.2,1);
+            box-shadow: var(--shadow-xs);
+            overflow: hidden;
+        }
+
+        .sidebar.collapsed { width: var(--sidebar-collapsed); }
+
+        .sidebar-logo {
+            padding: 18px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-height: 74px;
+            position: relative;
+        }
+
+        .sidebar-logo-icon {
+            width: 36px;
+            height: 36px;
+            min-width: 36px;
+            background: var(--brand-gradient);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(8,145,178,0.3);
+        }
+
+        .sidebar-logo-text {
+            font-size: 16px;
+            font-weight: 400;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+            white-space: nowrap;
+            opacity: 1;
+            transition: opacity 0.2s;
+        }
+
+        .sidebar.collapsed .sidebar-logo-text,
+        .sidebar.collapsed .sidebar-logo-sub { opacity: 0; pointer-events: none; }
+
+        .sidebar-logo-text span { font-weight: 600; color: var(--brand); }
+        .sidebar-logo-sub { font-size: 10px; color: var(--text-tertiary); letter-spacing: 0.05em; font-weight: 400; white-space: nowrap; opacity: 1; transition: opacity 0.2s; }
+
+        .sidebar-toggle {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            color: var(--text-tertiary);
+            transition: all 0.2s;
+            padding: 0;
+        }
+
+        .sidebar-toggle:hover { background: var(--bg-tertiary); border-color: var(--border-hover); color: var(--text-primary); }
+        .sidebar-toggle svg { width: 14px; height: 14px; transition: transform 0.3s; }
+        .sidebar.collapsed .sidebar-toggle { right: 50%; transform: translate(50%, -50%); }
+        .sidebar.collapsed .sidebar-toggle svg { transform: rotate(180deg); }
+
+        .sidebar-nav { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 8px 10px; }
+        .sidebar-section { margin-bottom: 4px; }
+
+        .sidebar-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 12px;
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+            transition: background 0.15s;
+            user-select: none;
+        }
+
+        .sidebar-section-header:hover { background: var(--bg-tertiary); }
+
+        .sidebar-section-title {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-tertiary);
+            white-space: nowrap;
+            opacity: 1;
+            transition: opacity 0.2s;
+        }
+
+        .sidebar.collapsed .sidebar-section-title,
+        .sidebar.collapsed .sidebar-section-arrow { opacity: 0; pointer-events: none; }
+
+        .sidebar-section-arrow {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.25s;
+            color: var(--text-tertiary);
+            opacity: 1;
+        }
+
+        .sidebar-section-arrow svg { width: 14px; height: 14px; }
+        .sidebar-section.collapsed-section .sidebar-section-arrow { transform: rotate(-90deg); }
+
+        .sidebar-section-links {
+            overflow: hidden;
+            transition: max-height 0.3s, opacity 0.2s;
+            max-height: 500px;
+            opacity: 1;
+        }
+
+        .sidebar-section.collapsed-section .sidebar-section-links { max-height: 0; opacity: 0; }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 400;
+            transition: all 0.15s;
+            cursor: pointer;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .sidebar-link:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+        .sidebar-link.active { background: var(--brand-light); color: var(--brand-dark); font-weight: 500; }
+
+        .sidebar-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 8px;
+            bottom: 8px;
+            width: 3px;
+            background: var(--brand);
+            border-radius: 0 2px 2px 0;
+        }
+
+        .sidebar-link-icon { width: 20px; height: 20px; min-width: 20px; display: flex; align-items: center; justify-content: center; }
+        .sidebar-link-icon svg { width: 18px; height: 18px; stroke: currentColor; }
+        .sidebar-link-icon .icon-fill { fill: currentColor; stroke: none; }
+
+        .sidebar-link-text,
+        .sidebar-link-badge { opacity: 1; transition: opacity 0.2s; }
+
+        .sidebar.collapsed .sidebar-link-text,
+        .sidebar.collapsed .sidebar-link-badge { opacity: 0; pointer-events: none; }
+
+        .sidebar-link-badge {
+            margin-left: auto;
+            background: var(--danger);
+            color: white;
+            font-size: 10.5px;
+            font-weight: 600;
+            padding: 2px 7px;
+            border-radius: 10px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .sidebar.collapsed .sidebar-link[data-tooltip]:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: calc(100% + 10px);
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            font-size: 12px;
+            font-weight: 500;
+            padding: 6px 10px;
+            border-radius: var(--radius-sm);
+            white-space: nowrap;
+            z-index: 200;
+            box-shadow: var(--shadow-md);
+            pointer-events: none;
+        }
+
+        .sidebar-footer { padding: 12px 14px; border-top: 1px solid var(--border); }
+
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .sidebar-user:hover { background: var(--bg-tertiary); }
+
+        .sidebar-user-avatar {
+            width: 34px;
+            height: 34px;
+            min-width: 34px;
+            border-radius: 50%;
+            background: var(--brand-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+        .sidebar-user-info { flex: 1; min-width: 0; opacity: 1; transition: opacity 0.2s; }
+        .sidebar.collapsed .sidebar-user-info,
+        .sidebar.collapsed .sidebar-user-arrow { opacity: 0; pointer-events: none; }
+
+        .sidebar-user-name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+        .sidebar-user-role { font-size: 11px; color: var(--text-tertiary); }
+        .sidebar-user-arrow { color: var(--text-tertiary); opacity: 1; transition: opacity 0.2s; }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            min-width: 0;
+            transition: margin-left 0.3s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        .header {
+            height: var(--header-height);
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 22px;
+            gap: 14px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-search { flex: 1; max-width: 380px; position: relative; }
+        .header-search svg { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); width: 17px; height: 17px; stroke: var(--text-tertiary); }
+        .header-search input {
+            width: 100%;
+            padding: 9px 14px 9px 38px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            background: var(--bg-secondary);
+            font-size: 13.5px;
+            font-family: inherit;
+            color: var(--text-primary);
+            transition: all 0.2s;
+        }
+        .header-search input:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px rgba(8,145,178,0.08); background: var(--bg-primary); }
+
+        .header-actions { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+        .header-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.15s;
+            position: relative;
+        }
+        .header-btn svg { width: 19px; height: 19px; stroke: currentColor; }
+        .header-btn:hover { background: var(--bg-tertiary); border-color: var(--border); color: var(--text-primary); }
+        .header-btn-badge { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; background: var(--danger); border-radius: 50%; border: 2px solid var(--bg-primary); }
+
+        .breadcrumb {
+            padding: 13px 22px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+        .breadcrumb a { color: var(--text-secondary); text-decoration: none; }
+        .breadcrumb a:hover { color: var(--brand); }
+        .breadcrumb-separator { font-size: 10px; }
+        .breadcrumb-current { color: var(--text-primary); font-weight: 500; }
+
+        .content-container { padding: 0 22px 22px; }
+
+        /* Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .stat-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 18px 20px;
+            box-shadow: var(--shadow-xs);
+            transition: all 0.2s;
+        }
+        .stat-card:hover { box-shadow: var(--shadow-md); border-color: var(--border-hover); }
+        .stat-card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+        .stat-card-label { font-size: 12.5px; font-weight: 500; color: var(--text-secondary); }
+        .stat-card-icon { width: 34px; height: 34px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .stat-card-icon svg { width: 17px; height: 17px; }
+        .stat-card-icon.blue { background: var(--brand-light); } .stat-card-icon.blue svg { stroke: var(--brand); }
+        .stat-card-icon.green { background: var(--success-light); } .stat-card-icon.green svg { stroke: var(--success); }
+        .stat-card-icon.red { background: var(--danger-light); } .stat-card-icon.red svg { stroke: var(--danger); }
+        .stat-card-value { font-size: 27px; font-weight: 600; color: var(--text-primary); margin-bottom: 3px; letter-spacing: -0.03em; }
+        .stat-card-change { font-size: 12px; font-weight: 500; display: flex; align-items: center; gap: 4px; }
+        .stat-card-change.positive { color: var(--success); }
+        .stat-card-change.negative { color: var(--danger); }
+
+        .content-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 22px; }
+
+        .card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-xs);
+        }
+
+        .card-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-title { font-size: 15px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
+        .card-title svg { width: 18px; height: 18px; stroke: var(--text-secondary); }
+        .card-body { padding: 0; }
+        .card-body-padded { padding: 16px 20px; }
+
+        .table { width: 100%; border-collapse: collapse; }
+        .table th {
+            padding: 11px 16px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-tertiary);
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+        .table td { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 13.5px; }
+        .table tr:last-child td { border-bottom: none; }
+        .table tbody tr:hover td { background: var(--bg-secondary); }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11.5px;
+            font-weight: 500;
+        }
+        .badge-success { background: var(--success-light); color: #065f46; }
+        .badge-info { background: var(--info-light); color: #3730a3; }
+        .badge-warning { background: var(--warning-light); color: #92400e; }
+        .badge-danger { background: var(--danger-light); color: #991b1b; }
+        .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; display: inline-block; }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.15s;
+            text-decoration: none;
+            font-family: inherit;
+            white-space: nowrap;
+        }
+        .btn svg { width: 15px; height: 15px; }
+        .btn-primary { background: var(--brand); color: white; box-shadow: var(--shadow-sm); }
+        .btn-primary:hover { background: var(--brand-dark); box-shadow: var(--shadow-md); }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); }
+        .btn-outline:hover { background: var(--bg-tertiary); border-color: var(--border-hover); }
+        .btn-sm { padding: 5px 10px; font-size: 12px; }
+        .btn-link { color: var(--brand); cursor: pointer; background: none; padding: 0; font-size: 13px; font-weight: 500; border: none; }
+        .btn-link:hover { color: var(--brand-dark); text-decoration: underline; }
+        .btn-danger { color: var(--danger); }
+        .btn-danger:hover { color: #991b1b; }
+
+        /* Grid de formulário */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        .form-grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .form-grid-full { grid-template-columns: 1fr; }
+
+        .form-section {
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        .form-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .form-section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .form-section-title svg { width: 18px; height: 18px; stroke: var(--brand); }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal {
+            background: var(--bg-primary);
+            border-radius: var(--radius-xl);
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+            animation: slideUp 0.3s ease;
+        }
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            background: var(--bg-primary);
+            z-index: 10;
+            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+        }
+        .modal-title { font-size: 18px; font-weight: 500; }
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: all 0.15s;
+        }
+        .modal-close:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+        .modal-body { padding: 24px; }
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            position: sticky;
+            bottom: 0;
+            background: var(--bg-primary);
+            border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+        }
+
+        .text-muted { color: var(--text-tertiary); font-size: 12px; }
+        .text-danger { color: var(--danger); }
+        .text-success { color: var(--success); }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fadeIn 0.35s ease-out; }
+
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+        @media (max-width: 1200px) { .content-grid { grid-template-columns: 1fr; } .form-grid-3 { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 1024px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); width: var(--sidebar-expanded) !important; }
+            .sidebar.mobile-open { transform: translateX(0); box-shadow: var(--shadow-lg); }
+            .sidebar .sidebar-logo-text,
+            .sidebar .sidebar-logo-sub,
+            .sidebar .sidebar-section-title,
+            .sidebar .sidebar-section-arrow,
+            .sidebar .sidebar-link-text,
+            .sidebar .sidebar-link-badge,
+            .sidebar .sidebar-user-info,
+            .sidebar .sidebar-user-arrow { opacity: 1 !important; pointer-events: auto !important; }
+            .main-content { margin-left: 0 !important; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .header { padding: 0 14px; }
+            .content-container { padding: 0 14px 14px; }
+            .header-search { max-width: 180px; }
+            .sidebar-toggle { display: none; }
+            .form-grid { grid-template-columns: 1fr; }
+            .form-grid-3 { grid-template-columns: 1fr; }
+            .modal { width: 95%; max-width: 95%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ============================================ -->
+    <!-- TELA DE LOGIN -->
+    <!-- ============================================ -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-logo">AP</div>
+                <div class="login-brand">Aqua<span>Pluss</span>Piscinas</div>
+                <div class="login-subtitle">Plataforma de Gestão</div>
+            </div>
+            <div class="login-body">
+                <h2>Bem-vindo de volta</h2>
+                <p>Faça login para acessar o painel administrativo</p>
+                <div id="loginAlert" class="alert"></div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label>E-mail</label>
+                        <div class="input-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            <input type="email" id="emailInput" class="form-input" placeholder="admin@aquapluss.com.br" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Senha</label>
+                        <div class="input-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            <input type="password" id="passwordInput" class="form-input" placeholder="••••••••" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-login" id="loginBtn">Entrar</button>
+                </form>
+            </div>
+            <div class="login-footer">AquaPlussPiscinas © 2024 • v1.0</div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- PAINEL ADMINISTRATIVO -->
+    <!-- ============================================ -->
+    <div id="appScreen" class="app-layout">
+        
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <div class="sidebar-logo-icon">AP</div>
+                <div>
+                    <div class="sidebar-logo-text">Aqua<span>Pluss</span>Piscinas</div>
+                    <div class="sidebar-logo-sub">Plataforma de Gestão</div>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle" title="Recolher menu">
+                    <svg viewBox="-4.5 0 19 19"><path d="M8.4 17.269a1.026 1.026 0 0 1-.727-.302l-6.801-6.8a1.03 1.03 0 0 1 0-1.456l6.8-6.8a1.03 1.03 0 0 1 1.456 1.455L3.055 9.439l6.073 6.073A1.03 1.03 0 0 1 8.4 17.27z" fill="currentColor"/></svg>
+                </button>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="sidebar-section" id="section-principal">
+                    <div class="sidebar-section-header" data-section="principal">
+                        <span class="sidebar-section-title">Principal</span>
+                        <span class="sidebar-section-arrow"><svg viewBox="0 0 48 48"><path d="M13 30L25 18L37 30" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>
+                    </div>
+                    <div class="sidebar-section-links">
+                        <a href="#" class="sidebar-link active" data-tooltip="Dashboard" data-page="dashboard">
+                            <span class="sidebar-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>
+                            <span class="sidebar-link-text">Dashboard</span>
+                        </a>
+                        <a href="#" class="sidebar-link" data-tooltip="Agenda" data-page="agenda">
+                            <span class="sidebar-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+                            <span class="sidebar-link-text">Agenda</span>
+                        </a>
+                        <a href="#" class="sidebar-link" data-tooltip="Rotas" data-page="rotas">
+                            <span class="sidebar-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z"/></svg></span>
+                            <span class="sidebar-link-text">Rotas</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="sidebar-section" id="section-gestao">
+                    <div class="sidebar-section-header" data-section="gestao">
+                        <span class="sidebar-section-title">Gestão</span>
+                        <span class="sidebar-section-arrow"><svg viewBox="0 0 48 48"><path d="M13 30L25 18L37 30" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>
+                    </div>
+                    <div class="sidebar-section-links">
+                        <a href="#" class="sidebar-link" data-tooltip="Clientes" data-page="clientes">
+                            <span class="sidebar-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+                            <span class="sidebar-link-text">Clientes</span>
+                        </a>
+                        <a href="#" class="sidebar-link" data-tooltip="Funcionários" data-page="funcionarios">
+                            <span class="sidebar-link-icon"><svg viewBox="0 0 480.16 480.16" class="icon-fill"><rect x="221.837" y="383.75" width="58.118" height="20"/><path d="M394.438,330.221c-11.215-3.841-28.098-10.968-35.499-16.463v-18.566c25.231-14.443,42.65-39.743,48.906-70.967c16.126-3.851,27.455-19.682,27.455-34.038c0-13.424-9.503-22.888-24.922-25.686v-11.417c0.137-4.198,1.055-53.931-30.314-86.589c-17.506-18.226-41.394-27.467-71-27.467c-29.555,0-53.291,9.076-70.72,27.005c-17.404-17.926-41.069-27.005-70.538-27.005c-29.699,0-53.638,9.263-71.151,27.532c-31.279,32.627-30.31,82.223-30.163,86.527v11.414c-15.418,2.798-24.922,12.262-24.922,25.686c0,14.36,11.335,30.197,27.469,34.042c6.16,30.474,22.974,55.408,47.197,69.997v16.367c-7.242,6.294-22.037,15.04-31.184,19.878C1.877,357.64,0.039,407.985,0.002,410.122v20.835c0,5.523,4.478,10,10,10h460.16c5.522,0,10-4.477,10-10v-20.878C480.15,408.093,478.96,357.045,394.438,330.221z"/><rect x="362.995" y="383.75" width="58.118" height="20"/></svg></span>
+                            <span class="sidebar-link-text">Funcionários</span>
+                        </a>
+                        <a href="#" class="sidebar-link" data-tooltip="Piscinas" data-page="piscinas">
+                            <span class="sidebar-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h2a4 4 0 0 0 4-4V6a4 4 0 0 1 8 0v2a4 4 0 0 0 4 4h2"/><path d="M6 12v2a6 6 0 0 0 12 0v-2"/><circle cx="12" cy="4" r="2"/></svg></span>
+                            <span class="sidebar-link-text">Piscinas</span>
+                        </a>
+                        <a href="#" class="sidebar-link" data-tooltip="Estoque" data-page="estoque">
+                            <span class="sidebar-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></span>
+                            <span class="sidebar-link-text">Estoque</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="sidebar-section" id="section-financeiro">
+                    <div class="sidebar-section-header" data-section="financeiro">
+                        <span class="sidebar-section-title">Financeiro</span>
+                        <span class="sidebar-section-arrow"><svg viewBox="0 0 48 48"><path d="M13 30L25 18L37 30" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>
+                    </div>
+                    <div class="sidebar-section-links">
+                        <a href="#" class="sidebar-link" data-tooltip="Financeiro" data-page="financeiro">
+                            <span class="sidebar-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+                            <span class="sidebar-link-text">Financeiro</span>
+                        </a>
+                        <a href="#" class="sidebar-link" data-tooltip="Contratos" data-page="contratos">
+                            <span class="sidebar-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></span>
+                            <span class="sidebar-link-text">Contratos</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="sidebar-section" id="section-sistema">
+                    <div class="sidebar-section-header" data-section="sistema">
+                        <span class="sidebar-section-title">Sistema</span>
+                        <span class="sidebar-section-arrow"><svg viewBox="0 0 48 48"><path d="M13 30L25 18L37 30" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>
+                    </div>
+                    <div class="sidebar-section-links">
+                        <a href="#" class="sidebar-link" data-tooltip="Perfis de Acesso" data-page="perfis">
+                            <span class="sidebar-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v2a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10V8a7 7 0 0 0-14 0v2"/><path d="M5 10h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2z"/><circle cx="12" cy="15" r="2"/></svg></span>
+                            <span class="sidebar-link-text">Perfis de Acesso</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar" id="sidebarAvatar">AP</div>
+                    <div class="sidebar-user-info">
+                        <div class="sidebar-user-name" id="sidebarUserName">Administrador</div>
+                        <div class="sidebar-user-role" id="sidebarUserRole">Admin Principal</div>
+                    </div>
+                    <div class="sidebar-user-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- MAIN CONTENT -->
+        <main class="main-content" id="mainContent">
+            <header class="header">
+                <button class="header-btn mobile-menu-btn" id="mobileMenuBtn" title="Menu" style="display:none;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <div class="header-search">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input type="text" id="globalSearch" placeholder="Buscar clientes, piscinas, contratos...">
+                </div>
+                <div class="header-actions">
+                    <button class="header-btn" id="themeToggle" title="Alternar tema">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    </button>
+                    <button class="header-btn" title="Sair" id="logoutBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    </button>
+                </div>
+            </header>
+            
+            <div class="breadcrumb">
+                <a href="#">Home</a>
+                <span class="breadcrumb-separator">›</span>
+                <span class="breadcrumb-current" id="breadcrumbPage">Dashboard</span>
+            </div>
+            
+            <div class="content-container animate-fade-in" id="pageContent"></div>
+        </main>
+    </div>
+
+    <!-- MODAL -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modalContent"></div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SCRIPTS -->
+    <!-- ============================================ -->
+    <script>
+        // ==================== CONFIGURAÇÃO FIREBASE ====================
+        const firebaseConfig = {
+            apiKey: "AIzaSyByxj9418BYG26MpB1h9GZAFUmRiu_3HZc",
+            authDomain: "aquaplusspiscinas.firebaseapp.com",
+            projectId: "aquaplusspiscinas",
+            storageBucket: "aquaplusspiscinas.firebasestorage.app",
+            messagingSenderId: "844112800471",
+            appId: "1:844112800471:web:468c21d1eafdd9a4071e92",
+            measurementId: "G-575HBNS9VZ"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        
+        // ==================== ELEMENTOS DOM ====================
+        const loginScreen = document.getElementById('loginScreen');
+        const appScreen = document.getElementById('appScreen');
+        const loginForm = document.getElementById('loginForm');
+        const loginAlert = document.getElementById('loginAlert');
+        const loginBtn = document.getElementById('loginBtn');
+        const emailInput = document.getElementById('emailInput');
+        const passwordInput = document.getElementById('passwordInput');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const pageContent = document.getElementById('pageContent');
+        const breadcrumbPage = document.getElementById('breadcrumbPage');
+        const sidebarUserName = document.getElementById('sidebarUserName');
+        const sidebarUserRole = document.getElementById('sidebarUserRole');
+        const sidebarAvatar = document.getElementById('sidebarAvatar');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalContent = document.getElementById('modalContent');
+        
+        // ==================== FUNÇÕES UI ====================
+        function showAlert(message, type = 'danger') {
+            loginAlert.textContent = message;
+            loginAlert.className = `alert alert-${type} show`;
+        }
+        
+        function hideAlert() { loginAlert.className = 'alert'; }
+        
+        function setLoading(loading) {
+            if (loading) {
+                loginBtn.disabled = true;
+                loginBtn.innerHTML = '<span class="spinner"></span> Entrando...';
+            } else {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = 'Entrar';
+            }
+        }
+        
+        function openModal(title, bodyHTML, footerHTML = '') {
+            modalContent.innerHTML = `
+                <div class="modal-header">
+                    <h3 class="modal-title">${title}</h3>
+                    <button class="modal-close" onclick="closeModal()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+                <div class="modal-body">${bodyHTML}</div>
+                ${footerHTML ? `<div class="modal-footer">${footerHTML}</div>` : ''}
+            `;
+            modalOverlay.classList.add('show');
+        }
+        
+        function closeModal() { modalOverlay.classList.remove('show'); }
+        
+        modalOverlay.addEventListener('click', function(e) {
+            if (e.target === modalOverlay) closeModal();
+        });
+        
+        // ==================== LOGIN ====================
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            hideAlert();
+            
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+            
+            if (!email || !password) {
+                showAlert('Preencha todos os campos.');
+                return;
+            }
+            
+            setLoading(true);
+            
+            try {
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                console.log('✅ Login:', user.email);
+                
+                const userDoc = await db.collection('usuarios').doc(user.uid).get();
+                
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    sidebarUserName.textContent = userData.nome || 'Usuário';
+                    sidebarUserRole.textContent = userData.cargo || userData.perfil || 'Usuário';
+                    sidebarAvatar.textContent = (userData.nome || 'U').substring(0, 2).toUpperCase();
+                    localStorage.setItem('aquapluss-user', JSON.stringify({ uid: user.uid, email: user.email, ...userData }));
+                } else {
+                    await db.collection('usuarios').doc(user.uid).set({
+                        nome: user.email.split('@')[0],
+                        email: user.email,
+                        perfil: 'admin',
+                        cargo: 'Administrador',
+                        criadoEm: firebase.firestore.FieldValue.serverTimestamp(),
+                        ultimoLogin: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    sidebarUserName.textContent = user.email.split('@')[0];
+                    sidebarUserRole.textContent = 'Administrador';
+                    sidebarAvatar.textContent = user.email.substring(0, 2).toUpperCase();
+                }
+                
+                await db.collection('usuarios').doc(user.uid).update({
+                    ultimoLogin: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                showApp();
+            } catch (error) {
+                console.error('❌ Erro login:', error);
+                let mensagem = 'Erro ao fazer login.';
+                switch (error.code) {
+                    case 'auth/user-not-found': mensagem = 'Usuário não encontrado.'; break;
+                    case 'auth/wrong-password': mensagem = 'Senha incorreta.'; break;
+                    case 'auth/invalid-email': mensagem = 'E-mail inválido.'; break;
+                    case 'auth/too-many-requests': mensagem = 'Muitas tentativas. Aguarde.'; break;
+                }
+                showAlert(mensagem);
+            }
+            setLoading(false);
+        });
+        
+        // ==================== LOGOUT ====================
+        logoutBtn.addEventListener('click', async function() {
+            await auth.signOut();
+            localStorage.removeItem('aquapluss-user');
+            showLogin();
+        });
+        
+        // ==================== NAVEGAÇÃO ====================
+        function showApp() {
+            loginScreen.style.display = 'none';
+            appScreen.style.display = 'flex';
+            appScreen.classList.add('show');
+            loadPage('dashboard');
+        }
+        
+        function showLogin() {
+            appScreen.style.display = 'none';
+            appScreen.classList.remove('show');
+            loginScreen.style.display = 'flex';
+            emailInput.value = '';
+            passwordInput.value = '';
+            hideAlert();
+        }
+        
+        function loadPage(page) {
+            const titles = {
+                dashboard: 'Dashboard',
+                clientes: 'Clientes',
+                funcionarios: 'Funcionários',
+                piscinas: 'Piscinas',
+                estoque: 'Estoque',
+                financeiro: 'Financeiro',
+                contratos: 'Contratos',
+                perfis: 'Perfis de Acesso',
+                agenda: 'Agenda',
+                rotas: 'Rotas'
+            };
+            breadcrumbPage.textContent = titles[page] || page;
+            
+            switch(page) {
+                case 'dashboard': loadDashboard(); break;
+                case 'clientes': loadClientes(); break;
+                case 'funcionarios': loadFuncionarios(); break;
+                case 'piscinas': loadPiscinas(); break;
+                case 'estoque': loadEstoque(); break;
+                case 'financeiro': loadFinanceiro(); break;
+                case 'contratos': loadContratos(); break;
+                case 'perfis': loadPerfis(); break;
+                case 'agenda': loadAgenda(); break;
+                case 'rotas': loadRotas(); break;
+                default: pageContent.innerHTML = '<p>Página em construção...</p>';
+            }
+        }
+        
+        // ==================== DASHBOARD ====================
+        async function loadDashboard() {
+            pageContent.innerHTML = '<p style="padding:40px;text-align:center;color:var(--text-tertiary);">Carregando dashboard...</p>';
+            
+            try {
+                const [clientesSnap, funcSnap, visitasSnap] = await Promise.all([
+                    db.collection('clientes').where('status', '==', 'ativo').get(),
+                    db.collection('funcionarios').where('status', '==', 'ativo').get(),
+                    db.collection('visitas').where('data', '==', new Date().toISOString().split('T')[0]).get()
+                ]);
+                
+                const totalClientes = clientesSnap.size;
+                const totalFuncionarios = funcSnap.size;
+                const visitasHoje = visitasSnap.size;
+                const concluidas = visitasSnap.docs.filter(d => d.data().status === 'concluido').length;
+                
+                const hoje = new Date();
+                const inicioMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1).toISOString().split('T')[0];
+                const faturasSnap = await db.collection('faturas').where('data', '>=', inicioMes).where('status', '==', 'pago').get();
+                let faturamento = 0;
+                faturasSnap.forEach(doc => { faturamento += doc.data().valor || 0; });
+                
+                pageContent.innerHTML = `
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-card-header"><span class="stat-card-label">Clientes Ativos</span><div class="stat-card-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div>
+                            <div class="stat-card-value">${totalClientes}</div>
+                            <span class="stat-card-change positive">✅ Firestore conectado</span>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-header"><span class="stat-card-label">Visitas Hoje</span><div class="stat-card-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div></div>
+                            <div class="stat-card-value">${visitasHoje}</div>
+                            <span class="stat-card-change positive">${concluidas} concluídas</span>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-header"><span class="stat-card-label">Funcionários</span><div class="stat-card-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div>
+                            <div class="stat-card-value">${totalFuncionarios}</div>
+                            <span class="stat-card-change positive">Equipe ativa</span>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-card-header"><span class="stat-card-label">Faturamento Mensal</span><div class="stat-card-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div></div>
+                            <div class="stat-card-value">R$ ${faturamento.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+                            <span class="stat-card-change positive">Mês atual</span>
+                        </div>
+                    </div>
+                    <div class="card"><div class="card-header"><h3 class="card-title">📋 Resumo do Sistema</h3></div>
+                    <div class="card-body-padded">
+                        <p style="color:var(--text-secondary);">✅ Conectado ao Firestore • Projeto: aquaplusspiscinas</p>
+                        <p style="color:var(--text-tertiary);font-size:12px;">${auth.currentUser?.email} • ${new Date().toLocaleDateString('pt-BR')}</p>
+                    </div></div>
+                `;
+            } catch (error) {
+                pageContent.innerHTML = `<div class="card"><div class="card-header"><h3 class="card-title">❌ Erro</h3></div><div class="card-body-padded"><p style="color:var(--danger);">${error.message}</p></div></div>`;
+            }
+        }
+        
+        // ==================== CLIENTES ====================
+        async function loadClientes() {
+            pageContent.innerHTML = '<p style="padding:40px;text-align:center;color:var(--text-tertiary);">Carregando clientes...</p>';
+            
+            try {
+                const snapshot = await db.collection('clientes').orderBy('nome').get();
+                let rows = '';
+                
+                if (snapshot.empty) {
+                    rows = '<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--text-tertiary);">Nenhum cliente cadastrado</td></tr>';
+                } else {
+                    snapshot.forEach(doc => {
+                        const c = doc.data();
+                        rows += `
+                            <tr>
+                                <td><strong>${c.nome || '-'}</strong><br><span style="font-size:12px;color:var(--text-tertiary);">${c.cpfCnpj || ''}</span></td>
+                                <td>${c.telefone || '-'}<br><span style="font-size:12px;color:var(--text-tertiary);">${c.email || ''}</span></td>
+                                <td><span class="badge ${c.status === 'ativo' ? 'badge-success' : 'badge-danger'}"><span class="badge-dot"></span>${c.status || 'inativo'}</span></td>
+                                <td>
+                                    <button class="btn-link" onclick="verCliente('${doc.id}')">Ver</button>
+                                    <button class="btn-link btn-danger" onclick="excluirCliente('${doc.id}')" style="margin-left:8px;">Excluir</button>
+                                </td>
+                            </tr>`;
+                    });
+                }
+                
+                pageContent.innerHTML = `
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">👥 Clientes (${snapshot.size})</h3>
+                            <button class="btn btn-primary btn-sm" onclick="novoCliente()">+ Novo Cliente</button>
+                        </div>
+                        <div class="card-body">
+                            <table class="table">
+                                <thead><tr><th>Nome / CPF</th><th>Contato</th><th>Status</th><th></th></tr></thead>
+                                <tbody>${rows}</tbody>
+                            </table>
+                        </div>
+                    </div>`;
+            } catch (error) {
+                pageContent.innerHTML = `<div class="card"><div class="card-header"><h3 class="card-title">❌ Erro</h3></div><div class="card-body-padded"><p style="color:var(--danger);">${error.message}</p></div></div>`;
+            }
+        }
+        
+        // ==================== CRUD CLIENTES ====================
+        function novoCliente(clienteData = null) {
+            const isEdit = !!clienteData;
+            const title = isEdit ? 'Editar Cliente' : 'Novo Cliente';
+            
+            const bodyHTML = `
+                <form id="clienteForm">
+                    <!-- Dados Pessoais -->
+                    <div class="form-section">
+                        <div class="form-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Dados Pessoais</div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Nome Completo *</label>
+                                <input type="text" class="form-input" name="nome" value="${clienteData?.nome || ''}" required>
+                            </div>
+                            <div class="form-group">
+                                <label>CPF/CNPJ</label>
+                                <input type="text" class="form-input" name="cpfCnpj" value="${clienteData?.cpfCnpj || ''}">
+                            </div>
+                            <div class="form-group">
+                                <label>Telefone Principal *</label>
+                                <input type="text" class="form-input" name="telefone" value="${clienteData?.telefone || ''}" required>
+                            </div>
+                            <div class="form-group">
+                                <label>E-mail</label>
+                                <input type="email" class="form-input" name="email" value="${clienteData?.email || ''}">
+                            </div>
+                            <div class="form-group">
+                                <label>Data de Nascimento</label>
+                                <input type="date" class="form-input" name="dataNascimento" value="${clienteData?.dataNascimento || ''}">
+                            </div>
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select class="form-input" name="status">
+                                    <option value="ativo" ${clienteData?.status === 'ativo' ? 'selected' : ''}>Ativo</option>
+                                    <option value="inativo" ${clienteData?.status === 'inativo' ? 'selected' : ''}>Inativo</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Endereço -->
+                    <div class="form-section">
+                        <div class="form-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z"/></svg> Endereço</div>
+                        <div class="form-grid">
+                            <div class="form-group"><label>CEP</label><input type="text" class="form-input" name="cep" value="${clienteData?.cep || ''}"></div>
+                            <div class="form-group"><label>Logradouro</label><input type="text" class="form-input" name="logradouro" value="${clienteData?.logradouro || ''}"></div>
+                            <div class="form-group"><label>Número</label><input type="text" class="form-input" name="numero" value="${clienteData?.numero || ''}"></div>
+                            <div class="form-group"><label>Complemento</label><input type="text" class="form-input" name="complemento" value="${clienteData?.complemento || ''}"></div>
+                            <div class="form-group"><label>Bairro</label><input type="text" class="form-input" name="bairro" value="${clienteData?.bairro || ''}"></div>
+                            <div class="form-group"><label>Cidade</label><input type="text" class="form-input" name="cidade" value="${clienteData?.cidade || ''}"></div>
+                            <div class="form-group"><label>Estado</label><input type="text" class="form-input" name="estado" value="${clienteData?.estado || ''}" maxlength="2"></div>
+                            <div class="form-group"><label>Coordenadas GPS</label><input type="text" class="form-input" name="gps" value="${clienteData?.gps || ''}" placeholder="Ex: -23.5505,-46.6333"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Informações da Piscina -->
+                    <div class="form-section">
+                        <div class="form-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h2a4 4 0 0 0 4-4V6a4 4 0 0 1 8 0v2a4 4 0 0 0 4 4h2"/></svg> Informações da Piscina</div>
+                        <div class="form-grid">
+                            <div class="form-group"><label>Tamanho (m²)</label><input type="number" class="form-input" name="tamanhoPiscina" value="${clienteData?.tamanhoPiscina || ''}" step="0.1"></div>
+                            <div class="form-group"><label>Volume (litros)</label><input type="number" class="form-input" name="volumeLitros" value="${clienteData?.volumeLitros || ''}"></div>
+                            <div class="form-group"><label>Material</label><select class="form-input" name="materialPiscina">
+                                <option value="">Selecione...</option>
+                                <option value="azulejo" ${clienteData?.materialPiscina === 'azulejo' ? 'selected' : ''}>Azulejo</option>
+                                <option value="vinil" ${clienteData?.materialPiscina === 'vinil' ? 'selected' : ''}>Vinil</option>
+                                <option value="fibra" ${clienteData?.materialPiscina === 'fibra' ? 'selected' : ''}>Fibra de Vidro</option>
+                                <option value="concreto" ${clienteData?.materialPiscina === 'concreto' ? 'selected' : ''}>Concreto</option>
+                            </select></div>
+                            <div class="form-group"><label>Tipo de Água</label><select class="form-input" name="tipoAgua">
+                                <option value="">Selecione...</option>
+                                <option value="doce" ${clienteData?.tipoAgua === 'doce' ? 'selected' : ''}>Doce</option>
+                                <option value="salgada" ${clienteData?.tipoAgua === 'salgada' ? 'selected' : ''}>Salgada</option>
+                            </select></div>
+                            <div class="form-group"><label>Fonte de Abastecimento</label><input type="text" class="form-input" name="fonteAbastecimento" value="${clienteData?.fonteAbastecimento || ''}"></div>
+                            <div class="form-group"><label>Possui Aquecimento?</label><select class="form-input" name="aquecimento">
+                                <option value="nao" ${clienteData?.aquecimento === 'nao' ? 'selected' : ''}>Não</option>
+                                <option value="sim" ${clienteData?.aquecimento === 'sim' ? 'selected' : ''}>Sim</option>
+                            </select></div>
+                            <div class="form-group"><label>Tipo de Filtragem</label><input type="text" class="form-input" name="tipoFiltragem" value="${clienteData?.tipoFiltragem || ''}"></div>
+                            <div class="form-group"><label>Qtd. Ideal de Produtos</label><input type="text" class="form-input" name="qtdIdealProdutos" value="${clienteData?.qtdIdealProdutos || ''}"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Informações Operacionais -->
+                    <div class="form-section">
+                        <div class="form-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83"/></svg> Informações Operacionais</div>
+                        <div class="form-grid">
+                            <div class="form-group"><label>Possui Chave?</label><select class="form-input" name="possuiChave">
+                                <option value="nao" ${clienteData?.possuiChave === 'nao' ? 'selected' : ''}>Não</option>
+                                <option value="sim" ${clienteData?.possuiChave === 'sim' ? 'selected' : ''}>Sim</option>
+                            </select></div>
+                            <div class="form-group"><label>Local da Chave</label><input type="text" class="form-input" name="localChave" value="${clienteData?.localChave || ''}"></div>
+                            <div class="form-group"><label>Ferramentas Disponíveis</label><input type="text" class="form-input" name="ferramentasDisponiveis" value="${clienteData?.ferramentasDisponiveis || ''}"></div>
+                            <div class="form-group"><label>Equipamentos do Cliente</label><input type="text" class="form-input" name="equipamentosCliente" value="${clienteData?.equipamentosCliente || ''}"></div>
+                            <div class="form-group"><label>Restrições de Acesso</label><input type="text" class="form-input" name="restricoesAcesso" value="${clienteData?.restricoesAcesso || ''}"></div>
+                            <div class="form-group"><label>Animais na Residência</label><input type="text" class="form-input" name="animais" value="${clienteData?.animais || ''}"></div>
+                            <div class="form-group"><label>Horários Permitidos</label><input type="text" class="form-input" name="horariosPermitidos" value="${clienteData?.horariosPermitidos || ''}"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Observações -->
+                    <div class="form-section">
+                        <div class="form-section-title">📝 Observações</div>
+                        <div class="form-group"><textarea class="form-input" name="observacoes" rows="3">${clienteData?.observacoes || ''}</textarea></div>
+                    </div>
+                </form>
+            `;
+            
+            const footerHTML = `
+                <button class="btn btn-outline" onclick="closeModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="salvarCliente('${clienteData?.id || ''}')">
+                    ${isEdit ? 'Atualizar' : 'Salvar'} Cliente
+                </button>
+            `;
+            
+            openModal(title, bodyHTML, footerHTML);
+        }
+        
+        async function salvarCliente(id) {
+            const form = document.getElementById('clienteForm');
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Adiciona timestamp
+            data.atualizadoEm = firebase.firestore.FieldValue.serverTimestamp();
+            
+            try {
+                if (id) {
+                    // Editar
+                    await db.collection('clientes').doc(id).update(data);
+                    console.log('✅ Cliente atualizado:', id);
+                } else {
+                    // Novo
+                    data.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
+                    data.status = data.status || 'ativo';
+                    const docRef = await db.collection('clientes').add(data);
+                    console.log('✅ Cliente criado:', docRef.id);
+                }
+                closeModal();
+                loadClientes();
+            } catch (error) {
+                console.error('❌ Erro ao salvar cliente:', error);
+                alert('Erro ao salvar: ' + error.message);
+            }
+        }
+        
+        async function verCliente(id) {
+            try {
+                const doc = await db.collection('clientes').doc(id).get();
+                if (doc.exists) {
+                    const c = doc.data();
+                    const bodyHTML = `
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                            <div><strong>Nome:</strong> ${c.nome || '-'}</div>
+                            <div><strong>CPF/CNPJ:</strong> ${c.cpfCnpj || '-'}</div>
+                            <div><strong>Telefone:</strong> ${c.telefone || '-'}</div>
+                            <div><strong>E-mail:</strong> ${c.email || '-'}</div>
+                            <div><strong>Status:</strong> <span class="badge ${c.status === 'ativo' ? 'badge-success' : 'badge-danger'}">${c.status}</span></div>
+                            <div><strong>Piscina:</strong> ${c.tamanhoPiscina || '-'}m² • ${c.volumeLitros || '-'}L</div>
+                            <div><strong>Material:</strong> ${c.materialPiscina || '-'}</div>
+                            <div><strong>Tipo Água:</strong> ${c.tipoAgua || '-'}</div>
+                            <div><strong>Endereço:</strong> ${c.logradouro || ''}, ${c.numero || ''} - ${c.bairro || ''}</div>
+                            <div><strong>Cidade/UF:</strong> ${c.cidade || ''}/${c.estado || ''}</div>
+                            <div><strong>GPS:</strong> ${c.gps || '-'}</div>
+                            <div><strong>Observações:</strong> ${c.observacoes || '-'}</div>
+                        </div>
+                    `;
+                    openModal(`Cliente: ${c.nome}`, bodyHTML, `<button class="btn btn-primary" onclick="closeModal();novoCliente({id:'${id}',...${JSON.stringify(c).replace(/"/g, '&quot;')}})">Editar</button>`);
+                }
+            } catch (error) {
+                console.error('❌ Erro:', error);
+            }
+        }
+        
+        async function excluirCliente(id) {
+            if (confirm('Tem certeza que deseja excluir este cliente?')) {
+                try {
+                    await db.collection('clientes').doc(id).delete();
+                    console.log('✅ Cliente excluído:', id);
+                    loadClientes();
+                } catch (error) {
+                    console.error('❌ Erro:', error);
+                    alert('Erro ao excluir: ' + error.message);
+                }
+            }
+        }
+        
+        // ==================== PLACEHOLDERS ====================
+        function loadFuncionarios() { pageContent.innerHTML = '<div class="card"><div class="card-header"><h3 class="card-title">👷 Funcionários</h3></div><div class="card-body-padded"><p style="color:var(--text-secondary);">📂 Coleção: <code>funcionarios</code> • Será desenvolvida na Parte 3</p></div></div>'; }
+        function loadPiscinas() { pageContent.innerHTML = '<div class="card"><div class="card-header"><h3 class="card-title">🏊 Piscinas</h3></div><div class="card-body-padded"><p style="color:var(--text-secondary);">📂 Coleção: <code>piscinas</code> • Será desenvolvida na Parte 3</p></div></div>'; }
+        function loadEstoque() { pageContent.innerHTML = '<div class="card"><div class="card-header"><h3 class="card-title">📦 Estoque</h3></div><div class="card-body-padded"><p style="color:var(--text-secondary);">📂 Coleção: <code>estoque</code> • Será desenvolvida na Parte 3</p></div></div>'; }
+        function loadFinanceiro() { pageContent.innerHTML = '<div class="card"><div class="card-header"><h3 class="card-title">💰 Financeiro</h3></div><div class="card-body-padded"><p style="color:var(--text-secondary);">📂 Coleção: <code>faturas</code> • Será desenvolvida na Parte 4</p></div></div>'; }
+        function loadContratos() { pageContent.innerHTML = '<div class="card"><div class="card-header"><h3 class="card-title">📄 Contratos</h3></div><div class="card-body-padded"><p style="color:var(--text-secondary);">📂 Coleção: <code>contratos</code></p></div></div>'; }
+        function loadPerfis() { pageContent.innerHTML = '<div class="card"><div class="card-header"><h3 class="card-title">🔐 Perfis de Acesso</h3></div><div class="card-body-padded"><p style="color:var(--text-secondary);">📂 Coleção: <code>usuarios</code> • Perfis: admin, gestor, funcionario, cliente</p></div></div>'; }
+        function loadAgenda() { pageContent.innerHTML = '<div class="card"><div class="card-header"><h3 class="card-title">📅 Agenda</h3></div><div class="card-body-padded"><p style="color:var(--text-secondary);">📂 Coleção: <code>visitas</code></p></div></div>'; }
+        function loadRotas() { pageContent.innerHTML = '<div class="card"><div class="card-header"><h3 class="card-title">🗺️ Rotas</h3></div><div class="card-body-padded"><p style="color:var(--text-secondary);">📂 Coleção: <code>rotas</code></p></div></div>'; }
+        
+        // ==================== EVENT LISTENERS ====================
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                const page = this.getAttribute('data-page');
+                if (page) loadPage(page);
+                if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('mobile-open');
+            });
+        });
+        
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            const sidebar = document.getElementById('sidebar');
+            const main = document.getElementById('mainContent');
+            const collapsed = sidebar.classList.toggle('collapsed');
+            main.style.marginLeft = collapsed ? '68px' : '252px';
+            localStorage.setItem('aquapluss-sidebar-collapsed', collapsed);
+        });
+        
+        document.querySelectorAll('.sidebar-section-header').forEach(header => {
+            header.addEventListener('click', function() {
+                this.closest('.sidebar-section').classList.toggle('collapsed-section');
+            });
+        });
+        
+        document.getElementById('themeToggle').addEventListener('click', function() {
+            const html = document.documentElement;
+            const newTheme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('aquapluss-theme', newTheme);
+        });
+        
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('mobile-open');
+        });
+        
+        // ==================== VERIFICA SESSÃO ====================
+        auth.onAuthStateChanged(function(user) {
+            if (user) {
+                const savedUser = localStorage.getItem('aquapluss-user');
+                if (savedUser) {
+                    const userData = JSON.parse(savedUser);
+                    sidebarUserName.textContent = userData.nome || user.email.split('@')[0];
+                    sidebarUserRole.textContent = userData.cargo || 'Usuário';
+                    sidebarAvatar.textContent = (userData.nome || user.email).substring(0, 2).toUpperCase();
+                }
+                showApp();
+            } else {
+                showLogin();
+            }
+        });
+        
+        // Restaura preferências
+        if (localStorage.getItem('aquapluss-theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+        if (localStorage.getItem('aquapluss-sidebar-collapsed') === 'true') {
+            document.getElementById('sidebar').classList.add('collapsed');
+            document.getElementById('mainContent').style.marginLeft = '68px';
+        }
+        
+        console.log('🚀 AquaPlussPiscinas v1.0');
+        console.log('🔥 Firebase: aquaplusspiscinas');
+        console.log('📌 Projeto ID: 844112800471');
+    </script>
+</body>
+</html>
