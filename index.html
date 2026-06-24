@@ -958,24 +958,50 @@ function renderCalendario(mes,ano){
 async function loadRotas(){
     pageContent.innerHTML='<p style="padding:40px;">Carregando...</p>';
     try{
-        const hoje=new Date();const ds=hoje.getDay();
-        const seg=new Date(hoje);seg.setDate(hoje.getDate()-(ds===0?6:ds-1));
-        const diasLabels=['Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
-        const diasAbrev=['Seg','Ter','Qua','Qui','Sex','Sáb'];
-        const clientesSnap=await db.collection('clientes').where('status','==','ativo').get();
-        const vencidasSnap=await db.collection('faturas').where('status','==','pendente').where('vencimento','<',new Date().toISOString().split('T')[0]).get();
-        const inadimplentes=new Set(vencidasSnap.docs.map(d=>d.data().clienteId));
-        let html='<div class="rotas-grid">';
-        for(let i=0;i<6;i++){
-            const dataDia=new Date(seg);dataDia.setDate(seg.getDate()+i);
-            const diaAbrev=diasAbrev[i];const hojeStr=new Date().toISOString().split('T')[0];
-            const dataStr=dataDia.toISOString().split('T')[0];const isHoje=dataStr===hojeStr;
-            const clientesDia=clientesSnap.docs.filter(d=>{if(inadimplentes.has(d.id))return false;return(d.data().diasSemana||[]).includes(diaAbrev);});
-            let ch=clientesDia.length===0?'<div class="rota-empty">Nenhum</div>':clientesDia.map(d=>{const c=d.data();return`<div class="rota-cliente"><span><strong>${c.nome}</strong><br><span style="font-size:11px;">${c.logradouro||''} ${c.numero||''}</span></span></div>`;}).join('');
-            html+=`<div class="rota-dia"><div class="rota-dia-header ${isHoje?'hoje':''}">${diasLabels[i]} - ${dataStr.split('-').reverse().join('/')}<span>${clientesDia.length}</span></div><div class="rota-dia-body">${ch}</div></div>`;
+        var hoje=new Date();
+        var ds=hoje.getDay();
+        var seg=new Date(hoje);
+        seg.setDate(hoje.getDate()-(ds===0?6:ds-1));
+        var diasLabels=['Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+        var diasAbrev=['Seg','Ter','Qua','Qui','Sex','Sáb'];
+        var clientesSnap=await db.collection('clientes').where('status','==','ativo').get();
+        var vencidasSnap=await db.collection('faturas').where('status','==','pendente').where('vencimento','<',new Date().toISOString().split('T')[0]).get();
+        var inadimplentes=new Set();
+        vencidasSnap.docs.forEach(function(d){inadimplentes.add(d.data().clienteId);});
+        
+        var html='<div class="rotas-grid">';
+        for(var i=0;i<6;i++){
+            var dataDia=new Date(seg);
+            dataDia.setDate(seg.getDate()+i);
+            var diaAbrev=diasAbrev[i];
+            var hojeStr=new Date().toISOString().split('T')[0];
+            var dataStr=dataDia.toISOString().split('T')[0];
+            var isHoje=dataStr===hojeStr;
+            
+            var clientesDia=[];
+            clientesSnap.docs.forEach(function(d){
+                if(inadimplentes.has(d.id))return;
+                var dias=d.data().diasSemana||[];
+                if(dias.includes(diaAbrev))clientesDia.push(d);
+            });
+            
+            var ch='';
+            if(clientesDia.length===0){
+                ch='<div class="rota-empty">Nenhum</div>';
+            }else{
+                clientesDia.forEach(function(d){
+                    var c=d.data();
+                    ch+='<div class="rota-cliente"><span><strong>'+c.nome+'</strong><br><span style="font-size:11px;">'+(c.logradouro||'')+' '+(c.numero||'')+'</span></span></div>';
+                });
+            }
+            
+            html+='<div class="rota-dia"><div class="rota-dia-header'+(isHoje?' hoje':'')+'">'+diasLabels[i]+' - '+dataStr.split('-').reverse().join('/')+'<span>'+clientesDia.length+'</span></div><div class="rota-dia-body">'+ch+'</div></div>';
         }
-        html+='</div>';pageContent.innerHTML=html;
-    }catch(err){pageContent.innerHTML=errCard(err.message);}
+        html+='</div>';
+        pageContent.innerHTML=html;
+    }catch(err){
+        pageContent.innerHTML=errCard(err.message);
+    }
 }
 
 // App Piscineiro
