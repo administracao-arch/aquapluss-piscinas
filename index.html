@@ -424,31 +424,103 @@ async function salvarProdutoCliente(id){const f=document.getElementById('prodCli
 function movimentarEstoqueCliente(pid,eid){const body=`<form id="movClienteForm"><input type="hidden" name="pid" value="${pid}"><input type="hidden" name="eid" value="${eid}"><div class="form-grid"><div class="form-group"><label>Tipo</label><select class="form-input" name="tipo" required><option value="entrada">Entrada</option><option value="saida">Saída</option></select></div><div class="form-group"><label>Qtd *</label><input type="number" class="form-input" name="quantidade" required min="1"></div></div></form>`;openModal('Movimentar',body,`<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarMovCliente()">Registrar</button>`);}
 async function salvarMovCliente(){const f=document.getElementById('movClienteForm');const fd=new FormData(f);const d=Object.fromEntries(fd.entries());const ref=db.collection('piscinas').doc(d.pid).collection('estoque').doc(d.eid);const doc=await ref.get();if(!doc.exists){alert('Não encontrado!');return;}const atual=doc.data().quantidade||0;const qtd=parseInt(d.quantidade);const novo=d.tipo==='entrada'?atual+qtd:atual-qtd;await ref.update({quantidade:novo,atualizadoEm:firebase.firestore.FieldValue.serverTimestamp()});closeModal();loadEstoqueClientes();}
 
-// Financeiro
-async function loadFinanceiro(){
+// // Gerar faturas automáticas para todos os clientes ativos
+async function gerarFaturasAutomaticas(){
+    const hoje=new Date();
+    const mesAtual=hoje.getMonth();
+    const anoAtual=hoje.getFullYear();
+    
+    const clientesSnap=await db.collection('clientes').where('status','==','ativo').get();
+    
+    for(const clienteDoc of clientesSnap.docs){
+        const c=clienteDoc.data();
+        const diaVenc=c.diaVencimento||10;
+        const valor=c.plano||0;
+        if(valor<=0)continue;
+        
+        // Verificar se já existe fatura para este mês
+        const vencimentoStr=`${anoAtual}-${String(mesAtual+1).padStart(2,'0')}-${String(diaVenc).padStart(2,'0')}`;
+        const existente=await db.collection('faturas')
+            .where('clienteId','==',clienteDoc.id)
+            .where('vencimento','==',vencimentoStr)
+            .get();
+        
+        if(existente.empty){
+            await db.collection('faturas').add({
+                clienteId:clienteDoc.id,
+                clienteNome:c.nome,
+                valor:valor,
+                vencimento:vencimentoStr,
+                metodo:c.formaPagamento||'PIX',
+                status:'pendente',
+                criadoEm:firebase.firestore.FieldValue.serverTimestamp()
+            });
+        }
+    }
+}
+    Financeiro
+async function loadFinanceiro(mesOffset=0){
     pageContent.innerHTML='<p style="padding:40px;">Carregando...</p>';
+    
+    // Gerar faturas automáticas primeiro
+    await gerarFaturasAutomaticas();
+    
     try{
-        const hoje=new Date().toISOString().split('T')[0];
-        const[faturas,vencidas,receitas,despesas]=await Promise.all([
-            db.collection('faturas').orderBy('vencimento','desc').limit(20).get(),
-            db.collection('faturas').where('status','==','pendente').where('vencimento','<',hoje).get(),
-            db.collection('faturas').where('status','==','pago').get(),
-            db.collection('despesas').get()
+        const hoje=new Date();
+        const mesRef=new Date(hoje.getFullYear(),hoje.getMonth()+mesOffset,1);
+        const mes=mesRef.getMonth();
+        const ano=mesRef.getFullYear();
+        const meses=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+        
+        const inicioMes=`${ano}-${String(mes+1).padStart(2,'0')}-01`;
+        const ultimoDia=new Date(ano,mes+1,0).getDate();
+        const fimMes=`${ano}-${String(mes+1).padStart(2,'0')}-${String(ultimoDia).padStart(2,'0')}`;
+        
+        const[faturas,receitas,despesas,vencidas]=await Promise.all([
+            db.collection('faturas').where('vencimento','>=',inicioMes).where('vencimento','<=',fimMes).orderBy('vencimento','desc').get(),
+            db.collection('faturas').where('status','==','pago').where('vencimento','>=',inicioMes).where('vencimento','<=',fimMes).get(),
+            db.collection('despesas').where('data','>=',inicioMes).where('data','<=',fimMes).get(),
+            db.collection('faturas').where('status','==','pendente').where('vencimento','<',new Date().toISOString().split('T')[0]).get()
         ]);
+        
         let totalReceitas=0;receitas.forEach(d=>totalReceitas+=Number(d.data().valor)||0);
         let totalDespesas=0;despesas.forEach(d=>totalDespesas+=Number(d.data().valor)||0);
-        let fRows=faturas.empty?'<tr><td colspan="6">Nenhuma fatura</td></tr>':faturas.docs.map(d=>{const f=d.data();const venc=new Date(f.vencimento+'T00:00:00');const vencido=venc<new Date()&&f.status==='pendente';return`<tr><td><strong>${f.clienteNome||'N/D'}</strong></td><td>R$ ${(Number(f.valor)||0).toFixed(2)}</td><td>${f.vencimento||'-'}</td><td>${f.metodo||'-'}</td><td><span class="badge ${f.status==='pago'?'badge-success':vencido?'badge-danger':'badge-warning'}">${f.status==='pago'?'Pago':vencido?'Vencido':'Pendente'}</span></td><td>${f.status==='pendente'?`<button class="btn-link" onclick="darBaixa('${d.id}')">Dar Baixa</button>`:''}</td></tr>`;}).join('');
+        
+        let fRows=faturas.empty?'<tr><td colspan="7">Nenhuma fatura neste mês</td></tr>':faturas.docs.map(d=>{
+            const f=d.data();
+            const venc=new Date(f.vencimento+'T00:00:00');
+            const vencido=venc<new Date()&&f.status==='pendente';
+            return`<tr>
+                <td><strong>${f.clienteNome||'N/D'}</strong></td>
+                <td>R$ ${(Number(f.valor)||0).toFixed(2)}</td>
+                <td>${f.vencimento||'-'}</td>
+                <td>${f.metodo||'-'}</td>
+                <td><span class="badge ${f.status==='pago'?'badge-success':vencido?'badge-danger':'badge-warning'}">${f.status==='pago'?'Pago':vencido?'Vencido':'Pendente'}</span></td>
+                <td>${f.status==='pago'?f.dataPagamento||'-':`<button class="btn-link" onclick="darBaixa('${d.id}')">Dar Baixa</button>`}</td>
+            </tr>`;
+        }).join('');
+        
+        let despesasRows=despesas.empty?'<tr><td colspan="4">Nenhuma despesa</td></tr>':despesas.docs.map(d=>{
+            const de=d.data();
+            return`<tr><td>${de.descricao||'-'}</td><td>${de.data||'-'}</td><td style="color:var(--danger);">- R$ ${(Number(de.valor)||0).toFixed(2)}</td><td><button class="btn-link btn-danger" onclick="excluirDespesa('${d.id}')">Excluir</button></td></tr>`;
+        }).join('');
+        
         pageContent.innerHTML=`
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+                <button class="btn btn-outline btn-sm" onclick="loadFinanceiro(${mesOffset-1})">← ${meses[(mes-1+12)%12]}</button>
+                <h3 style="font-weight:600;">${meses[mes]} ${ano}</h3>
+                <button class="btn btn-outline btn-sm" onclick="loadFinanceiro(${mesOffset+1})">${meses[(mes+1)%12]} →</button>
+            </div>
             <div class="stats-grid">
-                <div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Receitas</span><div class="stat-card-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></div></div><div class="stat-card-value">R$ ${totalReceitas.toFixed(2)}</div></div>
-                <div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Despesas</span><div class="stat-card-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div></div><div class="stat-card-value">R$ ${totalDespesas.toFixed(2)}</div></div>
-                <div class="stat-card clickable" onclick="loadPage('financeiro')"><div class="stat-card-header"><span class="stat-card-label">Vencidas</span><div class="stat-card-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg></div></div><div class="stat-card-value">${vencidas.size}</div></div>
-                <div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Saldo</span><div class="stat-card-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/></svg></div></div><div class="stat-card-value" style="color:${totalReceitas-totalDespesas>=0?'var(--success)':'var(--danger)'};">R$ ${(totalReceitas-totalDespesas).toFixed(2)}</div></div>
+                <div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Receitas do Mês</span><div class="stat-card-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></div></div><div class="stat-card-value">R$ ${totalReceitas.toFixed(2)}</div></div>
+                <div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Despesas do Mês</span><div class="stat-card-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div></div><div class="stat-card-value">R$ ${totalDespesas.toFixed(2)}</div></div>
+                <div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Saldo do Mês</span><div class="stat-card-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/></svg></div></div><div class="stat-card-value" style="color:${totalReceitas-totalDespesas>=0?'var(--success)':'var(--danger)'};">R$ ${(totalReceitas-totalDespesas).toFixed(2)}</div></div>
+                <div class="stat-card clickable" onclick="loadPage('financeiro')"><div class="stat-card-header"><span class="stat-card-label">⚠️ Vencidas (Total)</span><div class="stat-card-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg></div></div><div class="stat-card-value">${vencidas.size}</div></div>
             </div>
             <div class="content-grid">
-                <div class="card"><div class="card-header"><h3 class="card-title">Faturas</h3><button class="btn btn-primary btn-sm" onclick="novaFatura()">+ Nova</button></div><div class="card-body"><table class="table"><thead><tr><th>Cliente</th><th>Valor</th><th>Vencimento</th><th>Método</th><th>Status</th><th></th></tr></thead><tbody>${fRows}</tbody></table></div></div>
+                <div class="card"><div class="card-header"><h3 class="card-title">📋 Faturas de ${meses[mes]}</h3><button class="btn btn-primary btn-sm" onclick="novaFatura()">+ Nova</button></div><div class="card-body"><table class="table"><thead><tr><th>Cliente</th><th>Valor</th><th>Venc.</th><th>Método</th><th>Status</th><th>Ação</th></tr></thead><tbody>${fRows}</tbody></table></div></div>
                 <div>
-                    <div class="card" style="margin-bottom:14px;"><div class="card-header"><h3 class="card-title">Vencidas (${vencidas.size})</h3></div><div class="card-body-padded">${vencidas.empty?'<p style="color:var(--text-tertiary);">Nenhuma</p>':vencidas.docs.map(d=>{const f=d.data();return`<div class="fluxo-card saida"><span><strong>${f.clienteNome||'N/D'}</strong><br><span style="font-size:11px;">Venc: ${f.vencimento}</span></span><span style="color:var(--danger);font-weight:600;">R$ ${(Number(f.valor)||0).toFixed(2)}</span></div>`;}).join('')}</div></div>
+                    <div class="card" style="margin-bottom:14px;"><div class="card-header"><h3 class="card-title">💸 Despesas</h3></div><div class="card-body-padded"><table class="table"><thead><tr><th>Descrição</th><th>Data</th><th>Valor</th><th></th></tr></thead><tbody>${despesasRows}</tbody></table></div></div>
                     <div class="card"><div class="card-header"><h3 class="card-title">+ Despesa</h3></div><div class="card-body-padded"><form id="despesaForm"><div class="form-grid"><div class="form-group"><label>Descrição</label><input type="text" class="form-input" name="descricao" required></div><div class="form-group"><label>Valor (R$)</label><input type="number" class="form-input" name="valor" step="0.01" required></div></div><button type="button" class="btn btn-primary btn-sm" onclick="salvarDespesa()">Adicionar</button></form></div></div>
                 </div>
             </div>`;
@@ -506,7 +578,12 @@ async function salvarDespesa(){
     await db.collection('despesas').add(data);
     loadFinanceiro();
 }
-
+async function excluirDespesa(id){
+    if(confirm('Excluir despesa?')){
+        await db.collection('despesas').doc(id).delete();
+        loadFinanceiro();
+    }
+}
 // Agenda
 function loadAgenda(){const hoje=new Date();renderCalendario(hoje.getMonth(),hoje.getFullYear());}
 function renderCalendario(mes,ano){
