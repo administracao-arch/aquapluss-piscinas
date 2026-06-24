@@ -864,7 +864,8 @@ function abrirAppPiscineiro(){
         '<div class="header">🔧 AquaPluss Piscineiro</div>' +
         '<div class="container" id="appContent">Carregando...</div>' +
         '<script>' +
-        'if(!firebase.apps.length){firebase.initializeApp(firebaseConfig);}' +
+'var firebaseConfig = ' + JSON.stringify(firebaseConfig) + ';' +
+'if(!firebase.apps.length){firebase.initializeApp(firebaseConfig);}' +
         'var db = firebase.firestore();' +
         'var atendimentoAtivo = null;' +
         'var timerInterval = null;' +
@@ -1009,7 +1010,7 @@ function abrirAppPiscineiro(){
         '}' +
         '' +
         'async function finalizarAtendimento(){' +
-        '  if(!confirm("Deseja finalizar este atendimento?"))return;' +
+        '  if(!confirm(\'Deseja finalizar este atendimento?\'))return;' +
         '  clearInterval(timerInterval);' +
         '  var horaFim = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});' +
         '  var duracao = Math.floor(segundos/60);' +
@@ -1037,7 +1038,7 @@ function abrirAppPiscineiro(){
         '}' +
         '' +
         'function cancelarAtendimento(){' +
-        '  if(!confirm("Cancelar este atendimento?"))return;' +
+        '  if(!confirm(\'Tem certeza que deseja cancelar?\'))return;' +
         '  clearInterval(timerInterval);' +
         '  atendimentoAtivo = null;' +
         '  localStorage.removeItem("aquapluss-atendimento");' +
