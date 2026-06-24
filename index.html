@@ -317,78 +317,130 @@ async function salvarFuncionario(id){const f=document.getElementById('funcForm')
 async function loadPiscinas(){
     pageContent.innerHTML='<p style="padding:40px;">Carregando...</p>';
     try{
-        const snap=await db.collection('piscinas').get();
-        const rows=snap.empty?'<tr><td colspan="6">Nenhuma</td></tr>':snap.docs.map(d=>{const p=d.data();return`<tr><td><strong>${p.codigo||'PSC-XXXX'}</strong></td><td>${p.clienteNome||'-'}</td><td>${p.tamanho||'-'}m²</td><td>${p.volume||'-'}L</td><td><span class="badge ${p.status==='critica'?'badge-danger':p.status==='ativa'?'badge-success':'badge-warning'}">${p.status}</span></td><td><button class="btn-link" onclick="editarPiscina('${d.id}')">Editar</button><button class="btn-link btn-danger" onclick="excluirPiscina('${d.id}')">Excluir</button></td></tr>`;}).join('');
-        pageContent.innerHTML=`<div class="card"><div class="card-header"><h3 class="card-title">Piscinas (${snap.size})</h3><button class="btn btn-primary btn-sm" onclick="novaPiscina()">+ Nova</button></div><div class="card-body"><table class="table"><thead><tr><th>Código</th><th>Cliente</th><th>Tamanho</th><th>Volume</th><th>Status</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
-    }catch(err){pageContent.innerHTML=errCard(err.message);}
+        const clientesAtivosSnap = await db.collection('clientes').where('status','==','ativo').get();
+        const clientesAtivosIds = new Set();
+        clientesAtivosSnap.forEach(function(d){ clientesAtivosIds.add(d.id); });
+        
+        const snap = await db.collection('piscinas').get();
+        const piscinasAtivas = snap.docs.filter(function(d){
+            var p = d.data();
+            return clientesAtivosIds.has(p.clienteId);
+        });
+        
+        var rows = '';
+        if(piscinasAtivas.length === 0){
+            rows = '<tr><td colspan="6" style="text-align:center;padding:40px;">Nenhuma piscina ativa</td></tr>';
+        } else {
+            piscinasAtivas.forEach(function(d){
+                var p = d.data();
+                var statusClass = p.status === 'critica' ? 'badge-danger' : (p.status === 'ativa' ? 'badge-success' : 'badge-warning');
+                rows += '<tr><td><strong>' + (p.codigo || 'PSC-XXXX') + '</strong></td><td>' + (p.clienteNome || '-') + '</td><td>' + (p.tamanho || '-') + 'm²</td><td>' + (p.volume || '-') + 'L</td><td><span class="badge ' + statusClass + '"><span class="badge-dot"></span>' + (p.status || 'pendente') + '</span></td><td><button class="btn-link" onclick="editarPiscina(\'' + d.id + '\')">Editar</button><button class="btn-link btn-danger" onclick="excluirPiscina(\'' + d.id + '\')">Excluir</button></td></tr>';
+            });
+        }
+        
+        pageContent.innerHTML = '<div class="card"><div class="card-header"><h3 class="card-title">Piscinas Ativas (' + piscinasAtivas.length + ')</h3><button class="btn btn-primary btn-sm" onclick="novaPiscina()">+ Nova</button></div><div class="card-body"><table class="table"><thead><tr><th>Codigo</th><th>Cliente</th><th>Tamanho</th><th>Volume</th><th>Status</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div></div>';
+    }catch(err){
+        pageContent.innerHTML = errCard(err.message);
+    }
 }
-async function novaPiscina(data=null){
-    const isEdit=!!data;
-    // Carregar clientes ANTES de abrir o modal
-    let co='<option value="">Selecione...</option>';
+
+async function novaPiscina(data){
+    data = data || null;
+    var isEdit = !!data;
+    
+    var co = '<option value="">Selecione...</option>';
     try{
-        const cSnap=await db.collection('clientes').where('status','==','ativo').orderBy('nome').get();
-        cSnap.forEach(d=>{
-            co+=`<option value="${d.id}" ${data?.clienteId===d.id?'selected':''}>${d.data().nome}</option>`;
+        var cSnap = await db.collection('clientes').where('status','==','ativo').orderBy('nome').get();
+        cSnap.forEach(function(d){
+            var selected = (data && data.clienteId === d.id) ? 'selected' : '';
+            co += '<option value="' + d.id + '" ' + selected + '>' + d.data().nome + '</option>';
         });
     }catch(e){}
     
-    const body=`<form id="piscinaForm">
-        <div class="form-group"><label>Cliente *</label><select class="form-input" name="clienteId" required>${co}</select></div>
-        <div class="form-grid">
-            <div class="form-group"><label>Tamanho (m²) *</label><input type="number" class="form-input" name="tamanho" value="${data?.tamanho||''}" step="0.1" required></div>
-            <div class="form-group"><label>Volume (L) *</label><input type="number" class="form-input" name="volume" value="${data?.volume||''}" required></div>
-            <div class="form-group"><label>Material</label><select class="form-input" name="material"><option value="azulejo">Azulejo</option><option value="vinil">Vinil</option><option value="fibra">Fibra</option><option value="concreto">Concreto</option></select></div>
-            <div class="form-group"><label>Status</label><select class="form-input" name="status"><option value="ativa">Ativa</option><option value="critica">Crítica</option><option value="inativa">Inativa</option></select></div>
-        </div>
-    </form>`;
-    openModal(isEdit?'Editar Piscina':'Nova Piscina',body,`<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarPiscina('${data?.id||''}')">Salvar</button>`);
-}
-async function novaPiscina(data=null){
-    const isEdit=!!data;
-    let co='<option value="">Selecione...</option>';
-    try{
-        const cSnap=await db.collection('clientes').where('status','==','ativo').orderBy('nome').get();
-        cSnap.forEach(d=>{
-            co+=`<option value="${d.id}" ${data?.clienteId===d.id?'selected':''}>${d.data().nome}</option>`;
-        });
-    }catch(e){}
+    var tamanho = data ? (data.tamanho || '') : '';
+    var volume = data ? (data.volume || '') : '';
+    var materialAzulejo = (data && data.material === 'azulejo') ? 'selected' : '';
+    var materialVinil = (data && data.material === 'vinil') ? 'selected' : '';
+    var materialFibra = (data && data.material === 'fibra') ? 'selected' : '';
+    var materialConcreto = (data && data.material === 'concreto') ? 'selected' : '';
+    var statusAtiva = (data && data.status === 'ativa') ? 'selected' : '';
+    var statusCritica = (data && data.status === 'critica') ? 'selected' : '';
+    var statusInativa = (data && data.status === 'inativa') ? 'selected' : '';
     
-    const body=`<form id="piscinaForm">
-        <div class="form-group"><label>Cliente *</label><select class="form-input" name="clienteId" required>${co}</select></div>
-        <div class="form-grid">
-            <div class="form-group"><label>Tamanho (m²) *</label><input type="number" class="form-input" name="tamanho" value="${data?.tamanho||''}" step="0.1" required></div>
-            <div class="form-group"><label>Volume (L) *</label><input type="number" class="form-input" name="volume" value="${data?.volume||''}" required></div>
-            <div class="form-group"><label>Material</label><select class="form-input" name="material"><option value="azulejo">Azulejo</option><option value="vinil">Vinil</option><option value="fibra">Fibra</option><option value="concreto">Concreto</option></select></div>
-            <div class="form-group"><label>Status</label><select class="form-input" name="status"><option value="ativa">Ativa</option><option value="critica">Crítica</option><option value="inativa">Inativa</option></select></div>
-        </div>
-    </form>`;
-    openModal(isEdit?'Editar Piscina':'Nova Piscina',body,`<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarPiscina('${data?.id||''}')">Salvar</button>`);
+    var body = '<form id="piscinaForm">' +
+        '<div class="form-group"><label>Cliente *</label><select class="form-input" name="clienteId" required>' + co + '</select></div>' +
+        '<div class="form-grid">' +
+        '<div class="form-group"><label>Tamanho (m²) *</label><input type="number" class="form-input" name="tamanho" value="' + tamanho + '" step="0.1" required></div>' +
+        '<div class="form-group"><label>Volume (L) *</label><input type="number" class="form-input" name="volume" value="' + volume + '" required></div>' +
+        '<div class="form-group"><label>Material</label><select class="form-input" name="material"><option value="azulejo" ' + materialAzulejo + '>Azulejo</option><option value="vinil" ' + materialVinil + '>Vinil</option><option value="fibra" ' + materialFibra + '>Fibra</option><option value="concreto" ' + materialConcreto + '>Concreto</option></select></div>' +
+        '<div class="form-group"><label>Status</label><select class="form-input" name="status"><option value="ativa" ' + statusAtiva + '>Ativa</option><option value="critica" ' + statusCritica + '>Critica</option><option value="inativa" ' + statusInativa + '>Inativa</option></select></div>' +
+        '</div></form>';
+    
+    var titulo = isEdit ? 'Editar Piscina' : 'Nova Piscina';
+    var idSalvar = data ? (data.id || '') : '';
+    openModal(titulo, body, '<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarPiscina(\'' + idSalvar + '\')">Salvar</button>');
+}
+
+async function editarPiscina(id){
+    try {
+        var d = await db.collection('piscinas').doc(id).get();
+        if(d.exists){
+            var dados = d.data();
+            dados.id = id;
+            novaPiscina(dados);
+        } else {
+            alert('Piscina nao encontrada!');
+        }
+    } catch(e) {
+        alert('Erro: ' + e.message);
+    }
+}
+
+async function excluirPiscina(id){
+    if(confirm('Excluir esta piscina?')){
+        await db.collection('piscinas').doc(id).delete();
+        loadPiscinas();
+    }
 }
 
 async function salvarPiscina(id){
-    const form = document.getElementById('piscinaForm');
-    const fd = new FormData(form);
-    const data = {};
-    fd.forEach((value, key) => { data[key] = value; });
+    var form = document.getElementById('piscinaForm');
+    var fd = new FormData(form);
+    var data = {};
+    fd.forEach(function(value, key){ data[key] = value; });
     data.atualizadoEm = firebase.firestore.FieldValue.serverTimestamp();
+    
     if (!id) {
-        const cDoc = await db.collection('config').doc('piscina_counter').get();
-        let n = 1;
-        if (cDoc.exists) { n = (cDoc.data().ultimo || 0) + 1; await db.collection('config').doc('piscina_counter').update({ ultimo: n }); }
-        else { await db.collection('config').doc('piscina_counter').set({ ultimo: 1 }); }
+        var cDoc = await db.collection('config').doc('piscina_counter').get();
+        var n = 1;
+        if (cDoc.exists) {
+            n = (cDoc.data().ultimo || 0) + 1;
+            await db.collection('config').doc('piscina_counter').update({ ultimo: n });
+        } else {
+            await db.collection('config').doc('piscina_counter').set({ ultimo: 1 });
+        }
         data.codigo = 'PSC-' + String(n).padStart(4, '0');
         data.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
     }
+    
     if (data.clienteId) {
-        try { const cDoc = await db.collection('clientes').doc(data.clienteId).get(); if (cDoc.exists) data.clienteNome = cDoc.data().nome; } catch(e) {}
+        try {
+            var clienteDoc = await db.collection('clientes').doc(data.clienteId).get();
+            if (clienteDoc.exists) data.clienteNome = clienteDoc.data().nome;
+        } catch(e) {}
     }
+    
     try {
-        if (id) { await db.collection('piscinas').doc(id).update(data); }
-        else { await db.collection('piscinas').add(data); }
+        if (id) {
+            await db.collection('piscinas').doc(id).update(data);
+        } else {
+            await db.collection('piscinas').add(data);
+        }
         closeModal();
         loadPiscinas();
-    } catch(error) { alert('Erro ao salvar: ' + error.message); }
+    } catch(error) {
+        alert('Erro ao salvar: ' + error.message);
+    }
 }
 // Estoque Empresa
 async function loadEstoqueEmpresa(){
