@@ -1008,11 +1008,7 @@ async function loadRotas(){
 var appPiscineiroWindow = null;
 
 function abrirAppPiscineiro(){
-    var url = 'https://aquapluss-piscineiro.web.app';
-    var w = window.open(url, 'AppPiscineiro', 'width=420,height=750,left=100,top=50');
-    if(!w || w.closed){
-        alert('Popup bloqueado! Permita popups para este site.');
-    }
+    window.open('piscineiro.html', 'AppPiscineiro', 'width=420,height=750,left=100,top=50');
 }
 
 // Event Listeners
