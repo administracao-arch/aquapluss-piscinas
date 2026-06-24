@@ -765,21 +765,41 @@ async function verAtendimento(id){
 // Agenda
 function loadAgenda(){const hoje=new Date();renderCalendario(hoje.getMonth(),hoje.getFullYear());}
 function renderCalendario(mes,ano){
-    const meses=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-    const diasSemana=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-    const primeiroDia=new Date(ano,mes,1).getDay();
-    const ultimoDia=new Date(ano,mes+1,0).getDate();
-    const ultimoDiaAnterior=new Date(ano,mes,0).getDate();
-    const hoje=new Date();
-    let html=`<div class="calendar-nav"><button onclick="renderCalendario(${mes-1},${ano})">← Anterior</button><span class="month-year">${meses[mes]} ${ano}</span><button onclick="renderCalendario(${mes+1},${ano})">Próximo →</button></div>`;
-    html+='<div class="calendar-grid">';
-    diasSemana.forEach(d=>html+=`<div class="calendar-day-header">${d}</div>`);
-    for(let i=primeiroDia-1;i>=0;i--)html+=`<div class="calendar-day other-month">${ultimoDiaAnterior-i}</div>`;
-    for(let dia=1;dia<=ultimoDia;dia++){const isHoje=dia===hoje.getDate()&&mes===hoje.getMonth()&&ano===hoje.getFullYear();html+=`<div class="calendar-day ${isHoje?'today':''}">${dia}</div>`;}
-    const total=primeiroDia+ultimoDia;const restante=total%7===0?0:7-(total%7);
-    for(let i=1;i<=restante;i++)html+=`<div class="calendar-day other-month">${i}</div>`;
+    var meses=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    var diasSemana=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+    var primeiroDia=new Date(ano,mes,1).getDay();
+    var ultimoDia=new Date(ano,mes+1,0).getDate();
+    var ultimoDiaAnterior=new Date(ano,mes,0).getDate();
+    var hoje=new Date();
+    
+    var html='<div class="calendar-nav">';
+    html+='<button onclick="renderCalendario('+(mes-1)+','+ano+')">← Anterior</button>';
+    html+='<span class="month-year">'+meses[mes]+' '+ano+'</span>';
+    html+='<button onclick="renderCalendario('+(mes+1)+','+ano+')">Próximo →</button>';
     html+='</div>';
-    pageContent.innerHTML=`<div class="card"><div class="card-header"><h3 class="card-title">Agenda</h3></div><div class="card-body-padded">${html}</div></div>`;
+    html+='<div class="calendar-grid">';
+    
+    for(var d=0;d<diasSemana.length;d++){
+        html+='<div class="calendar-day-header">'+diasSemana[d]+'</div>';
+    }
+    
+    for(var i=primeiroDia-1;i>=0;i--){
+        html+='<div class="calendar-day other-month">'+(ultimoDiaAnterior-i)+'</div>';
+    }
+    
+    for(var dia=1;dia<=ultimoDia;dia++){
+        var isHoje=(dia===hoje.getDate()&&mes===hoje.getMonth()&&ano===hoje.getFullYear());
+        html+='<div class="calendar-day'+(isHoje?' today':'')+'">'+dia+'</div>';
+    }
+    
+    var total=primeiroDia+ultimoDia;
+    var restante=total%7===0?0:7-(total%7);
+    for(var r=1;r<=restante;r++){
+        html+='<div class="calendar-day other-month">'+r+'</div>';
+    }
+    
+    html+='</div>';
+    pageContent.innerHTML='<div class="card"><div class="card-header"><h3 class="card-title">Agenda</h3></div><div class="card-body-padded">'+html+'</div></div>';
 }
 
 // Rotas
