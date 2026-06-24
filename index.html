@@ -864,8 +864,7 @@ function abrirAppPiscineiro(){
         '<div class="header">🔧 AquaPluss Piscineiro</div>' +
         '<div class="container" id="appContent">Carregando...</div>' +
         '<script>' +
-        'var firebaseConfig = ' + JSON.stringify(firebaseConfig) + ';' +
-        'firebase.initializeApp(firebaseConfig);' +
+        'if(!firebase.apps.length){firebase.initializeApp(firebaseConfig);}' +
         'var db = firebase.firestore();' +
         'var atendimentoAtivo = null;' +
         'var timerInterval = null;' +
@@ -1059,8 +1058,21 @@ document.querySelectorAll('.sidebar-section-header').forEach(h=>{h.addEventListe
 document.getElementById('themeToggle').addEventListener('click',()=>{const t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',t);localStorage.setItem('aquapluss-theme',t);});
 document.getElementById('mobileMenuBtn').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('mobile-open'));
 
-auth.onAuthStateChanged(user=>{
-    if(user){const saved=localStorage.getItem('aquapluss-user');if(saved){const d=JSON.parse(saved);sidebarUserName.textContent=d.nome||user.email.split('@')[0];sidebarUserRole.textContent=d.cargo||'Usuário';sidebarAvatar.textContent=(d.nome||user.email).substring(0,2).toUpperCase();}showApp();}else{showLogin();}
+auth.onAuthStateChanged(function(user){
+    if(user){
+        console.log('✅ Usuário autenticado:', user.email);
+        var saved=localStorage.getItem('aquapluss-user');
+        if(saved){
+            var d=JSON.parse(saved);
+            sidebarUserName.textContent=d.nome||user.email.split('@')[0];
+            sidebarUserRole.textContent=d.cargo||'Usuário';
+            sidebarAvatar.textContent=(d.nome||user.email).substring(0,2).toUpperCase();
+        }
+        showApp();
+    }else{
+        console.log('ℹ️ Nenhum usuário autenticado');
+        showLogin();
+    }
 });
 if(localStorage.getItem('aquapluss-theme')==='dark')document.documentElement.setAttribute('data-theme','dark');
 if(localStorage.getItem('aquapluss-sidebar-collapsed')==='true'){document.getElementById('sidebar').classList.add('collapsed');document.getElementById('mainContent').style.marginLeft='68px';}
