@@ -226,23 +226,35 @@ function loadPage(page){
 async function loadDashboard(){
     pageContent.innerHTML='<p style="padding:40px;text-align:center;">Carregando...</p>';
     try{
-        const hoje=new Date().toISOString().split('T')[0];
-        const[clientes,funcs,piscinas,estoque,vencidas]=await Promise.all([
-            db.collection('clientes').where('status','==','ativo').get(),
-            db.collection('funcionarios').where('status','==','ativo').get(),
-            db.collection('piscinas').where('status','==','ativa').get(),
-            db.collection('estoque').get(),
-            db.collection('faturas').where('status','==','pendente').where('vencimento','<',hoje).get()
-        ]);
-        const baixo=estoque.docs.filter(d=>{const e=d.data();return(e.quantidade||0)<=(e.quantidadeMinima||5);});
-        pageContent.innerHTML=`
-            <div class="stats-grid">
-                <div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Clientes Ativos</span><div class="stat-card-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div><div class="stat-card-value">${clientes.size}</div></div>
-                <div class="stat-card clickable" onclick="loadPage('financeiro')"><div class="stat-card-header"><span class="stat-card-label">⚠️ Faturas Vencidas</span><div class="stat-card-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg></div></div><div class="stat-card-value">${vencidas.size}</div><span class="stat-card-change negative">Clique para ver</span></div>
-                <div class="stat-card clickable" onclick="loadPage('estoque-empresa')"><div class="stat-card-header"><span class="stat-card-label">Estoque Baixo</span><div class="stat-card-icon amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg></div></div><div class="stat-card-value">${baixo.length}</div></div>
-                <div class="stat-card clickable" onclick="loadPage('piscinas')"><div class="stat-card-header"><span class="stat-card-label">Piscinas Ativas</span><div class="stat-card-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h2a4 4 0 0 0 4-4V6a4 4 0 0 1 8 0v2a4 4 0 0 0 4 4h2"/></svg></div></div><div class="stat-card-value">${piscinas.size}</div></div>
-            </div>`;
-    }catch(err){pageContent.innerHTML=errCard(err.message);}
+        var hoje=new Date().toISOString().split('T')[0];
+        var clientesSnap=await db.collection('clientes').where('status','==','ativo').get();
+        var funcsSnap=await db.collection('funcionarios').where('status','==','ativo').get();
+        var piscinasSnap=await db.collection('piscinas').where('status','==','ativa').get();
+        var estoqueSnap=await db.collection('estoque').get();
+        var vencidasSnap=await db.collection('faturas').where('status','==','pendente').where('vencimento','<',hoje).get();
+        
+        var totalClientes=clientesSnap.size;
+        var totalFuncs=funcsSnap.size;
+        var totalPiscinas=piscinasSnap.size;
+        var totalVencidas=vencidasSnap.size;
+        
+        var baixo=0;
+        estoqueSnap.docs.forEach(function(d){
+            var e=d.data();
+            if((e.quantidade||0)<=(e.quantidadeMinima||5)){baixo++;}
+        });
+        
+        var html='<div class="stats-grid">';
+        html+='<div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Clientes Ativos</span><div class="stat-card-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div><div class="stat-card-value">'+totalClientes+'</div></div>';
+        html+='<div class="stat-card clickable" onclick="loadPage(\'financeiro\')"><div class="stat-card-header"><span class="stat-card-label">⚠️ Faturas Vencidas</span><div class="stat-card-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg></div></div><div class="stat-card-value">'+totalVencidas+'</div><span class="stat-card-change negative">Clique para ver</span></div>';
+        html+='<div class="stat-card clickable" onclick="loadPage(\'estoque-empresa\')"><div class="stat-card-header"><span class="stat-card-label">Estoque Baixo</span><div class="stat-card-icon amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg></div></div><div class="stat-card-value">'+baixo+'</div></div>';
+        html+='<div class="stat-card clickable" onclick="loadPage(\'piscinas\')"><div class="stat-card-header"><span class="stat-card-label">Piscinas Ativas</span><div class="stat-card-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h2a4 4 0 0 0 4-4V6a4 4 0 0 1 8 0v2a4 4 0 0 0 4 4h2"/></svg></div></div><div class="stat-card-value">'+totalPiscinas+'</div></div>';
+        html+='</div>';
+        
+        pageContent.innerHTML=html;
+    }catch(err){
+        pageContent.innerHTML=errCard(err.message);
+    }
 }
 
 // Clientes
