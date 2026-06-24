@@ -331,7 +331,46 @@ async function novaPiscina(data=null){
             co+=`<option value="${d.id}" ${data?.clienteId===d.id?'selected':''}>${d.data().nome}</option>`;
         });
     }catch(e){}
+    async function salvarPiscina(id){
+    const form = document.getElementById('piscinaForm');
+    const fd = new FormData(form);
+    const data = {};
+    fd.forEach((value, key) => { data[key] = value; });
     
+    data.atualizadoEm = firebase.firestore.FieldValue.serverTimestamp();
+    
+    if (!id) {
+        const cDoc = await db.collection('config').doc('piscina_counter').get();
+        let n = 1;
+        if (cDoc.exists) {
+            n = (cDoc.data().ultimo || 0) + 1;
+            await db.collection('config').doc('piscina_counter').update({ ultimo: n });
+        } else {
+            await db.collection('config').doc('piscina_counter').set({ ultimo: 1 });
+        }
+        data.codigo = 'PSC-' + String(n).padStart(4, '0');
+        data.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
+    }
+    
+    if (data.clienteId) {
+        try {
+            const cDoc = await db.collection('clientes').doc(data.clienteId).get();
+            if (cDoc.exists) data.clienteNome = cDoc.data().nome;
+        } catch(e) {}
+    }
+    
+    try {
+        if (id) {
+            await db.collection('piscinas').doc(id).update(data);
+        } else {
+            await db.collection('piscinas').add(data);
+        }
+        closeModal();
+        loadPiscinas();
+    } catch(error) {
+        alert('Erro ao salvar: ' + error.message);
+    }
+}
     const body=`<form id="piscinaForm">
         <div class="form-group"><label>Cliente *</label><select class="form-input" name="clienteId" required>${co}</select></div>
         <div class="form-grid">
