@@ -234,7 +234,6 @@ async function loadDashboard(){
         var vencidasSnap=await db.collection('faturas').where('status','==','pendente').where('vencimento','<',hoje).get();
         
         var totalClientes=clientesSnap.size;
-        var totalFuncs=funcsSnap.size;
         var totalPiscinas=piscinasSnap.size;
         var totalVencidas=vencidasSnap.size;
         
@@ -246,7 +245,7 @@ async function loadDashboard(){
         
         var html='<div class="stats-grid">';
         html+='<div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Clientes Ativos</span><div class="stat-card-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div><div class="stat-card-value">'+totalClientes+'</div></div>';
-        html+='<div class="stat-card clickable" onclick="loadPage(\'financeiro\')"><div class="stat-card-header"><span class="stat-card-label">⚠️ Faturas Vencidas</span><div class="stat-card-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg></div></div><div class="stat-card-value">'+totalVencidas+'</div><span class="stat-card-change negative">Clique para ver</span></div>';
+        html+='<div class="stat-card clickable" onclick="loadPage(\'financeiro\')"><div class="stat-card-header"><span class="stat-card-label">Faturas Vencidas</span><div class="stat-card-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg></div></div><div class="stat-card-value">'+totalVencidas+'</div><span class="stat-card-change negative">Clique para ver</span></div>';
         html+='<div class="stat-card clickable" onclick="loadPage(\'estoque-empresa\')"><div class="stat-card-header"><span class="stat-card-label">Estoque Baixo</span><div class="stat-card-icon amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg></div></div><div class="stat-card-value">'+baixo+'</div></div>';
         html+='<div class="stat-card clickable" onclick="loadPage(\'piscinas\')"><div class="stat-card-header"><span class="stat-card-label">Piscinas Ativas</span><div class="stat-card-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h2a4 4 0 0 0 4-4V6a4 4 0 0 1 8 0v2a4 4 0 0 0 4 4h2"/></svg></div></div><div class="stat-card-value">'+totalPiscinas+'</div></div>';
         html+='</div>';
@@ -261,12 +260,22 @@ async function loadDashboard(){
 async function loadClientes(){
     pageContent.innerHTML='<p style="padding:40px;">Carregando...</p>';
     try{
-        const snap=await db.collection('clientes').orderBy('nome').get();
-        const rows=snap.empty?'<tr><td colspan="5">Nenhum</td></tr>':snap.docs.map(d=>{const c=d.data();return`<tr><td><strong>${c.nome}</strong><br><span style="font-size:11px;">${c.cpfCnpj||''}</span></td><td>${c.telefone||'-'}</td><td>R$ ${(Number(c.plano)||0).toFixed(2)}</td><td><span class="badge ${c.status==='ativo'?'badge-success':c.status==='inativo'?'badge-danger':'badge-warning'}">${c.status}</span></td><td><button class="btn-link" onclick="editarCliente('${d.id}')">Editar</button><button class="btn-link" onclick="inativarCliente('${d.id}')">${c.status==='ativo'?'Inativar':'Ativar'}</button></td></tr>`;}).join('');
-        pageContent.innerHTML=`<div class="card"><div class="card-header"><h3 class="card-title">Clientes (${snap.size})</h3><button class="btn btn-primary btn-sm" onclick="novoCliente()">+ Novo</button></div><div class="card-body"><table class="table"><thead><tr><th>Nome/CPF</th><th>Telefone</th><th>Plano</th><th>Status</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
-    }catch(err){pageContent.innerHTML=errCard(err.message);}
+        var snap=await db.collection('clientes').orderBy('nome').get();
+        var rows='';
+        if(snap.empty){
+            rows='<tr><td colspan="5">Nenhum</td></tr>';
+        }else{
+            snap.docs.forEach(function(d){
+                var c=d.data();
+                var statusClass=c.status==='ativo'?'badge-success':(c.status==='inativo'?'badge-danger':'badge-warning');
+                rows+='<tr><td><strong>'+c.nome+'</strong><br><span style="font-size:11px;">'+(c.cpfCnpj||'')+'</span></td><td>'+(c.telefone||'-')+'</td><td>R$ '+(Number(c.plano)||0).toFixed(2)+'</td><td><span class="badge '+statusClass+'">'+c.status+'</span></td><td><button class="btn-link" onclick="editarCliente(\''+d.id+'\')">Editar</button><button class="btn-link" onclick="inativarCliente(\''+d.id+'\')">'+(c.status==='ativo'?'Inativar':'Ativar')+'</button></td></tr>';
+            });
+        }
+        pageContent.innerHTML='<div class="card"><div class="card-header"><h3 class="card-title">Clientes ('+snap.size+')</h3><button class="btn btn-primary btn-sm" onclick="novoCliente()">+ Novo</button></div><div class="card-body"><table class="table"><thead><tr><th>Nome/CPF</th><th>Telefone</th><th>Plano</th><th>Status</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div></div>';
+    }catch(err){
+        pageContent.innerHTML=errCard(err.message);
+    }
 }
-
 async function novoCliente(data=null){
     const isEdit=!!data;
     let funcOpts='<option value="">Selecione...</option>';
