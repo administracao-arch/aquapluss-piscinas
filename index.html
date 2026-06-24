@@ -256,7 +256,6 @@ async function loadClientes(){
 
 async function novoCliente(data=null){
     const isEdit=!!data;
-    // Carregar funcionários ANTES de abrir o modal
     let funcOpts='<option value="">Selecione...</option>';
     try{
         const fSnap=await db.collection('funcionarios').where('status','==','ativo').get();
@@ -275,8 +274,10 @@ async function novoCliente(data=null){
             <div class="form-group"><label>Telefone *</label><input type="text" class="form-input" name="telefone" value="${data?.telefone||''}" required></div>
             <div class="form-group"><label>E-mail</label><input type="email" class="form-input" name="email" value="${data?.email||''}"></div>
         </div></div>
-        <div class="form-section"><div class="form-section-title">Plano</div><div class="form-grid">
+        <div class="form-section"><div class="form-section-title">Plano e Pagamento</div><div class="form-grid">
             <div class="form-group"><label>Valor (R$) *</label><input type="number" class="form-input" name="plano" value="${data?.plano||''}" step="0.01" required></div>
+            <div class="form-group"><label>Dia do Vencimento *</label><select class="form-input" name="diaVencimento"><option value="">Selecione...</option>${[5,10,15,20,25,30].map(d=>`<option value="${d}" ${data?.diaVencimento==d?'selected':''}>Dia ${d}</option>`).join('')}</select></div>
+            <div class="form-group"><label>Forma de Pagamento *</label><select class="form-input" name="formaPagamento"><option value="">Selecione...</option><option value="PIX" ${data?.formaPagamento=='PIX'?'selected':''}>PIX</option><option value="Boleto" ${data?.formaPagamento=='Boleto'?'selected':''}>Boleto</option><option value="Cartão" ${data?.formaPagamento=='Cartão'?'selected':''}>Cartão</option><option value="Dinheiro" ${data?.formaPagamento=='Dinheiro'?'selected':''}>Dinheiro</option></select></div>
             <div class="form-group"><label>Funcionário</label><select class="form-input" name="funcionarioId">${funcOpts}</select></div>
         </div><div class="form-group"><label>Dias da Semana</label><div class="tag-group" id="diasTags">${diasTags}</div></div></div>
         <div class="form-section"><div class="form-section-title">Endereço</div><div class="form-grid">
@@ -296,8 +297,8 @@ async function editarCliente(id){const d=await db.collection('clientes').doc(id)
 async function inativarCliente(id){const d=await db.collection('clientes').doc(id).get();const c=d.data();const ns=c.status==='ativo'?'inativo':'ativo';const body=`<div class="form-group"><label>Motivo</label><textarea class="form-input" id="motivoInativacao" rows="3"></textarea></div>`;openModal(`${ns==='inativo'?'Inativar':'Reativar'}: ${c.nome}`,body,`<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="confirmarInativacao('${id}','${ns}')">Confirmar</button>`);}
 async function confirmarInativacao(id,status){const m=document.getElementById('motivoInativacao')?.value||'';await db.collection('clientes').doc(id).update({status,motivoInativacao:m,atualizadoEm:firebase.firestore.FieldValue.serverTimestamp()});closeModal();loadClientes();}
 async function buscarCEP(){const cep=document.getElementById('cepInput')?.value.replace(/\D/g,'');if(cep.length!==8)return;try{const r=await fetch(`https://viacep.com.br/ws/${cep}/json/`);const d=await r.json();if(!d.erro){document.getElementById('logradouroInput').value=d.logradouro||'';document.getElementById('bairroInput').value=d.bairro||'';document.getElementById('cidadeInput').value=d.localidade||'';document.getElementById('estadoInput').value=d.uf||'';}}catch(e){}}
-async function salvarCliente(id){const form=document.getElementById('clienteForm');const fd=new FormData(form);const data=Object.fromEntries(fd.entries());data.plano=Number(data.plano)||0;const dias=[];document.querySelectorAll('#diasTags .tag.active').forEach(t=>dias.push(t.getAttribute('data-dia')));data.diasSemana=dias;data.atualizadoEm=firebase.firestore.FieldValue.serverTimestamp();if(id){await db.collection('clientes').doc(id).update(data);}else{data.status='ativo';data.criadoEm=firebase.firestore.FieldValue.serverTimestamp();await db.collection('clientes').add(data);}closeModal();loadClientes();}
-
+async function salvarCliente(id){const form=document.getElementById('clienteForm');const fd=new FormData(form);const data=Object.fromEntries(fd.entries());data.plano=Number(data.plano)||0;data.diaVencimento=Number(data.diaVencimento)||10;const dias=[];document.querySelectorAll('#diasTags .tag.active').forEach(t=>dias.push(t.getAttribute('data-dia')));data.diasSemana=dias;data.atualizadoEm=firebase.firestore.FieldValue.serverTimestamp();if(id){await db.collection('clientes').doc(id).update(data);}else{data.status='ativo';data.criadoEm=firebase.firestore.FieldValue.serverTimestamp();await db.collection('clientes').add(data);}closeModal();loadClientes();
+}
 // Funcionários
 async function loadFuncionarios(){
     pageContent.innerHTML='<p style="padding:40px;">Carregando...</p>';
