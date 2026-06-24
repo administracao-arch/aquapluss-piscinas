@@ -340,31 +340,43 @@ async function novoCliente(data){
     openModal(titulo, body, '<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarCliente(\'' + idSalvar + '\')">Salvar</button>');
 }
 
-async function editarCliente(id){const d=await db.collection('clientes').doc(id).get();if(d.exists)novoCliente({id,...d.data()});}
-async function inativarCliente(id){
+async function editarCliente(id){
     var d = await db.collection('clientes').doc(id).get();
-    var c = d.data();
-    var ns = c.status === 'ativo' ? 'inativo' : 'ativo';
-    var titulo = (ns === 'inativo' ? 'Inativar' : 'Reativar') + ': ' + c.nome;
-    var body = '<div class="form-group"><label>Motivo</label><textarea class="form-input" id="motivoInativacao" rows="3"></textarea></div>';
-    openModal(titulo, body, '<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="confirmarInativacao(\'' + id + '\',\'' + ns + '\')">Confirmar</button>');
+    if(d.exists){
+        novoCliente({id: id, nome: d.data().nome, cpfCnpj: d.data().cpfCnpj, telefone: d.data().telefone, email: d.data().email, plano: d.data().plano, diaVencimento: d.data().diaVencimento, formaPagamento: d.data().formaPagamento, funcionarioId: d.data().funcionarioId, diasSemana: d.data().diasSemana, cep: d.data().cep, logradouro: d.data().logradouro, numero: d.data().numero, bairro: d.data().bairro, cidade: d.data().cidade, estado: d.data().estado, gps: d.data().gps, status: d.data().status});
+    }
 }
-async function confirmarInativacao(id,status){const m=document.getElementById('motivoInativacao')?.value||'';await db.collection('clientes').doc(id).update({status,motivoInativacao:m,atualizadoEm:firebase.firestore.FieldValue.serverTimestamp()});closeModal();loadClientes();}
+async function confirmarInativacao(id, status){
+    var m = document.getElementById('motivoInativacao');
+    var motivo = m ? m.value : '';
+    await db.collection('clientes').doc(id).update({
+        status: status,
+        motivoInativacao: motivo,
+        atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    closeModal();
+    loadClientes();
+}
+
 async function salvarCliente(id){
-    const form=document.getElementById('clienteForm');
-    const fd=new FormData(form);
-    const data=Object.fromEntries(fd.entries());
-    data.plano=Number(data.plano)||0;
-    data.diaVencimento=Number(data.diaVencimento)||10;
-    const dias=[];
-    document.querySelectorAll('#diasTags .tag.active').forEach(t=>dias.push(t.getAttribute('data-dia')));
-    data.diasSemana=dias;
-    data.atualizadoEm=firebase.firestore.FieldValue.serverTimestamp();
+    var form = document.getElementById('clienteForm');
+    var fd = new FormData(form);
+    var data = {};
+    fd.forEach(function(value, key){ data[key] = value; });
+    data.plano = Number(data.plano) || 0;
+    data.diaVencimento = Number(data.diaVencimento) || 10;
+    var dias = [];
+    var tags = document.querySelectorAll('#diasTags .tag.active');
+    for(var i=0; i<tags.length; i++){
+        dias.push(tags[i].getAttribute('data-dia'));
+    }
+    data.diasSemana = dias;
+    data.atualizadoEm = firebase.firestore.FieldValue.serverTimestamp();
     if(id){
         await db.collection('clientes').doc(id).update(data);
     }else{
-        data.status='ativo';
-        data.criadoEm=firebase.firestore.FieldValue.serverTimestamp();
+        data.status = 'ativo';
+        data.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
         await db.collection('clientes').add(data);
     }
     closeModal();
@@ -372,19 +384,101 @@ async function salvarCliente(id){
 }
 
 // Funcionários
+	
+// Funcionários
 async function loadFuncionarios(){
     pageContent.innerHTML='<p style="padding:40px;">Carregando...</p>';
     try{
-        const snap=await db.collection('funcionarios').orderBy('nome').get();
-        const rows=snap.empty?'<tr><td colspan="5">Nenhum</td></tr>':snap.docs.map(d=>{const f=d.data();return`<tr><td>${f.nome}</td><td>${f.cargo||'-'}</td><td>${f.telefone||'-'}</td><td><span class="badge ${f.status==='ativo'?'badge-success':'badge-danger'}">${f.status}</span></td><td><button class="btn-link" onclick="editarFuncionario('${d.id}')">Editar</button><button class="btn-link" onclick="inativarFuncionario('${d.id}')">${f.status==='ativo'?'Inativar':'Ativar'}</button></td></tr>`;}).join('');
-        pageContent.innerHTML=`<div class="card"><div class="card-header"><h3 class="card-title">Funcionários (${snap.size})</h3><button class="btn btn-primary btn-sm" onclick="novoFuncionario()">+ Novo</button></div><div class="card-body"><table class="table"><thead><tr><th>Nome</th><th>Cargo</th><th>Telefone</th><th>Status</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
-    }catch(err){pageContent.innerHTML=errCard(err.message);}
+        var snap = await db.collection('funcionarios').orderBy('nome').get();
+        var rows = '';
+        if(snap.empty){
+            rows = '<tr><td colspan="5">Nenhum</td></tr>';
+        }else{
+            snap.docs.forEach(function(d){
+                var f = d.data();
+                var statusClass = f.status === 'ativo' ? 'badge-success' : 'badge-danger';
+                rows += '<tr><td>' + f.nome + '</td><td>' + (f.cargo || '-') + '</td><td>' + (f.telefone || '-') + '</td><td><span class="badge ' + statusClass + '">' + f.status + '</span></td><td><button class="btn-link" onclick="editarFuncionario(\'' + d.id + '\')">Editar</button><button class="btn-link" onclick="inativarFuncionario(\'' + d.id + '\')">' + (f.status === 'ativo' ? 'Inativar' : 'Ativar') + '</button></td></tr>';
+            });
+        }
+        pageContent.innerHTML = '<div class="card"><div class="card-header"><h3 class="card-title">Funcionários (' + snap.size + ')</h3><button class="btn btn-primary btn-sm" onclick="novoFuncionario()">+ Novo</button></div><div class="card-body"><table class="table"><thead><tr><th>Nome</th><th>Cargo</th><th>Telefone</th><th>Status</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div></div>';
+    }catch(err){
+        pageContent.innerHTML = errCard(err.message);
+    }
 }
-function novoFuncionario(data=null){const isEdit=!!data;const body=`<form id="funcForm"><div class="form-grid"><div class="form-group"><label>Nome *</label><input type="text" class="form-input" name="nome" value="${data?.nome||''}" required></div><div class="form-group"><label>CPF *</label><input type="text" class="form-input" name="cpf" value="${data?.cpf||''}" required></div><div class="form-group"><label>Telefone *</label><input type="text" class="form-input" name="telefone" value="${data?.telefone||''}" required></div><div class="form-group"><label>E-mail</label><input type="email" class="form-input" name="email" value="${data?.email||''}"></div><div class="form-group"><label>Cargo</label><select class="form-input" name="cargo"><option value="Piscineiro">Piscineiro</option><option value="Técnico">Técnico</option></select></div><div class="form-group"><label>Salário (R$)</label><input type="number" class="form-input" name="salario" value="${data?.salario||''}" step="0.01"></div><div class="form-group"><label>Comissão (%)</label><input type="number" class="form-input" name="comissao" value="${data?.comissao||''}" step="0.1"></div></div></form>`;openModal(isEdit?'Editar':'Novo Funcionário',body,`<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarFuncionario('${data?.id||''}')">Salvar</button>`);}
-async function editarFuncionario(id){const d=await db.collection('funcionarios').doc(id).get();if(d.exists)novoFuncionario({id,...d.data()});}
-async function inativarFuncionario(id){const d=await db.collection('funcionarios').doc(id).get();const f=d.data();const ns=f.status==='ativo'?'inativo':'ativo';await db.collection('funcionarios').doc(id).update({status:ns});loadFuncionarios();}
-async function salvarFuncionario(id){const f=document.getElementById('funcForm');const fd=new FormData(f);const data=Object.fromEntries(fd.entries());data.atualizadoEm=firebase.firestore.FieldValue.serverTimestamp();if(id){await db.collection('funcionarios').doc(id).update(data);}else{data.status='ativo';data.criadoEm=firebase.firestore.FieldValue.serverTimestamp();await db.collection('funcionarios').add(data);}closeModal();loadFuncionarios();}
+// Funcionários
+async function loadFuncionarios(){
+    pageContent.innerHTML='<p style="padding:40px;">Carregando...</p>';
+    try{
+        var snap = await db.collection('funcionarios').orderBy('nome').get();
+        var rows = '';
+        if(snap.empty){
+            rows = '<tr><td colspan="5">Nenhum</td></tr>';
+        }else{
+            snap.docs.forEach(function(d){
+                var f = d.data();
+                var statusClass = f.status === 'ativo' ? 'badge-success' : 'badge-danger';
+                rows += '<tr><td>' + f.nome + '</td><td>' + (f.cargo || '-') + '</td><td>' + (f.telefone || '-') + '</td><td><span class="badge ' + statusClass + '">' + f.status + '</span></td><td><button class="btn-link" onclick="editarFuncionario(\'' + d.id + '\')">Editar</button><button class="btn-link" onclick="inativarFuncionario(\'' + d.id + '\')">' + (f.status === 'ativo' ? 'Inativar' : 'Ativar') + '</button></td></tr>';
+            });
+        }
+        pageContent.innerHTML = '<div class="card"><div class="card-header"><h3 class="card-title">Funcionários (' + snap.size + ')</h3><button class="btn btn-primary btn-sm" onclick="novoFuncionario()">+ Novo</button></div><div class="card-body"><table class="table"><thead><tr><th>Nome</th><th>Cargo</th><th>Telefone</th><th>Status</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div></div>';
+    }catch(err){
+        pageContent.innerHTML = errCard(err.message);
+    }
+}
 
+function novoFuncionario(data){
+    data = data || null;
+    var isEdit = !!data;
+    var body = '<form id="funcForm"><div class="form-grid">' +
+        '<div class="form-group"><label>Nome *</label><input type="text" class="form-input" name="nome" value="' + (data ? data.nome || '' : '') + '" required></div>' +
+        '<div class="form-group"><label>CPF *</label><input type="text" class="form-input" name="cpf" value="' + (data ? data.cpf || '' : '') + '" required></div>' +
+        '<div class="form-group"><label>Telefone *</label><input type="text" class="form-input" name="telefone" value="' + (data ? data.telefone || '' : '') + '" required></div>' +
+        '<div class="form-group"><label>E-mail</label><input type="email" class="form-input" name="email" value="' + (data ? data.email || '' : '') + '"></div>' +
+        '<div class="form-group"><label>Cargo</label><select class="form-input" name="cargo"><option value="Piscineiro"' + (data && data.cargo === 'Piscineiro' ? 'selected' : '') + '>Piscineiro</option><option value="Técnico"' + (data && data.cargo === 'Técnico' ? 'selected' : '') + '>Técnico</option></select></div>' +
+        '<div class="form-group"><label>Salário (R$)</label><input type="number" class="form-input" name="salario" value="' + (data ? data.salario || '' : '') + '" step="0.01"></div>' +
+        '<div class="form-group"><label>Comissão (%)</label><input type="number" class="form-input" name="comissao" value="' + (data ? data.comissao || '' : '') + '" step="0.1"></div>' +
+        '</div></form>';
+    var titulo = isEdit ? 'Editar Funcionário' : 'Novo Funcionário';
+    var idSalvar = data ? (data.id || '') : '';
+    openModal(titulo, body, '<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarFuncionario(\'' + idSalvar + '\')">Salvar</button>');
+}
+
+async function editarFuncionario(id){
+    var d = await db.collection('funcionarios').doc(id).get();
+    if(d.exists){
+        var dados = d.data();
+        dados.id = id;
+        novoFuncionario(dados);
+    }
+}
+
+async function inativarFuncionario(id){
+    var d = await db.collection('funcionarios').doc(id).get();
+    var f = d.data();
+    var ns = f.status === 'ativo' ? 'inativo' : 'ativo';
+    await db.collection('funcionarios').doc(id).update({status: ns});
+    loadFuncionarios();
+}
+
+async function salvarFuncionario(id){
+    var f = document.getElementById('funcForm');
+    var fd = new FormData(f);
+    var data = {};
+    fd.forEach(function(value, key){ data[key] = value; });
+    data.atualizadoEm = firebase.firestore.FieldValue.serverTimestamp();
+    if(id){
+        await db.collection('funcionarios').doc(id).update(data);
+    }else{
+        data.status = 'ativo';
+        data.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
+        await db.collection('funcionarios').add(data);
+    }
+    closeModal();
+    loadFuncionarios();
+}
+
+// Piscinas
+	
 // Piscinas
 async function loadPiscinas(){
     pageContent.innerHTML='<p style="padding:40px;">Carregando...</p>';
