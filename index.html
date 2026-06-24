@@ -276,47 +276,79 @@ async function loadClientes(){
         pageContent.innerHTML=errCard(err.message);
     }
 }
-async function novoCliente(data=null){
-    const isEdit=!!data;
-    let funcOpts='<option value="">Selecione...</option>';
+async function novoCliente(data){
+    data = data || null;
+    var isEdit = !!data;
+    var funcOpts = '<option value="">Selecione...</option>';
     try{
-        const fSnap=await db.collection('funcionarios').where('status','==','ativo').get();
-        fSnap.forEach(d=>{
-            funcOpts+=`<option value="${d.id}" ${data?.funcionarioId===d.id?'selected':''}>${d.data().nome}</option>`;
+        var fSnap = await db.collection('funcionarios').where('status','==','ativo').get();
+        fSnap.docs.forEach(function(d){
+            var selected = (data && data.funcionarioId === d.id) ? 'selected' : '';
+            funcOpts += '<option value="' + d.id + '" ' + selected + '>' + d.data().nome + '</option>';
         });
     }catch(e){}
     
-    const diasSemana=data?.diasSemana||[];
-    const diasLabels=['Seg','Ter','Qua','Qui','Sex','Sáb'];
-    const diasTags=diasLabels.map(d=>`<span class="tag ${diasSemana.includes(d)?'active':''}" onclick="this.classList.toggle('active')" data-dia="${d}">${d}</span>`).join('');
-    const body=`<form id="clienteForm">
-        <div class="form-section"><div class="form-section-title">Dados Pessoais</div><div class="form-grid">
-            <div class="form-group"><label>Nome *</label><input type="text" class="form-input" name="nome" value="${data?.nome||''}" required></div>
-            <div class="form-group"><label>CPF/CNPJ</label><input type="text" class="form-input" name="cpfCnpj" value="${data?.cpfCnpj||''}"></div>
-            <div class="form-group"><label>Telefone *</label><input type="text" class="form-input" name="telefone" value="${data?.telefone||''}" required></div>
-            <div class="form-group"><label>E-mail</label><input type="email" class="form-input" name="email" value="${data?.email||''}"></div>
-        </div></div>
-        <div class="form-section"><div class="form-section-title">Plano e Pagamento</div><div class="form-grid">
-            <div class="form-group"><label>Valor (R$) *</label><input type="number" class="form-input" name="plano" value="${data?.plano||''}" step="0.01" required></div>
-            <div class="form-group"><label>Dia do Vencimento *</label><select class="form-input" name="diaVencimento"><option value="">Selecione...</option>${[5,10,15,20,25,30].map(d=>`<option value="${d}" ${data?.diaVencimento==d?'selected':''}>Dia ${d}</option>`).join('')}</select></div>
-            <div class="form-group"><label>Forma de Pagamento *</label><select class="form-input" name="formaPagamento"><option value="">Selecione...</option><option value="PIX" ${data?.formaPagamento=='PIX'?'selected':''}>PIX</option><option value="Boleto" ${data?.formaPagamento=='Boleto'?'selected':''}>Boleto</option><option value="Cartão" ${data?.formaPagamento=='Cartão'?'selected':''}>Cartão</option><option value="Dinheiro" ${data?.formaPagamento=='Dinheiro'?'selected':''}>Dinheiro</option></select></div>
-            <div class="form-group"><label>Funcionário</label><select class="form-input" name="funcionarioId">${funcOpts}</select></div>
-        </div><div class="form-group"><label>Dias da Semana</label><div class="tag-group" id="diasTags">${diasTags}</div></div></div>
-        <div class="form-section"><div class="form-section-title">Endereço</div><div class="form-grid">
-            <div class="form-group"><label>CEP</label><input type="text" class="form-input" name="cep" id="cepInput" value="${data?.cep||''}" onblur="buscarCEP()"></div>
-            <div class="form-group"><label>Logradouro</label><input type="text" class="form-input" name="logradouro" id="logradouroInput" value="${data?.logradouro||''}"></div>
-            <div class="form-group"><label>Número</label><input type="text" class="form-input" name="numero" value="${data?.numero||''}"></div>
-            <div class="form-group"><label>Bairro</label><input type="text" class="form-input" name="bairro" id="bairroInput" value="${data?.bairro||''}"></div>
-            <div class="form-group"><label>Cidade</label><input type="text" class="form-input" name="cidade" id="cidadeInput" value="${data?.cidade||''}"></div>
-            <div class="form-group"><label>Estado</label><input type="text" class="form-input" name="estado" id="estadoInput" value="${data?.estado||''}" maxlength="2"></div>
-            <div class="form-group"><label>GPS</label><input type="text" class="form-input" name="gps" value="${data?.gps||''}"></div>
-        </div></div>
-    </form>`;
-    openModal(isEdit?'Editar Cliente':'Novo Cliente',body,`<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarCliente('${data?.id||''}')">Salvar</button>`);
+    var diasSemana = data ? (data.diasSemana || []) : [];
+    var diasLabels = ['Seg','Ter','Qua','Qui','Sex','Sáb'];
+    var diasTags = '';
+    for(var i=0; i<diasLabels.length; i++){
+        var d = diasLabels[i];
+        var ativo = diasSemana.includes(d) ? ' active' : '';
+        diasTags += '<span class="tag' + ativo + '" onclick="this.classList.toggle(\'active\')" data-dia="' + d + '">' + d + '</span>';
+    }
+    
+    var plano = data ? (data.plano || '') : '';
+    var diaVenc = data ? (data.diaVencimento || '') : '';
+    var sel5 = (diaVenc == 5) ? 'selected' : '';
+    var sel10 = (diaVenc == 10) ? 'selected' : '';
+    var sel15 = (diaVenc == 15) ? 'selected' : '';
+    var sel20 = (diaVenc == 20) ? 'selected' : '';
+    var sel25 = (diaVenc == 25) ? 'selected' : '';
+    var sel30 = (diaVenc == 30) ? 'selected' : '';
+    var fp = data ? (data.formaPagamento || '') : '';
+    var selPIX = (fp == 'PIX') ? 'selected' : '';
+    var selBoleto = (fp == 'Boleto') ? 'selected' : '';
+    var selCartao = (fp == 'Cartão') ? 'selected' : '';
+    var selDinheiro = (fp == 'Dinheiro') ? 'selected' : '';
+    
+    var body = '<form id="clienteForm">' +
+        '<div class="form-section"><div class="form-section-title">Dados Pessoais</div><div class="form-grid">' +
+        '<div class="form-group"><label>Nome *</label><input type="text" class="form-input" name="nome" value="' + (data ? data.nome || '' : '') + '" required></div>' +
+        '<div class="form-group"><label>CPF/CNPJ</label><input type="text" class="form-input" name="cpfCnpj" value="' + (data ? data.cpfCnpj || '' : '') + '"></div>' +
+        '<div class="form-group"><label>Telefone *</label><input type="text" class="form-input" name="telefone" value="' + (data ? data.telefone || '' : '') + '" required></div>' +
+        '<div class="form-group"><label>E-mail</label><input type="email" class="form-input" name="email" value="' + (data ? data.email || '' : '') + '"></div>' +
+        '</div></div>' +
+        '<div class="form-section"><div class="form-section-title">Plano e Pagamento</div><div class="form-grid">' +
+        '<div class="form-group"><label>Valor (R$) *</label><input type="number" class="form-input" name="plano" value="' + plano + '" step="0.01" required></div>' +
+        '<div class="form-group"><label>Dia do Vencimento *</label><select class="form-input" name="diaVencimento"><option value="">Selecione...</option><option value="5" ' + sel5 + '>Dia 5</option><option value="10" ' + sel10 + '>Dia 10</option><option value="15" ' + sel15 + '>Dia 15</option><option value="20" ' + sel20 + '>Dia 20</option><option value="25" ' + sel25 + '>Dia 25</option><option value="30" ' + sel30 + '>Dia 30</option></select></div>' +
+        '<div class="form-group"><label>Forma de Pagamento *</label><select class="form-input" name="formaPagamento"><option value="">Selecione...</option><option value="PIX" ' + selPIX + '>PIX</option><option value="Boleto" ' + selBoleto + '>Boleto</option><option value="Cartão" ' + selCartao + '>Cartão</option><option value="Dinheiro" ' + selDinheiro + '>Dinheiro</option></select></div>' +
+        '<div class="form-group"><label>Funcionário</label><select class="form-input" name="funcionarioId">' + funcOpts + '</select></div>' +
+        '</div><div class="form-group"><label>Dias da Semana</label><div class="tag-group" id="diasTags">' + diasTags + '</div></div></div>' +
+        '<div class="form-section"><div class="form-section-title">Endereço</div><div class="form-grid">' +
+        '<div class="form-group"><label>CEP</label><input type="text" class="form-input" name="cep" id="cepInput" value="' + (data ? data.cep || '' : '') + '" onblur="buscarCEP()"></div>' +
+        '<div class="form-group"><label>Logradouro</label><input type="text" class="form-input" name="logradouro" id="logradouroInput" value="' + (data ? data.logradouro || '' : '') + '"></div>' +
+        '<div class="form-group"><label>Número</label><input type="text" class="form-input" name="numero" value="' + (data ? data.numero || '' : '') + '"></div>' +
+        '<div class="form-group"><label>Bairro</label><input type="text" class="form-input" name="bairro" id="bairroInput" value="' + (data ? data.bairro || '' : '') + '"></div>' +
+        '<div class="form-group"><label>Cidade</label><input type="text" class="form-input" name="cidade" id="cidadeInput" value="' + (data ? data.cidade || '' : '') + '"></div>' +
+        '<div class="form-group"><label>Estado</label><input type="text" class="form-input" name="estado" id="estadoInput" value="' + (data ? data.estado || '' : '') + '" maxlength="2"></div>' +
+        '<div class="form-group"><label>GPS</label><input type="text" class="form-input" name="gps" value="' + (data ? data.gps || '' : '') + '"></div>' +
+        '</div></div>' +
+        '</form>';
+    
+    var titulo = isEdit ? 'Editar Cliente' : 'Novo Cliente';
+    var idSalvar = data ? (data.id || '') : '';
+    openModal(titulo, body, '<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarCliente(\'' + idSalvar + '\')">Salvar</button>');
 }
 
 async function editarCliente(id){const d=await db.collection('clientes').doc(id).get();if(d.exists)novoCliente({id,...d.data()});}
-async function inativarCliente(id){const d=await db.collection('clientes').doc(id).get();const c=d.data();const ns=c.status==='ativo'?'inativo':'ativo';const body=`<div class="form-group"><label>Motivo</label><textarea class="form-input" id="motivoInativacao" rows="3"></textarea></div>`;openModal(`${ns==='inativo'?'Inativar':'Reativar'}: ${c.nome}`,body,`<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="confirmarInativacao('${id}','${ns}')">Confirmar</button>`);}
+async function inativarCliente(id){
+    var d = await db.collection('clientes').doc(id).get();
+    var c = d.data();
+    var ns = c.status === 'ativo' ? 'inativo' : 'ativo';
+    var titulo = (ns === 'inativo' ? 'Inativar' : 'Reativar') + ': ' + c.nome;
+    var body = '<div class="form-group"><label>Motivo</label><textarea class="form-input" id="motivoInativacao" rows="3"></textarea></div>';
+    openModal(titulo, body, '<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="confirmarInativacao(\'' + id + '\',\'' + ns + '\')">Confirmar</button>');
+}
 async function confirmarInativacao(id,status){const m=document.getElementById('motivoInativacao')?.value||'';await db.collection('clientes').doc(id).update({status,motivoInativacao:m,atualizadoEm:firebase.firestore.FieldValue.serverTimestamp()});closeModal();loadClientes();}
 async function salvarCliente(id){
     const form=document.getElementById('clienteForm');
