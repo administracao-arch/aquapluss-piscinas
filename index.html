@@ -331,46 +331,28 @@ async function novaPiscina(data=null){
             co+=`<option value="${d.id}" ${data?.clienteId===d.id?'selected':''}>${d.data().nome}</option>`;
         });
     }catch(e){}
-    async function salvarPiscina(id){
-    const form = document.getElementById('piscinaForm');
-    const fd = new FormData(form);
-    const data = {};
-    fd.forEach((value, key) => { data[key] = value; });
     
-    data.atualizadoEm = firebase.firestore.FieldValue.serverTimestamp();
-    
-    if (!id) {
-        const cDoc = await db.collection('config').doc('piscina_counter').get();
-        let n = 1;
-        if (cDoc.exists) {
-            n = (cDoc.data().ultimo || 0) + 1;
-            await db.collection('config').doc('piscina_counter').update({ ultimo: n });
-        } else {
-            await db.collection('config').doc('piscina_counter').set({ ultimo: 1 });
-        }
-        data.codigo = 'PSC-' + String(n).padStart(4, '0');
-        data.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
-    }
-    
-    if (data.clienteId) {
-        try {
-            const cDoc = await db.collection('clientes').doc(data.clienteId).get();
-            if (cDoc.exists) data.clienteNome = cDoc.data().nome;
-        } catch(e) {}
-    }
-    
-    try {
-        if (id) {
-            await db.collection('piscinas').doc(id).update(data);
-        } else {
-            await db.collection('piscinas').add(data);
-        }
-        closeModal();
-        loadPiscinas();
-    } catch(error) {
-        alert('Erro ao salvar: ' + error.message);
-    }
+    const body=`<form id="piscinaForm">
+        <div class="form-group"><label>Cliente *</label><select class="form-input" name="clienteId" required>${co}</select></div>
+        <div class="form-grid">
+            <div class="form-group"><label>Tamanho (m²) *</label><input type="number" class="form-input" name="tamanho" value="${data?.tamanho||''}" step="0.1" required></div>
+            <div class="form-group"><label>Volume (L) *</label><input type="number" class="form-input" name="volume" value="${data?.volume||''}" required></div>
+            <div class="form-group"><label>Material</label><select class="form-input" name="material"><option value="azulejo">Azulejo</option><option value="vinil">Vinil</option><option value="fibra">Fibra</option><option value="concreto">Concreto</option></select></div>
+            <div class="form-group"><label>Status</label><select class="form-input" name="status"><option value="ativa">Ativa</option><option value="critica">Crítica</option><option value="inativa">Inativa</option></select></div>
+        </div>
+    </form>`;
+    openModal(isEdit?'Editar Piscina':'Nova Piscina',body,`<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarPiscina('${data?.id||''}')">Salvar</button>`);
 }
+async function novaPiscina(data=null){
+    const isEdit=!!data;
+    let co='<option value="">Selecione...</option>';
+    try{
+        const cSnap=await db.collection('clientes').where('status','==','ativo').orderBy('nome').get();
+        cSnap.forEach(d=>{
+            co+=`<option value="${d.id}" ${data?.clienteId===d.id?'selected':''}>${d.data().nome}</option>`;
+        });
+    }catch(e){}
+    
     const body=`<form id="piscinaForm">
         <div class="form-group"><label>Cliente *</label><select class="form-input" name="clienteId" required>${co}</select></div>
         <div class="form-grid">
@@ -383,6 +365,30 @@ async function novaPiscina(data=null){
     openModal(isEdit?'Editar Piscina':'Nova Piscina',body,`<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarPiscina('${data?.id||''}')">Salvar</button>`);
 }
 
+async function salvarPiscina(id){
+    const form = document.getElementById('piscinaForm');
+    const fd = new FormData(form);
+    const data = {};
+    fd.forEach((value, key) => { data[key] = value; });
+    data.atualizadoEm = firebase.firestore.FieldValue.serverTimestamp();
+    if (!id) {
+        const cDoc = await db.collection('config').doc('piscina_counter').get();
+        let n = 1;
+        if (cDoc.exists) { n = (cDoc.data().ultimo || 0) + 1; await db.collection('config').doc('piscina_counter').update({ ultimo: n }); }
+        else { await db.collection('config').doc('piscina_counter').set({ ultimo: 1 }); }
+        data.codigo = 'PSC-' + String(n).padStart(4, '0');
+        data.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
+    }
+    if (data.clienteId) {
+        try { const cDoc = await db.collection('clientes').doc(data.clienteId).get(); if (cDoc.exists) data.clienteNome = cDoc.data().nome; } catch(e) {}
+    }
+    try {
+        if (id) { await db.collection('piscinas').doc(id).update(data); }
+        else { await db.collection('piscinas').add(data); }
+        closeModal();
+        loadPiscinas();
+    } catch(error) { alert('Erro ao salvar: ' + error.message); }
+}
 // Estoque Empresa
 async function loadEstoqueEmpresa(){
     pageContent.innerHTML='<p style="padding:40px;">Carregando...</p>';
