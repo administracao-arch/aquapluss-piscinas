@@ -458,126 +458,183 @@ async function gerarFaturasAutomaticas(){
         }
     }
 }
-    Financeiro
-async function loadFinanceiro(mesOffset=0){
+    // Financeiro
+async function loadFinanceiro(mesOffset){
+    if(typeof mesOffset === 'undefined') mesOffset = 0;
     pageContent.innerHTML='<p style="padding:40px;">Carregando...</p>';
     
-    // Gerar faturas automáticas primeiro
-    await gerarFaturasAutomaticas();
+    // Gerar faturas automaticas
+    try {
+        const hoje2 = new Date();
+        const mesAtual2 = hoje2.getMonth();
+        const anoAtual2 = hoje2.getFullYear();
+        const clientesSnap2 = await db.collection('clientes').where('status','==','ativo').get();
+        for(const clienteDoc of clientesSnap2.docs){
+            const c = clienteDoc.data();
+            const diaVenc = c.diaVencimento || 10;
+            const valor = c.plano || 0;
+            if(valor <= 0) continue;
+            const vencStr = anoAtual2 + '-' + String(mesAtual2+1).padStart(2,'0') + '-' + String(diaVenc).padStart(2,'0');
+            const existente = await db.collection('faturas').where('clienteId','==',clienteDoc.id).where('vencimento','==',vencStr).get();
+            if(existente.empty){
+                await db.collection('faturas').add({
+                    clienteId: clienteDoc.id,
+                    clienteNome: c.nome,
+                    valor: valor,
+                    vencimento: vencStr,
+                    metodo: c.formaPagamento || 'PIX',
+                    status: 'pendente',
+                    criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }
+        }
+    } catch(e) {}
     
     try{
-        const hoje=new Date();
-        const mesRef=new Date(hoje.getFullYear(),hoje.getMonth()+mesOffset,1);
-        const mes=mesRef.getMonth();
-        const ano=mesRef.getFullYear();
-        const meses=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+        var hoje = new Date();
+        var mesRef = new Date(hoje.getFullYear(), hoje.getMonth() + mesOffset, 1);
+        var mes = mesRef.getMonth();
+        var ano = mesRef.getFullYear();
+        var meses = ['Janeiro','Fevereiro','Marco','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
         
-        const inicioMes=`${ano}-${String(mes+1).padStart(2,'0')}-01`;
-        const ultimoDia=new Date(ano,mes+1,0).getDate();
-        const fimMes=`${ano}-${String(mes+1).padStart(2,'0')}-${String(ultimoDia).padStart(2,'0')}`;
+        var inicioMes = ano + '-' + String(mes+1).padStart(2,'0') + '-01';
+        var ultimoDia = new Date(ano, mes+1, 0).getDate();
+        var fimMes = ano + '-' + String(mes+1).padStart(2,'0') + '-' + String(ultimoDia).padStart(2,'0');
         
-        const[faturas,receitas,despesas,vencidas]=await Promise.all([
-            db.collection('faturas').where('vencimento','>=',inicioMes).where('vencimento','<=',fimMes).orderBy('vencimento','desc').get(),
-            db.collection('faturas').where('status','==','pago').where('vencimento','>=',inicioMes).where('vencimento','<=',fimMes).get(),
-            db.collection('despesas').where('data','>=',inicioMes).where('data','<=',fimMes).get(),
-            db.collection('faturas').where('status','==','pendente').where('vencimento','<',new Date().toISOString().split('T')[0]).get()
-        ]);
+        var faturasSnap = await db.collection('faturas').where('vencimento','>=',inicioMes).where('vencimento','<=',fimMes).orderBy('vencimento','desc').get();
+        var receitasSnap = await db.collection('faturas').where('status','==','pago').where('vencimento','>=',inicioMes).where('vencimento','<=',fimMes).get();
+        var despesasSnap = await db.collection('despesas').where('data','>=',inicioMes).where('data','<=',fimMes).get();
+        var vencidasSnap = await db.collection('faturas').where('status','==','pendente').where('vencimento','<',new Date().toISOString().split('T')[0]).get();
         
-        let totalReceitas=0;receitas.forEach(d=>totalReceitas+=Number(d.data().valor)||0);
-        let totalDespesas=0;despesas.forEach(d=>totalDespesas+=Number(d.data().valor)||0);
+        var totalReceitas = 0;
+        receitasSnap.forEach(function(d){ totalReceitas += Number(d.data().valor) || 0; });
+        var totalDespesas = 0;
+        despesasSnap.forEach(function(d){ totalDespesas += Number(d.data().valor) || 0; });
         
-        let fRows=faturas.empty?'<tr><td colspan="7">Nenhuma fatura neste mês</td></tr>':faturas.docs.map(d=>{
-            const f=d.data();
-            const venc=new Date(f.vencimento+'T00:00:00');
-            const vencido=venc<new Date()&&f.status==='pendente';
-            return`<tr>
-                <td><strong>${f.clienteNome||'N/D'}</strong></td>
-                <td>R$ ${(Number(f.valor)||0).toFixed(2)}</td>
-                <td>${f.vencimento||'-'}</td>
-                <td>${f.metodo||'-'}</td>
-                <td><span class="badge ${f.status==='pago'?'badge-success':vencido?'badge-danger':'badge-warning'}">${f.status==='pago'?'Pago':vencido?'Vencido':'Pendente'}</span></td>
-                <td>${f.status==='pago'?f.dataPagamento||'-':`<button class="btn-link" onclick="darBaixa('${d.id}')">Dar Baixa</button>`}</td>
-            </tr>`;
-        }).join('');
+        var fRows = '';
+        if(faturasSnap.empty){
+            fRows = '<tr><td colspan="7" style="text-align:center;padding:40px;">Nenhuma fatura neste mes</td></tr>';
+        } else {
+            faturasSnap.docs.forEach(function(d){
+                var f = d.data();
+                var venc = new Date(f.vencimento + 'T00:00:00');
+                var vencido = venc < new Date() && f.status === 'pendente';
+                var statusClass = f.status === 'pago' ? 'badge-success' : (vencido ? 'badge-danger' : 'badge-warning');
+                var statusText = f.status === 'pago' ? 'Pago' : (vencido ? 'Vencido' : 'Pendente');
+                var acao = f.status === 'pago' ? (f.dataPagamento || '-') : '<button class="btn-link" onclick="darBaixa(\'' + d.id + '\')">Dar Baixa</button>';
+                fRows += '<tr><td><strong>' + (f.clienteNome || 'N/D') + '</strong></td><td>R$ ' + (Number(f.valor) || 0).toFixed(2) + '</td><td>' + (f.vencimento || '-') + '</td><td>' + (f.metodo || '-') + '</td><td><span class="badge ' + statusClass + '"><span class="badge-dot"></span>' + statusText + '</span></td><td>' + acao + '</td></tr>';
+            });
+        }
         
-        let despesasRows=despesas.empty?'<tr><td colspan="4">Nenhuma despesa</td></tr>':despesas.docs.map(d=>{
-            const de=d.data();
-            return`<tr><td>${de.descricao||'-'}</td><td>${de.data||'-'}</td><td style="color:var(--danger);">- R$ ${(Number(de.valor)||0).toFixed(2)}</td><td><button class="btn-link btn-danger" onclick="excluirDespesa('${d.id}')">Excluir</button></td></tr>`;
-        }).join('');
+        var dRows = '';
+        if(despesasSnap.empty){
+            dRows = '<tr><td colspan="4" style="text-align:center;padding:40px;">Nenhuma despesa</td></tr>';
+        } else {
+            despesasSnap.docs.forEach(function(d){
+                var de = d.data();
+                dRows += '<tr><td>' + (de.descricao || '-') + '</td><td>' + (de.data || '-') + '</td><td style="color:var(--danger);">- R$ ' + (Number(de.valor) || 0).toFixed(2) + '</td><td><button class="btn-link btn-danger" onclick="excluirDespesa(\'' + d.id + '\')">Excluir</button></td></tr>';
+            });
+        }
         
-        pageContent.innerHTML=`
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-                <button class="btn btn-outline btn-sm" onclick="loadFinanceiro(${mesOffset-1})">← ${meses[(mes-1+12)%12]}</button>
-                <h3 style="font-weight:600;">${meses[mes]} ${ano}</h3>
-                <button class="btn btn-outline btn-sm" onclick="loadFinanceiro(${mesOffset+1})">${meses[(mes+1)%12]} →</button>
-            </div>
-            <div class="stats-grid">
-                <div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Receitas do Mês</span><div class="stat-card-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></div></div><div class="stat-card-value">R$ ${totalReceitas.toFixed(2)}</div></div>
-                <div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Despesas do Mês</span><div class="stat-card-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div></div><div class="stat-card-value">R$ ${totalDespesas.toFixed(2)}</div></div>
-                <div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Saldo do Mês</span><div class="stat-card-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/></svg></div></div><div class="stat-card-value" style="color:${totalReceitas-totalDespesas>=0?'var(--success)':'var(--danger)'};">R$ ${(totalReceitas-totalDespesas).toFixed(2)}</div></div>
-                <div class="stat-card clickable" onclick="loadPage('financeiro')"><div class="stat-card-header"><span class="stat-card-label">⚠️ Vencidas (Total)</span><div class="stat-card-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg></div></div><div class="stat-card-value">${vencidas.size}</div></div>
-            </div>
-            <div class="content-grid">
-                <div class="card"><div class="card-header"><h3 class="card-title">📋 Faturas de ${meses[mes]}</h3><button class="btn btn-primary btn-sm" onclick="novaFatura()">+ Nova</button></div><div class="card-body"><table class="table"><thead><tr><th>Cliente</th><th>Valor</th><th>Venc.</th><th>Método</th><th>Status</th><th>Ação</th></tr></thead><tbody>${fRows}</tbody></table></div></div>
-                <div>
-                    <div class="card" style="margin-bottom:14px;"><div class="card-header"><h3 class="card-title">💸 Despesas</h3></div><div class="card-body-padded"><table class="table"><thead><tr><th>Descrição</th><th>Data</th><th>Valor</th><th></th></tr></thead><tbody>${despesasRows}</tbody></table></div></div>
-                    <div class="card"><div class="card-header"><h3 class="card-title">+ Despesa</h3></div><div class="card-body-padded"><form id="despesaForm"><div class="form-grid"><div class="form-group"><label>Descrição</label><input type="text" class="form-input" name="descricao" required></div><div class="form-group"><label>Valor (R$)</label><input type="number" class="form-input" name="valor" step="0.01" required></div></div><button type="button" class="btn btn-primary btn-sm" onclick="salvarDespesa()">Adicionar</button></form></div></div>
-                </div>
-            </div>`;
-    }catch(err){pageContent.innerHTML=errCard(err.message);}
+        var mesAnterior = meses[(mes-1+12)%12];
+        var mesProximo = meses[(mes+1)%12];
+        var saldo = totalReceitas - totalDespesas;
+        var saldoCor = saldo >= 0 ? 'var(--success)' : 'var(--danger)';
+        
+        pageContent.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;"><button class="btn btn-outline btn-sm" onclick="loadFinanceiro(' + (mesOffset-1) + ')">&#8592; ' + mesAnterior + '</button><h3 style="font-weight:600;">' + meses[mes] + ' ' + ano + '</h3><button class="btn btn-outline btn-sm" onclick="loadFinanceiro(' + (mesOffset+1) + ')">' + mesProximo + ' &#8594;</button></div>' +
+            '<div class="stats-grid">' +
+            '<div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Receitas do Mes</span><div class="stat-card-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></div></div><div class="stat-card-value">R$ ' + totalReceitas.toFixed(2) + '</div></div>' +
+            '<div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Despesas do Mes</span><div class="stat-card-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div></div><div class="stat-card-value">R$ ' + totalDespesas.toFixed(2) + '</div></div>' +
+            '<div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Saldo do Mes</span><div class="stat-card-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/></svg></div></div><div class="stat-card-value" style="color:' + saldoCor + ';">R$ ' + saldo.toFixed(2) + '</div></div>' +
+            '<div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Vencidas (Total)</span><div class="stat-card-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg></div></div><div class="stat-card-value">' + vencidasSnap.size + '</div></div>' +
+            '</div>' +
+            '<div class="content-grid">' +
+            '<div class="card"><div class="card-header"><h3 class="card-title">Faturas de ' + meses[mes] + '</h3><button class="btn btn-primary btn-sm" onclick="novaFatura()">+ Nova</button></div><div class="card-body"><table class="table"><thead><tr><th>Cliente</th><th>Valor</th><th>Venc.</th><th>Metodo</th><th>Status</th><th>Acao</th></tr></thead><tbody>' + fRows + '</tbody></table></div></div>' +
+            '<div>' +
+            '<div class="card" style="margin-bottom:14px;"><div class="card-header"><h3 class="card-title">Despesas</h3></div><div class="card-body-padded"><table class="table"><thead><tr><th>Descricao</th><th>Data</th><th>Valor</th><th></th></tr></thead><tbody>' + dRows + '</tbody></table></div></div>' +
+            '<div class="card"><div class="card-header"><h3 class="card-title">+ Despesa</h3></div><div class="card-body-padded"><form id="despesaForm"><div class="form-grid"><div class="form-group"><label>Descricao</label><input type="text" class="form-input" name="descricao" required></div><div class="form-group"><label>Valor (R$)</label><input type="number" class="form-input" name="valor" step="0.01" required></div></div><button type="button" class="btn btn-primary btn-sm" onclick="salvarDespesa()">Adicionar</button></form></div></div>' +
+            '</div></div>';
+    }catch(err){
+        pageContent.innerHTML = '<div class="card"><div class="card-header"><h3 class="card-title">Erro</h3></div><div class="card-body-padded"><p style="color:var(--danger);">' + err.message + '</p></div></div>';
+    }
 }
 
-async function novaFatura(data=null){
-    let co='<option value="">Selecione...</option>';
-    try{const s=await db.collection('clientes').where('status','==','ativo').orderBy('nome').get();s.forEach(d=>co+=`<option value="${d.id}" ${data?.clienteId===d.id?'selected':''}>${d.data().nome} - R$ ${(Number(d.data().plano)||0).toFixed(2)}</option>`);}catch(e){}
-    const body=`<form id="faturaForm">
-        <div class="form-group"><label>Cliente *</label><select class="form-input" name="clienteId" required onchange="preencherValorFatura()">${co}</select></div>
-        <div class="form-grid">
-            <div class="form-group"><label>Valor (R$) *</label><input type="number" class="form-input" name="valor" id="faturaValor" value="${data?.valor||''}" step="0.01" required></div>
-            <div class="form-group"><label>Vencimento *</label><input type="date" class="form-input" name="vencimento" value="${data?.vencimento||''}" required></div>
-            <div class="form-group"><label>Método *</label><select class="form-input" name="metodo" required><option value="PIX">PIX</option><option value="Boleto">Boleto</option><option value="Cartão">Cartão</option><option value="Dinheiro">Dinheiro</option></select></div>
-            <div class="form-group"><label>Link Boleto</label><input type="text" class="form-input" name="linkBoleto" value="${data?.linkBoleto||''}" placeholder="https://..."></div>
-        </div>
-    </form>`;
-    openModal(data?'Editar Fatura':'Nova Fatura',body,`<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarFatura('${data?.id||''}')">Salvar</button>`);
+async function novaFatura(data){
+    data = data || null;
+    var co = '<option value="">Selecione...</option>';
+    try{
+        var s = await db.collection('clientes').where('status','==','ativo').orderBy('nome').get();
+        s.forEach(function(d){
+            co += '<option value="' + d.id + '" ' + (data && data.clienteId === d.id ? 'selected' : '') + '>' + d.data().nome + ' - R$ ' + (Number(d.data().plano) || 0).toFixed(2) + '</option>';
+        });
+    }catch(e){}
+    var body = '<form id="faturaForm"><div class="form-group"><label>Cliente *</label><select class="form-input" name="clienteId" required onchange="preencherValorFatura()">' + co + '</select></div><div class="form-grid"><div class="form-group"><label>Valor (R$) *</label><input type="number" class="form-input" name="valor" id="faturaValor" value="' + (data ? data.valor || '' : '') + '" step="0.01" required></div><div class="form-group"><label>Vencimento *</label><input type="date" class="form-input" name="vencimento" value="' + (data ? data.vencimento || '' : '') + '" required></div><div class="form-group"><label>Metodo *</label><select class="form-input" name="metodo" required><option value="PIX">PIX</option><option value="Boleto">Boleto</option><option value="Cartao">Cartao</option><option value="Dinheiro">Dinheiro</option></select></div><div class="form-group"><label>Link Boleto</label><input type="text" class="form-input" name="linkBoleto" value="' + (data ? data.linkBoleto || '' : '') + '" placeholder="https://..."></div></div></form>';
+    openModal(data ? 'Editar Fatura' : 'Nova Fatura', body, '<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarFatura(\'' + (data ? data.id || '' : '') + '\')">Salvar</button>');
 }
 
 async function preencherValorFatura(){
-    const sel=document.querySelector('[name="clienteId"]');
-    if(!sel||!sel.value)return;
-    const d=await db.collection('clientes').doc(sel.value).get();
-    if(d.exists){document.getElementById('faturaValor').value=Number(d.data().plano)||0;}
+    var sel = document.querySelector('[name="clienteId"]');
+    if(!sel || !sel.value) return;
+    var d = await db.collection('clientes').doc(sel.value).get();
+    if(d.exists){
+        document.getElementById('faturaValor').value = Number(d.data().plano) || 0;
+    }
 }
 
 async function salvarFatura(id){
-    const f=document.getElementById('faturaForm');const fd=new FormData(f);const data=Object.fromEntries(fd.entries());
-    data.valor=Number(data.valor)||0;data.status='pendente';data.atualizadoEm=firebase.firestore.FieldValue.serverTimestamp();
-    if(data.clienteId){try{const cDoc=await db.collection('clientes').doc(data.clienteId).get();if(cDoc.exists)data.clienteNome=cDoc.data().nome;}catch(e){}}
-    if(id){await db.collection('faturas').doc(id).update(data);}else{data.criadoEm=firebase.firestore.FieldValue.serverTimestamp();await db.collection('faturas').add(data);}
-    if(data.metodo==='PIX'){
-        const pixCode=`00020126580014br.gov.bcb.pix0136${(data.clienteNome||'cliente').replace(/\s/g,'')}@aquapluss520400005303986540${data.valor.toFixed(2)}5802BR5925AquaPluss Piscinas6009SAO PAULO62070503***`;
-        openModal('PIX Gerado',`<div class="pix-box"><p>Valor: <strong>R$ ${data.valor.toFixed(2)}</strong></p><p>Cliente: <strong>${data.clienteNome||'N/D'}</strong></p><p style="margin-top:12px;">Código PIX:</p><div class="pix-code" id="pixCode">${pixCode}</div><span class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('pixCode').textContent);alert('Copiado!')">📋 Copiar código</span></div>`,`<button class="btn btn-primary" onclick="closeModal()">OK</button>`);
+    var f = document.getElementById('faturaForm');
+    var fd = new FormData(f);
+    var data = {};
+    fd.forEach(function(v,k){ data[k] = v; });
+    data.valor = Number(data.valor) || 0;
+    data.status = 'pendente';
+    data.atualizadoEm = firebase.firestore.FieldValue.serverTimestamp();
+    if(data.clienteId){
+        try{
+            var cDoc = await db.collection('clientes').doc(data.clienteId).get();
+            if(cDoc.exists) data.clienteNome = cDoc.data().nome;
+        }catch(e){}
     }
-    if(data.metodo==='Boleto'&&data.linkBoleto){
-        openModal('Boleto',`<p>Link do boleto:</p><a href="${data.linkBoleto}" target="_blank" style="color:var(--brand);">${data.linkBoleto}</a><p style="margin-top:12px;">Cliente: ${data.clienteNome}</p><p>Valor: R$ ${data.valor.toFixed(2)}</p>`,`<button class="btn btn-primary" onclick="closeModal()">OK</button>`);
+    if(id){
+        await db.collection('faturas').doc(id).update(data);
+    } else {
+        data.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
+        await db.collection('faturas').add(data);
     }
-    closeModal();loadFinanceiro();
+    if(data.metodo === 'PIX'){
+        var pixCode = '00020126580014br.gov.bcb.pix0136' + (data.clienteNome || 'cliente').replace(/\s/g,'') + '@aquapluss520400005303986540' + data.valor.toFixed(2) + '5802BR5925AquaPluss Piscinas6009SAO PAULO62070503***';
+        openModal('PIX Gerado', '<div class="pix-box"><p>Valor: <strong>R$ ' + data.valor.toFixed(2) + '</strong></p><p>Cliente: <strong>' + (data.clienteNome || 'N/D') + '</strong></p><p style="margin-top:12px;">Codigo PIX:</p><div class="pix-code" id="pixCode">' + pixCode + '</div><span class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById(\'pixCode\').textContent);alert(\'Copiado!\')">Copiar codigo</span></div>', '<button class="btn btn-primary" onclick="closeModal()">OK</button>');
+    }
+    if(data.metodo === 'Boleto' && data.linkBoleto){
+        openModal('Boleto', '<p>Link do boleto:</p><a href="' + data.linkBoleto + '" target="_blank" style="color:var(--brand);">' + data.linkBoleto + '</a><p style="margin-top:12px;">Cliente: ' + data.clienteNome + '</p><p>Valor: R$ ' + data.valor.toFixed(2) + '</p>', '<button class="btn btn-primary" onclick="closeModal()">OK</button>');
+    }
+    closeModal();
+    loadFinanceiro();
 }
 
 async function darBaixa(id){
     if(confirm('Confirmar pagamento?')){
-        await db.collection('faturas').doc(id).update({status:'pago',dataPagamento:new Date().toISOString().split('T')[0],atualizadoEm:firebase.firestore.FieldValue.serverTimestamp()});
+        await db.collection('faturas').doc(id).update({
+            status: 'pago',
+            dataPagamento: new Date().toISOString().split('T')[0],
+            atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
+        });
         loadFinanceiro();
     }
 }
 
 async function salvarDespesa(){
-    const f=document.getElementById('despesaForm');const fd=new FormData(f);const data=Object.fromEntries(fd.entries());
-    data.valor=Number(data.valor)||0;data.data=new Date().toISOString().split('T')[0];
-    data.criadoEm=firebase.firestore.FieldValue.serverTimestamp();
+    var f = document.getElementById('despesaForm');
+    var fd = new FormData(f);
+    var data = {};
+    fd.forEach(function(v,k){ data[k] = v; });
+    data.valor = Number(data.valor) || 0;
+    data.data = new Date().toISOString().split('T')[0];
+    data.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
     await db.collection('despesas').add(data);
     loadFinanceiro();
 }
+
 async function excluirDespesa(id){
     if(confirm('Excluir despesa?')){
         await db.collection('despesas').doc(id).delete();
