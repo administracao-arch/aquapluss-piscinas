@@ -276,6 +276,7 @@ async function loadClientes(){
         pageContent.innerHTML=errCard(err.message);
     }
 }
+
 async function novoCliente(data){
     data = data || null;
     var isEdit = !!data;
@@ -292,9 +293,9 @@ async function novoCliente(data){
     var diasLabels = ['Seg','Ter','Qua','Qui','Sex','Sáb'];
     var diasTags = '';
     for(var i=0; i<diasLabels.length; i++){
-        var d = diasLabels[i];
-        var ativo = diasSemana.includes(d) ? ' active' : '';
-        diasTags += '<span class="tag' + ativo + '" onclick="this.classList.toggle(\'active\')" data-dia="' + d + '">' + d + '</span>';
+        var dia = diasLabels[i];
+        var ativo = diasSemana.includes(dia) ? ' active' : '';
+        diasTags += '<span class="tag' + ativo + '" onclick="this.classList.toggle(\'active\')" data-dia="' + dia + '">' + dia + '</span>';
     }
     
     var plano = data ? (data.plano || '') : '';
@@ -346,6 +347,16 @@ async function editarCliente(id){
         novoCliente({id: id, nome: d.data().nome, cpfCnpj: d.data().cpfCnpj, telefone: d.data().telefone, email: d.data().email, plano: d.data().plano, diaVencimento: d.data().diaVencimento, formaPagamento: d.data().formaPagamento, funcionarioId: d.data().funcionarioId, diasSemana: d.data().diasSemana, cep: d.data().cep, logradouro: d.data().logradouro, numero: d.data().numero, bairro: d.data().bairro, cidade: d.data().cidade, estado: d.data().estado, gps: d.data().gps, status: d.data().status});
     }
 }
+
+async function inativarCliente(id){
+    var d = await db.collection('clientes').doc(id).get();
+    var c = d.data();
+    var ns = c.status === 'ativo' ? 'inativo' : 'ativo';
+    var titulo = (ns === 'inativo' ? 'Inativar' : 'Reativar') + ': ' + c.nome;
+    var body = '<div class="form-group"><label>Motivo</label><textarea class="form-input" id="motivoInativacao" rows="3"></textarea></div>';
+    openModal(titulo, body, '<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="confirmarInativacao(\'' + id + '\',\'' + ns + '\')">Confirmar</button>');
+}
+
 async function confirmarInativacao(id, status){
     var m = document.getElementById('motivoInativacao');
     var motivo = m ? m.value : '';
@@ -356,6 +367,23 @@ async function confirmarInativacao(id, status){
     });
     closeModal();
     loadClientes();
+}
+
+async function buscarCEP(){
+    var cepInput = document.getElementById('cepInput');
+    if(!cepInput) return;
+    var cep = cepInput.value.replace(/\D/g,'');
+    if(cep.length !== 8) return;
+    try{
+        var r = await fetch('https://viacep.com.br/ws/' + cep + '/json/');
+        var dados = await r.json();
+        if(!dados.erro){
+            document.getElementById('logradouroInput').value = dados.logradouro || '';
+            document.getElementById('bairroInput').value = dados.bairro || '';
+            document.getElementById('cidadeInput').value = dados.localidade || '';
+            document.getElementById('estadoInput').value = dados.uf || '';
+        }
+    }catch(e){}
 }
 
 async function salvarCliente(id){
@@ -383,28 +411,6 @@ async function salvarCliente(id){
     loadClientes();
 }
 
-// Funcionários
-	
-// Funcionários
-async function loadFuncionarios(){
-    pageContent.innerHTML='<p style="padding:40px;">Carregando...</p>';
-    try{
-        var snap = await db.collection('funcionarios').orderBy('nome').get();
-        var rows = '';
-        if(snap.empty){
-            rows = '<tr><td colspan="5">Nenhum</td></tr>';
-        }else{
-            snap.docs.forEach(function(d){
-                var f = d.data();
-                var statusClass = f.status === 'ativo' ? 'badge-success' : 'badge-danger';
-                rows += '<tr><td>' + f.nome + '</td><td>' + (f.cargo || '-') + '</td><td>' + (f.telefone || '-') + '</td><td><span class="badge ' + statusClass + '">' + f.status + '</span></td><td><button class="btn-link" onclick="editarFuncionario(\'' + d.id + '\')">Editar</button><button class="btn-link" onclick="inativarFuncionario(\'' + d.id + '\')">' + (f.status === 'ativo' ? 'Inativar' : 'Ativar') + '</button></td></tr>';
-            });
-        }
-        pageContent.innerHTML = '<div class="card"><div class="card-header"><h3 class="card-title">Funcionários (' + snap.size + ')</h3><button class="btn btn-primary btn-sm" onclick="novoFuncionario()">+ Novo</button></div><div class="card-body"><table class="table"><thead><tr><th>Nome</th><th>Cargo</th><th>Telefone</th><th>Status</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div></div>';
-    }catch(err){
-        pageContent.innerHTML = errCard(err.message);
-    }
-}
 // Funcionários
 async function loadFuncionarios(){
     pageContent.innerHTML='<p style="padding:40px;">Carregando...</p>';
@@ -478,7 +484,6 @@ async function salvarFuncionario(id){
 }
 
 // Piscinas
-	
 // Piscinas
 async function loadPiscinas(){
     pageContent.innerHTML='<p style="padding:40px;">Carregando...</p>';
