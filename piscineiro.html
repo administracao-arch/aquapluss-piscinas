@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>AquaPluss - App Piscineiro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f0f4f8;
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0891b2, #0e7490);
+            color: white;
+            padding: 16px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        
+        .header-sub {
+            font-size: 11px;
+            opacity: 0.8;
+            font-weight: 400;
+            margin-top: 2px;
+        }
+        
+        .container {
+            padding: 12px;
+            padding-bottom: 30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1a1d23;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+            font-family: inherit;
+            text-align: center;
+        }
+        
+        .btn:active {
+            transform: scale(0.97);
+        }
+        
+        .btn-primary {
+            background: #0891b2;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #0e7490;
+        }
+        
+        .btn-success {
+            background: #059669;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #047857;
+        }
+        
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+        
+        .btn-warning {
+            background: #d97706;
+            color: white;
+        }
+        
+        .btn-outline {
+            background: white;
+            border: 2px solid #0891b2;
+            color: #0891b2;
+        }
+        
+        .btn-sm {
+            padding: 10px 14px;
+            font-size: 13px;
+            width: auto;
+            display: inline-block;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .timer {
+            font-size: 56px;
+            font-weight: 700;
+            text-align: center;
+            color: #0891b2;
+            padding: 16px 0;
+            letter-spacing: -2px;
+            transition: color 0.3s;
+        }
+        
+        .timer.alerta {
+            color: #dc2626;
+            animation: pulse 0.8s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        
+        .timer-label {
+            text-align: center;
+            font-size: 12px;
+            color: #5a5f6b;
+            margin-top: -10px;
+            margin-bottom: 8px;
+        }
+        
+        select, input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e2e5ea;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            margin-bottom: 8px;
+            background: #f8fafc;
+            color: #1a1d23;
+            transition: border 0.2s;
+        }
+        
+        select:focus, input:focus, textarea:focus {
+            outline: none;
+            border-color: #0891b2;
+            box-shadow: 0 0 0 3px rgba(8,145,178,0.1);
+            background: white;
+        }
+        
+        label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #5a5f6b;
+            display: block;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .badge-success {
+            background: #ecfdf5;
+            color: #065f46;
+        }
+        
+        .badge-info {
+            background: #eef2ff;
+            color: #3730a3;
+        }
+        
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .tag-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+        
+        .tag {
+            padding: 8px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            border: 1px solid #e2e5ea;
+            background: #f6f8fa;
+            transition: all 0.15s;
+        }
+        
+        .tag:active {
+            transform: scale(0.95);
+        }
+        
+        .tag.active {
+            background: #0891b2;
+            color: white;
+            border-color: #0891b2;
+        }
+        
+        .alert-toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #dc2626;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 90%;
+        }
+        
+        .alert-toast.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            color: #5a5f6b;
+            font-weight: 500;
+        }
+        
+        .info-value {
+            color: #1a1d23;
+            font-weight: 600;
+            text-align: right;
+        }
+        
+        .cliente-info {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .cliente-info p {
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+        
+        .cliente-info p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #8b9099;
+        }
+        
+        .empty-state .icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #8b9099;
+        }
+        
+        .loading .spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid #e2e5ea;
+            border-top-color: #0891b2;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .login-box {
+            max-width: 400px;
+            margin: 60px auto;
+            padding: 20px;
+        }
+        
+        .login-logo {
+            text-align: center;
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+        
+        .login-title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a1d23;
+            margin-bottom: 4px;
+        }
+        
+        .login-subtitle {
+            text-align: center;
+            font-size: 13px;
+            color: #8b9099;
+            margin-bottom: 24px;
+        }
+        
+        .status-bar {
+            background: white;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #059669;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .status-dot.offline {
+            background: #dc2626;
+        }
+        
+        .produto-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+        }
+        
+        .produto-item:last-child {
+            border-bottom: none;
+        }
+        
+        .produto-remove {
+            color: #dc2626;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px;
+        }
+        
+        .footer-actions {
+            position: sticky;
+            bottom: 0;
+            background: #f0f4f8;
+            padding: 12px;
+            padding-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="alert-toast" id="alertaTimer">
+        ⏰ Atenção! O atendimento está demorando mais que o esperado.
+        <br><button class="btn btn-warning btn-sm" onclick="prorrogarTempo()" style="margin-top:8px;">Prorrogar +10 min</button>
+    </div>
+
+    <div id="appRoot"></div>
+
+    <script>
+        // ==================== CONFIGURAÇÃO FIREBASE ====================
+        const firebaseConfig = {
+            apiKey: "AIzaSyByxj9418BYG26MpB1h9GZAFUmRiu_3HZc",
+            authDomain: "aquaplusspiscinas.firebaseapp.com",
+            projectId: "aquaplusspiscinas",
+            storageBucket: "aquaplusspiscinas.firebasestorage.app",
+            messagingSenderId: "844112800471",
+            appId: "1:844112800471:web:468c21d1eafdd9a4071e92"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // ==================== ESTADO DO APP ====================
+        var atendimentoAtivo = null;
+        var timerInterval = null;
+        var segundos = 0;
+        var tempoLimite = 1200; // 20 minutos
+        var prorrogado = false;
+        var alertaMostrado = false;
+        var procedimentosPadrao = [
+            "Drenagem",
+            "Escovação",
+            "Limpeza pré-filtro",
+            "Aspiração",
+            "Teste de pH",
+            "Aplicação de cloro",
+            "Clarificação",
+            "Limpeza de bordas",
+            "Retrolavagem"
+        ];
+        var produtosUsados = [];
+        var procedimentosFeitos = [];
+        var audioContext = null;
+
+        // ==================== FUNÇÕES DE ÁUDIO ====================
+        function beep() {
+            try {
+                if (!audioContext) {
+                    audioContext = new(window.AudioContext || window.webkitAudioContext)();
+                }
+                var o = audioContext.createOscillator();
+                var g = audioContext.createGain();
+                o.connect(g);
+                g.connect(audioContext.destination);
+                o.frequency.value = 800;
+                o.type = "square";
+                g.gain.value = 0.3;
+                o.start();
+                setTimeout(function() { o.stop(); }, 200);
+            } catch (e) {}
+        }
+
+        function beepTriplo() {
+            beep();
+            setTimeout(function() { beep(); }, 400);
+            setTimeout(function() { beep(); }, 800);
+        }
+
+        // ==================== RENDERIZAÇÃO ====================
+        function render(html) {
+            document.getElementById('appRoot').innerHTML = html;
+        }
+
+        function showLoading(msg) {
+            msg = msg || 'Carregando...';
+            render('<div class="loading"><div class="spinner"></div><p style="margin-top:12px;">' + msg + '</p></div>');
+        }
+
+        // ==================== LOGIN ====================
+        function showLogin() {
+            var html = '<div class="login-box">';
+            html += '<div class="login-logo">🔧</div>';
+            html += '<div class="login-title">AquaPluss Piscineiro</div>';
+            html += '<div class="login-subtitle">Faça login para começar</div>';
+            html += '<div class="card">';
+            html += '<form id="loginForm">';
+            html += '<div class="form-group"><label>E-mail</label><input type="email" id="emailInput" placeholder="seu@email.com" required></div>';
+            html += '<div class="form-group"><label>Senha</label><input type="password" id="passwordInput" placeholder="••••••••" required></div>';
+            html += '<button type="submit" class="btn btn-primary" id="loginBtn">Entrar</button>';
+            html += '</form>';
+            html += '<p id="loginError" style="color:#dc2626;font-size:12px;margin-top:8px;display:none;"></p>';
+            html += '</div>';
+            html += '</div>';
+            render(html);
+
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                var email = document.getElementById('emailInput').value.trim();
+                var pw = document.getElementById('passwordInput').value;
+                var btn = document.getElementById('loginBtn');
+                var errEl = document.getElementById('loginError');
+
+                if (!email || !pw) {
+                    errEl.textContent = 'Preencha todos os campos.';
+                    errEl.style.display = 'block';
+                    return;
+                }
+
+                btn.disabled = true;
+                btn.textContent = 'Entrando...';
+                errEl.style.display = 'none';
+
+                auth.signInWithEmailAndPassword(email, pw)
+                    .then(function(uc) {
+                        var user = uc.user;
+                        // Salvar no localStorage
+                        localStorage.setItem('aquapluss-user', JSON.stringify({
+                            uid: user.uid,
+                            email: user.email,
+                            nome: user.email.split('@')[0]
+                        }));
+                        carregarApp();
+                    })
+                    .catch(function(err) {
+                        var msg = 'Erro ao fazer login.';
+                        if (err.code === 'auth/user-not-found') msg = 'Usuário não encontrado.';
+                        else if (err.code === 'auth/wrong-password') msg = 'Senha incorreta.';
+                        else if (err.code === 'auth/invalid-email') msg = 'E-mail inválido.';
+                        errEl.textContent = msg;
+                        errEl.style.display = 'block';
+                        btn.disabled = false;
+                        btn.textContent = 'Entrar';
+                    });
+            });
+        }
+
+        // ==================== APP PRINCIPAL ====================
+        function carregarApp() {
+            // Verificar se há atendimento ativo
+            var saved = localStorage.getItem('aquapluss-atendimento');
+            if (saved) {
+                try {
+                    atendimentoAtivo = JSON.parse(saved);
+                    segundos = Math.floor((new Date() - new Date(atendimentoAtivo.timestamp || new Date())) / 1000);
+                    if (segundos < 0) segundos = 0;
+                    if (segundos >= tempoLimite && !atendimentoAtivo.prorrogado) {
+                        alertaMostrado = true;
+                    }
+                    timerInterval = setInterval(atualizarTimer, 1000);
+                    mostrarAtendimentoAtivo();
+                    return;
+                } catch (e) {
+                    localStorage.removeItem('aquapluss-atendimento');
+                }
+            }
+
+            mostrarSelecaoCliente();
+        }
+
+        // ==================== SELEÇÃO DE CLIENTE ====================
+        async function mostrarSelecaoCliente() {
+            showLoading('Carregando clientes...');
+
+            try {
+                var hojeStr = new Date().toISOString().split('T')[0];
+                var clientesSnap = await db.collection('clientes')
+                    .where('status', '==', 'ativo')
+                    .orderBy('nome')
+                    .get();
+
+                if (clientesSnap.empty) {
+                    render('<div class="container"><div class="empty-state"><div class="icon">📋</div><p>Nenhum cliente ativo encontrado.</p></div></div>');
+                    return;
+                }
+
+                var html = '<div class="header">🔧 AquaPluss Piscineiro<div class="header-sub">' + new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' }) + '</div></div>';
+                html += '<div class="container">';
+                html += '<div class="card"><div class="card-title">📋 Selecione o Cliente</div>';
+                html += '<select id="clienteSelect" onchange="selecionarCliente()" style="font-size:16px;">';
+                html += '<option value="">Selecione um cliente...</option>';
+                clientesSnap.docs.forEach(function(d) {
+                    var c = d.data();
+                    html += '<option value="' + d.id + '">' + c.nome + ' - ' + (c.logradouro || 'Sem endereço') + '</option>';
+                });
+                html += '</select>';
+                html += '</div>';
+                html += '<div id="clienteInfo"></div>';
+                html += '<button class="btn btn-outline" onclick="auth.signOut().then(function(){localStorage.clear();showLogin();})" style="margin-top:20px;">🚪 Sair</button>';
+                html += '</div>';
+                render(html);
+            } catch (e) {
+                render('<div class="container"><div class="card"><p style="color:#dc2626;">Erro ao carregar: ' + e.message + '</p><button class="btn btn-primary" onclick="carregarApp()">Tentar novamente</button></div></div>');
+            }
+        }
+
+        async function selecionarCliente() {
+            var id = document.getElementById('clienteSelect').value;
+            if (!id) {
+                document.getElementById('clienteInfo').innerHTML = '';
+                return;
+            }
+
+            document.getElementById('clienteInfo').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+            try {
+                var d = await db.collection('clientes').doc(id).get();
+                if (!d.exists) {
+                    document.getElementById('clienteInfo').innerHTML = '<div class="card"><p>Cliente não encontrado.</p></div>';
+                    return;
+                }
+
+                var c = d.data();
+                var html = '<div class="cliente-info">';
+                html += '<p>🏠 <strong>' + c.nome + '</strong></p>';
+                html += '<p>📍 ' + (c.logradouro || '') + ', ' + (c.numero || '') + ' - ' + (c.bairro || '') + '</p>';
+                html += '<p>📱 ' + (c.telefone || 'Não informado') + '</p>';
+                if (c.tamanhoPiscina || c.volumeLitros) {
+                    html += '<p>🏊 Piscina: ' + (c.tamanhoPiscina || 'N/D') + 'm² - ' + (c.volumeLitros || 'N/D') + 'L</p>';
+                }
+                if (c.observacoes) {
+                    html += '<p style="color:#d97706;">⚠️ ' + c.observacoes + '</p>';
+                }
+                html += '</div>';
+                html += '<button class="btn btn-primary" onclick="iniciarAtendimento(\'' + id + '\', \'' + c.nome.replace(/'/g, "\\'") + '\')">▶️ Iniciar Atendimento</button>';
+
+                document.getElementById('clienteInfo').innerHTML = html;
+            } catch (e) {
+                document.getElementById('clienteInfo').innerHTML = '<div class="card"><p style="color:#dc2626;">Erro: ' + e.message + '</p></div>';
+            }
+        }
+
+        // ==================== ATENDIMENTO ====================
+        function iniciarAtendimento(clienteId, clienteNome) {
+            segundos = 0;
+            prorrogado = false;
+            alertaMostrado = false;
+            produtosUsados = [];
+            procedimentosFeitos = [];
+            tempoLimite = 1200;
+
+            var horaInicio = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            var hojeStr = new Date().toISOString().split('T')[0];
+
+            atendimentoAtivo = {
+                clienteId: clienteId,
+                clienteNome: clienteNome,
+                horaInicio: horaInicio,
+                data: hojeStr,
+                status: 'em_andamento',
+                timestamp: new Date().toISOString()
+            };
+
+            localStorage.setItem('aquapluss-atendimento', JSON.stringify(atendimentoAtivo));
+
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(atualizarTimer, 1000);
+
+            mostrarAtendimentoAtivo();
+        }
+
+        function atualizarTimer() {
+            segundos++;
+
+            var min = Math.floor(segundos / 60);
+            var seg = segundos % 60;
+            var display = String(min).padStart(2, '0') + ':' + String(seg).padStart(2, '0');
+
+            var el = document.getElementById('timerDisplay');
+            if (el) el.textContent = display;
+
+            if (!prorrogado && segundos >= tempoLimite && !alertaMostrado) {
+                alertaMostrado = true;
+                document.getElementById('alertaTimer').classList.add('show');
+                var timerEl = document.getElementById('timerDisplay');
+                if (timerEl) timerEl.classList.add('alerta');
+                beepTriplo();
+                // Vibrar se disponível
+                if (navigator.vibrate) {
+                    navigator.vibrate([200, 100, 200, 100, 200]);
+                }
+            }
+        }
+
+        function prorrogarTempo() {
+            prorrogado = true;
+            alertaMostrado = false;
+            tempoLimite += 600; // +10 minutos
+            document.getElementById('alertaTimer').classList.remove('show');
+            var timerEl = document.getElementById('timerDisplay');
+            if (timerEl) timerEl.classList.remove('alerta');
+            if (atendimentoAtivo) {
+                atendimentoAtivo.prorrogado = true;
+                localStorage.setItem('aquapluss-atendimento', JSON.stringify(atendimentoAtivo));
+            }
+        }
+
+        function mostrarAtendimentoAtivo() {
+            var a = atendimentoAtivo;
+            if (!a) {
+                carregarApp();
+                return;
+            }
+
+            var min = Math.floor(segundos / 60);
+            var seg = segundos % 60;
+            var display = String(min).padStart(2, '0') + ':' + String(seg).padStart(2, '0');
+
+            // Tags de procedimentos
+            var procTags = '';
+            procedimentosPadrao.forEach(function(p) {
+                var ativo = procedimentosFeitos.includes(p) ? ' active' : '';
+                procTags += '<span class="tag' + ativo + '" onclick="toggleProcedimento(\'' + p.replace(/'/g, "\\'") + '\')">' + p + '</span>';
+            });
+
+            // Lista de produtos
+            var prodList = '';
+            if (produtosUsados.length === 0) {
+                prodList = '<p style="color:#8b9099;font-size:12px;text-align:center;">Nenhum produto adicionado</p>';
+            } else {
+                produtosUsados.forEach(function(p, idx) {
+                    prodList += '<div class="produto-item"><span>🧴 ' + p.nome + ' - ' + p.qtd + '</span><span class="produto-remove" onclick="removerProduto(' + idx + ')">✕</span></div>';
+                });
+            }
+
+            var html = '<div class="header">🔧 AquaPluss Piscineiro<div class="header-sub">Atendimento em andamento</div></div>';
+            html += '<div class="container">';
+
+            // Timer
+            html += '<div class="card" style="text-align:center;">';
+            html += '<div class="card-title">⏱️ Tempo de Atendimento</div>';
+            html += '<div class="timer' + (alertaMostrado ? ' alerta' : '') + '" id="timerDisplay">' + display + '</div>';
+            html += '<div class="timer-label">minutos:segundos</div>';
+            html += '<p style="font-size:14px;">🏠 <strong>' + a.clienteNome + '</strong></p>';
+            html += '<p style="font-size:12px;color:#5a5f6b;">Início: ' + a.horaInicio + '</p>';
+            html += '</div>';
+
+            // Procedimentos
+            html += '<div class="card">';
+            html += '<div class="card-title">🔧 Procedimentos Realizados</div>';
+            html += '<div class="tag-group">' + procTags + '</div>';
+            html += '</div>';
+
+            // Produtos
+            html += '<div class="card">';
+            html += '<div class="card-title">🧪 Produtos Utilizados</div>';
+            html += '<input type="text" id="produtoNome" placeholder="Nome do produto..." style="margin-bottom:4px;">';
+            html += '<input type="text" id="produtoQtd" placeholder="Quantidade (ex: 2 L, 500g)...">';
+            html += '<button class="btn btn-outline btn-sm" onclick="adicionarProduto()">+ Adicionar</button>';
+            html += '<div style="margin-top:8px;">' + prodList + '</div>';
+            html += '</div>';
+
+            // Botões de ação
+            html += '<div class="footer-actions">';
+            html += '<button class="btn btn-success" onclick="finalizarAtendimento()">✅ Finalizar Atendimento</button>';
+            html += '<button class="btn btn-danger" onclick="cancelarAtendimento()" style="margin-top:4px;">❌ Cancelar</button>';
+            html += '</div>';
+
+            html += '</div>';
+
+            render(html);
+        }
+
+        // ==================== PROCEDIMENTOS ====================
+        function toggleProcedimento(nome) {
+            var idx = procedimentosFeitos.indexOf(nome);
+            if (idx > -1) {
+                procedimentosFeitos.splice(idx, 1);
+            } else {
+                procedimentosFeitos.push(nome);
+            }
+            mostrarAtendimentoAtivo();
+        }
+
+        // ==================== PRODUTOS ====================
+        function adicionarProduto() {
+            var nome = document.getElementById('produtoNome').value.trim();
+            var qtd = document.getElementById('produtoQtd').value.trim();
+
+            if (!nome) return;
+
+            produtosUsados.push({
+                nome: nome,
+                qtd: qtd || '1 un'
+            });
+
+            document.getElementById('produtoNome').value = '';
+            document.getElementById('produtoQtd').value = '';
+            mostrarAtendimentoAtivo();
+        }
+
+        function removerProduto(idx) {
+            produtosUsados.splice(idx, 1);
+            mostrarAtendimentoAtivo();
+        }
+
+        // ==================== FINALIZAR ====================
+        async function finalizarAtendimento() {
+            if (!confirm('Deseja finalizar este atendimento?')) return;
+
+            clearInterval(timerInterval);
+            document.getElementById('alertaTimer').classList.remove('show');
+
+            var horaFim = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            var duracao = Math.floor(segundos / 60);
+
+            var userData = null;
+            try {
+                var saved = localStorage.getItem('aquapluss-user');
+                if (saved) userData = JSON.parse(saved);
+            } catch (e) {}
+
+            var dados = {
+                clienteId: atendimentoAtivo.clienteId,
+                clienteNome: atendimentoAtivo.clienteNome,
+                piscineiroNome: userData ? userData.nome || userData.email : 'Piscineiro',
+                data: atendimentoAtivo.data,
+                horaInicio: atendimentoAtivo.horaInicio,
+                horaFim: horaFim,
+                duracao: duracao,
+                status: 'concluido',
+                procedimentos: procedimentosFeitos.join(', '),
+                produtos: produtosUsados.map(function(p) { return p.nome + ' (' + p.qtd + ')'; }).join(', '),
+                criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            try {
+                await db.collection('atendimentos').add(dados);
+                alert('✅ Atendimento registrado com sucesso!');
+            } catch (e) {
+                alert('Erro ao salvar: ' + e.message);
+                // Salvar localmente se offline
+                var offlineData = JSON.parse(localStorage.getItem('aquapluss-offline') || '[]');
+                offlineData.push(dados);
+                localStorage.setItem('aquapluss-offline', JSON.stringify(offlineData));
+                alert('📱 Salvo offline! Será sincronizado quando houver internet.');
+            }
+
+            // Limpar
+            atendimentoAtivo = null;
+            localStorage.removeItem('aquapluss-atendimento');
+            segundos = 0;
+            produtosUsados = [];
+            procedimentosFeitos = [];
+
+            carregarApp();
+        }
+
+        function cancelarAtendimento() {
+            if (!confirm('Tem certeza que deseja cancelar este atendimento?')) return;
+
+            clearInterval(timerInterval);
+            document.getElementById('alertaTimer').classList.remove('show');
+
+            atendimentoAtivo = null;
+            localStorage.removeItem('aquapluss-atendimento');
+            segundos = 0;
+            produtosUsados = [];
+            procedimentosFeitos = [];
+
+            carregarApp();
+        }
+
+        // ==================== SINCRONIZAÇÃO OFFLINE ====================
+        async function sincronizarOffline() {
+            var offlineData = JSON.parse(localStorage.getItem('aquapluss-offline') || '[]');
+            if (offlineData.length === 0) return;
+
+            var sincronizados = 0;
+            for (var i = 0; i < offlineData.length; i++) {
+                try {
+                    await db.collection('atendimentos').add(offlineData[i]);
+                    sincronizados++;
+                } catch (e) {
+                    console.error('Erro ao sincronizar:', e);
+                    break;
+                }
+            }
+
+            if (sincronizados > 0) {
+                offlineData.splice(0, sincronizados);
+                localStorage.setItem('aquapluss-offline', JSON.stringify(offlineData));
+                console.log('✅ ' + sincronizados + ' atendimentos sincronizados!');
+            }
+        }
+
+        // ==================== INICIALIZAÇÃO ====================
+        function init() {
+            auth.onAuthStateChanged(function(user) {
+                if (user) {
+                    console.log('✅ Autenticado:', user.email);
+                    sincronizarOffline();
+                    carregarApp();
+                } else {
+                    console.log('ℹ️ Não autenticado');
+                    showLogin();
+                }
+            });
+        }
+
+        // ==================== SERVICE WORKER (PWA) ====================
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                // Registra service worker básico para cache offline
+                var cacheName = 'aquapluss-piscineiro-v1';
+                var filesToCache = [
+                    './',
+                    './?utm_source=pwa'
+                ];
+
+                caches.open(cacheName).then(function(cache) {
+                    cache.addAll(filesToCache);
+                });
+            });
+        }
+
+        // Iniciar
+        init();
+        console.log('🚀 AquaPluss Piscineiro v1.0');
+    </script>
+</body>
+</html>
