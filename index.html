@@ -115,7 +115,7 @@
                 <button type="submit" class="btn-login" id="loginBtn">Entrar</button>
             </form>
         </div>
-        <div class="login-footer">AquaPlussPiscinas © 2024 • v2.0</div>
+        <div class="login-footer">AquaPlussPiscinas © 2026 • v2.0</div>
     </div>
 </div>
 
@@ -418,15 +418,16 @@ async function loadFuncionarios(){
         var snap = await db.collection('funcionarios').orderBy('nome').get();
         var rows = '';
         if(snap.empty){
-            rows = '<tr><td colspan="5">Nenhum</td></tr>';
+            rows = '<tr><td colspan="6">Nenhum</td></tr>';
         }else{
             snap.docs.forEach(function(d){
                 var f = d.data();
                 var statusClass = f.status === 'ativo' ? 'badge-success' : 'badge-danger';
-                rows += '<tr><td>' + f.nome + '</td><td>' + (f.cargo || '-') + '</td><td>' + (f.telefone || '-') + '</td><td><span class="badge ' + statusClass + '">' + f.status + '</span></td><td><button class="btn-link" onclick="editarFuncionario(\'' + d.id + '\')">Editar</button><button class="btn-link" onclick="inativarFuncionario(\'' + d.id + '\')">' + (f.status === 'ativo' ? 'Inativar' : 'Ativar') + '</button></td></tr>';
+                var temAcesso = f.uid ? '<span class="badge badge-success" style="font-size:10px;">✅ Criado</span>' : '<span class="badge badge-warning" style="font-size:10px;">⚠️ Pendente</span>';
+                rows += '<tr><td>' + f.nome + '</td><td>' + (f.cargo || '-') + '</td><td>' + (f.telefone || '-') + '</td><td>' + (f.email || '-') + '</td><td>' + temAcesso + '</td><td><button class="btn-link" onclick="editarFuncionario(\'' + d.id + '\')">Editar</button><button class="btn-link" onclick="inativarFuncionario(\'' + d.id + '\')">' + (f.status === 'ativo' ? 'Inativar' : 'Ativar') + '</button></td></tr>';
             });
         }
-        pageContent.innerHTML = '<div class="card"><div class="card-header"><h3 class="card-title">Funcionários (' + snap.size + ')</h3><button class="btn btn-primary btn-sm" onclick="novoFuncionario()">+ Novo</button></div><div class="card-body"><table class="table"><thead><tr><th>Nome</th><th>Cargo</th><th>Telefone</th><th>Status</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div></div>';
+        pageContent.innerHTML = '<div class="card"><div class="card-header"><h3 class="card-title">Funcionários (' + snap.size + ')</h3><button class="btn btn-primary btn-sm" onclick="novoFuncionario()">+ Novo</button></div><div class="card-body"><table class="table"><thead><tr><th>Nome</th><th>Cargo</th><th>Telefone</th><th>E-mail</th><th>Acesso</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div></div>';
     }catch(err){
         pageContent.innerHTML = errCard(err.message);
     }
@@ -439,16 +440,27 @@ function novoFuncionario(data){
         '<div class="form-group"><label>Nome *</label><input type="text" class="form-input" name="nome" value="' + (data ? data.nome || '' : '') + '" required></div>' +
         '<div class="form-group"><label>CPF *</label><input type="text" class="form-input" name="cpf" value="' + (data ? data.cpf || '' : '') + '" required></div>' +
         '<div class="form-group"><label>Telefone *</label><input type="text" class="form-input" name="telefone" value="' + (data ? data.telefone || '' : '') + '" required></div>' +
-        '<div class="form-group"><label>E-mail</label><input type="email" class="form-input" name="email" value="' + (data ? data.email || '' : '') + '"></div>' +
-        '<div class="form-group"><label>Cargo</label><select class="form-input" name="cargo"><option value="Piscineiro"' + (data && data.cargo === 'Piscineiro' ? 'selected' : '') + '>Piscineiro</option><option value="Técnico"' + (data && data.cargo === 'Técnico' ? 'selected' : '') + '>Técnico</option></select></div>' +
+        '<div class="form-group"><label>E-mail (será o login) *</label><input type="email" class="form-input" name="email" value="' + (data ? data.email || '' : '') + '" required></div>' +
+        '<div class="form-group"><label>Cargo</label><select class="form-input" name="cargo"><option value="Piscineiro"' + (data && data.cargo === 'Piscineiro' ? 'selected' : '') + '>Piscineiro</option><option value="Técnico"' + (data && data.cargo === 'Técnico' ? 'selected' : '') + '>Técnico</option><option value="Supervisor"' + (data && data.cargo === 'Supervisor' ? 'selected' : '') + '>Supervisor</option><option value="Gestor"' + (data && data.cargo === 'Gestor' ? 'selected' : '') + '>Gestor</option></select></div>' +
+        '<div class="form-group"><label>Senha de Acesso</label><input type="text" class="form-input" name="senhaAcesso" id="senhaAcesso" value="' + (data ? data.senhaAcesso || '' : '') + '" readonly placeholder="Gerada ao criar acesso" style="background:#f1f5f9;"></div>' +
         '<div class="form-group"><label>Salário (R$)</label><input type="number" class="form-input" name="salario" value="' + (data ? data.salario || '' : '') + '" step="0.01"></div>' +
         '<div class="form-group"><label>Comissão (%)</label><input type="number" class="form-input" name="comissao" value="' + (data ? data.comissao || '' : '') + '" step="0.1"></div>' +
         '</div></form>';
+    
     var titulo = isEdit ? 'Editar Funcionário' : 'Novo Funcionário';
     var idSalvar = data ? (data.id || '') : '';
-    openModal(titulo, body, '<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarFuncionario(\'' + idSalvar + '\')">Salvar</button>');
+    var footerBtns = '<button class="btn btn-outline" onclick="closeModal()">Cancelar</button>';
+    
+    if (!isEdit || !data.senhaAcesso) {
+        footerBtns += '<button class="btn btn-warning" onclick="gerarSenhaAcesso()">🔑 Gerar Senha</button>';
+    }
+    footerBtns += '<button class="btn btn-primary" onclick="salvarFuncionario(\'' + idSalvar + '\')">Salvar</button>';
+    if (!isEdit) {
+        footerBtns += '<button class="btn btn-success" onclick="criarAcessoFuncionario()" id="btnCriarAcesso">👤 Criar Acesso e Salvar</button>';
+    }
+    
+    openModal(titulo, body, footerBtns);
 }
-
 async function editarFuncionario(id){
     var d = await db.collection('funcionarios').doc(id).get();
     if(d.exists){
@@ -483,7 +495,134 @@ async function salvarFuncionario(id){
     loadFuncionarios();
 }
 
-// Piscinas
+// Gerar senha aleatória
+function gerarSenhaAcesso(){
+    var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#';
+    var senha = '';
+    for(var i=0; i<10; i++){
+        senha += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    document.getElementById('senhaAcesso').value = senha;
+}
+
+// Criar acesso do funcionário (Firebase Auth + Firestore)
+async function criarAcessoFuncionario(){
+    var form = document.getElementById('funcForm');
+    var fd = new FormData(form);
+    var dados = {};
+    fd.forEach(function(value, key){ dados[key] = value; });
+    
+    if(!dados.email || !dados.senhaAcesso || !dados.nome){
+        alert('Preencha Nome, E-mail e gere uma senha!');
+        return;
+    }
+    
+    var btn = document.getElementById('btnCriarAcesso');
+    btn.disabled = true;
+    btn.textContent = 'Criando acesso...';
+    
+    try{
+        // 1. Criar usuário no Firebase Authentication via REST API
+        var apiKey = firebaseConfig.apiKey;
+        var response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + apiKey, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: dados.email,
+                password: dados.senhaAcesso,
+                returnSecureToken: true
+            })
+        });
+        
+        var result = await response.json();
+        
+        if(result.error){
+            alert('Erro ao criar acesso: ' + result.error.message);
+            btn.disabled = false;
+            btn.textContent = '👤 Criar Acesso e Salvar';
+            return;
+        }
+        
+        var uid = result.localId;
+        
+        // 2. Salvar funcionário no Firestore
+        var funcData = {
+            nome: dados.nome,
+            cpf: dados.cpf || '',
+            telefone: dados.telefone || '',
+            email: dados.email,
+            cargo: dados.cargo || 'Piscineiro',
+            salario: dados.salario || '',
+            comissao: dados.comissao || '',
+            senhaAcesso: dados.senhaAcesso,
+            uid: uid,
+            status: 'ativo',
+            criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        
+        var funcRef = await db.collection('funcionarios').add(funcData);
+        
+        // 3. Criar documento na coleção usuarios
+        await db.collection('usuarios').doc(uid).set({
+            nome: dados.nome,
+            email: dados.email,
+            perfil: 'funcionario',
+            cargo: dados.cargo || 'Piscineiro',
+            funcionarioId: funcRef.id,
+            criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        alert('✅ Acesso criado com sucesso!\n\nE-mail: ' + dados.email + '\nSenha: ' + dados.senhaAcesso + '\n\nGuarde esta senha para entregar ao funcionário!');
+        
+        closeModal();
+        loadFuncionarios();
+    }catch(e){
+        alert('Erro ao criar acesso: ' + e.message);
+        btn.disabled = false;
+        btn.textContent = '👤 Criar Acesso e Salvar';
+    }
+}	
+
+// Função para o funcionário redefinir a própria senha
+async function redefinirSenhaFuncionario(id){
+    var novaSenha = prompt('Digite a nova senha (mínimo 6 caracteres):');
+    if(!novaSenha || novaSenha.length < 6){
+        alert('Senha deve ter no mínimo 6 caracteres!');
+        return;
+    }
+    
+    try{
+        var d = await db.collection('funcionarios').doc(id).get();
+        if(!d.exists){ alert('Funcionário não encontrado!'); return; }
+        
+        var f = d.data();
+        if(!f.uid){ alert('Este funcionário não tem acesso criado!'); return; }
+        
+        // Atualizar senha no Firebase Auth via REST API
+        var apiKey = firebaseConfig.apiKey;
+        var response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:update?key=' + apiKey, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                idToken: await auth.currentUser.getIdToken(),
+                password: novaSenha,
+                returnSecureToken: false
+            })
+        });
+        
+        var result = await response.json();
+        if(result.error){
+            alert('Erro: ' + result.error.message);
+            return;
+        }
+        
+        await db.collection('funcionarios').doc(id).update({senhaAcesso: novaSenha});
+        alert('✅ Senha alterada com sucesso!');
+    }catch(e){
+        alert('Erro: ' + e.message);
+    }
+}
+	
 // Piscinas
 async function loadPiscinas(){
     pageContent.innerHTML='<p style="padding:40px;">Carregando...</p>';
