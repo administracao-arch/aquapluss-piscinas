@@ -110,8 +110,12 @@
         <div class="login-body"><h2>Bem-vindo de volta</h2><p>Faça login para acessar o painel</p>
             <div id="loginAlert" class="alert"></div>
             <form id="loginForm">
-                <div class="form-group"><label>E-mail</label><div style="position:relative;"><svg style="position:absolute;left:12px;top:50%;transform:translateY(-50%);width:17px;stroke:var(--text-tertiary);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><input type="email" id="emailInput" class="form-input" style="padding-left:38px;" placeholder="admin@aquapluss.com.br" required></div></div>
-                <div class="form-group"><label>Senha</label><div style="position:relative;"><svg style="position:absolute;left:12px;top:50%;transform:translateY(-50%);width:17px;stroke:var(--text-tertiary);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input type="password" id="passwordInput" class="form-input" style="padding-left:38px;" placeholder="••••••••" required autocomplete="current-password"></div></div>
+                <div class="form-group"><label>E-mail</label><div style="position:relative;"><svg style="position:absolute;left:12px;top:50%;transform:translateY(-50%);width:17px;stroke:var(--text-tertiary);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><input type="email" id="emailInput" class="form-input" style="padding-left:38px;" placeholder="admin@aquapluss.com.br" required autocomplete="username"></div></div>
+                <div class="form-group"><label>Senha</label><div style="position:relative;"><svg style="position:absolute;left:12px;top:50%;transform:translateY(-50%);width:17px;stroke:var(--text-tertiary);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input type="password" id="passwordInput" class="form-input" style="padding-left:38px;" placeholder="••••••••" required autocomplete="current-password"><span id="toggleSenha" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--text-tertiary);font-size:18px;user-select:none;" onclick="toggleVerSenha()" title="Ver senha">👁️</span></div></div>
+                <div class="form-group" style="display:flex;align-items:center;gap:8px;margin-top:-4px;">
+                    <input type="checkbox" id="lembrarCheck" style="width:auto;accent-color:var(--brand);">
+                    <label style="margin-bottom:0;cursor:pointer;font-weight:400;text-transform:none;letter-spacing:0;font-size:12px;">Lembrar de mim</label>
+                </div>
                 <button type="submit" class="btn-login" id="loginBtn">Entrar</button>
             </form>
         </div>
@@ -188,20 +192,54 @@ modalOverlay.addEventListener('click',e=>{if(e.target===modalOverlay)closeModal(
 function errCard(m){return `<div class="card"><div class="card-header"><h3 class="card-title">Erro</h3></div><div class="card-body-padded"><p style="color:var(--danger);">${m}</p></div></div>`;}
 
 // Login
+// Verificar se tem login salvo
+var savedEmail = localStorage.getItem('aquapluss-email');
+var savedPass = localStorage.getItem('aquapluss-pass');
+if(savedEmail){ document.addEventListener('DOMContentLoaded', function(){
+    var emailEl = document.getElementById('emailInput');
+    var passEl = document.getElementById('passwordInput');
+    var checkEl = document.getElementById('lembrarCheck');
+    if(emailEl) emailEl.value = savedEmail;
+    if(passEl) passEl.value = savedPass;
+    if(checkEl && savedEmail) checkEl.checked = true;
+});}
+
+function toggleVerSenha(){
+    var passInput = document.getElementById('passwordInput');
+    var toggleBtn = document.getElementById('toggleSenha');
+    if(passInput.type === 'password'){
+        passInput.type = 'text';
+        toggleBtn.textContent = '🙈';
+    }else{
+        passInput.type = 'password';
+        toggleBtn.textContent = '👁️';
+    }
+}
+
 loginForm.addEventListener('submit',async function(e){
     e.preventDefault();hideAlert();
-    const email=emailInput.value.trim(),pw=passwordInput.value;
+    var email=emailInput.value.trim(),pw=passwordInput.value;
     if(!email||!pw){showAlert('Preencha todos os campos.');return;}
     setLoading(true);
     try{
-        const uc=await auth.signInWithEmailAndPassword(email,pw);
-        const user=uc.user;
-        const uDoc=await db.collection('usuarios').doc(user.uid).get();
-        if(uDoc.exists){const d=uDoc.data();sidebarUserName.textContent=d.nome||'Usuário';sidebarUserRole.textContent=d.cargo||'Usuário';sidebarAvatar.textContent=(d.nome||'U').substring(0,2).toUpperCase();localStorage.setItem('aquapluss-user',JSON.stringify({uid:user.uid,email:user.email,...d}));}
+        var uc=await auth.signInWithEmailAndPassword(email,pw);
+        var user=uc.user;
+        
+        // Salvar login se marcado
+        if(document.getElementById('lembrarCheck').checked){
+            localStorage.setItem('aquapluss-email', email);
+            localStorage.setItem('aquapluss-pass', pw);
+        }else{
+            localStorage.removeItem('aquapluss-email');
+            localStorage.removeItem('aquapluss-pass');
+        }
+        
+        var uDoc=await db.collection('usuarios').doc(user.uid).get();
+        if(uDoc.exists){var d=uDoc.data();sidebarUserName.textContent=d.nome||'Usuário';sidebarUserRole.textContent=d.cargo||'Usuário';sidebarAvatar.textContent=(d.nome||'U').substring(0,2).toUpperCase();localStorage.setItem('aquapluss-user',JSON.stringify({uid:user.uid,email:user.email,...d}));}
         else{await db.collection('usuarios').doc(user.uid).set({nome:email.split('@')[0],email,perfil:'admin',cargo:'Administrador',criadoEm:firebase.firestore.FieldValue.serverTimestamp()});sidebarUserName.textContent=email.split('@')[0];sidebarUserRole.textContent='Administrador';sidebarAvatar.textContent=email.substring(0,2).toUpperCase();}
         await db.collection('usuarios').doc(user.uid).update({ultimoLogin:firebase.firestore.FieldValue.serverTimestamp()});
         showApp();
-    }catch(err){let m='Erro ao fazer login.';if(err.code==='auth/user-not-found')m='Usuário não encontrado.';else if(err.code==='auth/wrong-password')m='Senha incorreta.';showAlert(m);}
+    }catch(err){var m='Erro ao fazer login.';if(err.code==='auth/user-not-found')m='Usuário não encontrado.';else if(err.code==='auth/wrong-password')m='Senha incorreta.';else if(err.code==='auth/too-many-requests')m='Muitas tentativas. Aguarde um momento.';showAlert(m);}
     setLoading(false);
 });
 logoutBtn.addEventListener('click',async()=>{await auth.signOut();localStorage.removeItem('aquapluss-user');showLogin();});
@@ -429,7 +467,6 @@ async function loadFuncionarios(){
                     '<td><span class="badge '+statusClass+'"><span class="badge-dot"></span>'+statusText+'</span></td>' +
                     '<td>'+ (f.cargo || '-') +'</td>' +
                     '<td>'+ (f.telefone || '-') +'<br><span style="font-size:11px;color:var(--text-tertiary);">'+ (f.email || '') +'</span></td>' +
-                    '<td>'+temAcesso+'</td>' +
                     '<td>'+ (f.dataAdmissao || '-') +'</td>' +
                     '<td>' +
                         '<button class="btn btn-outline btn-sm" onclick="editarFuncionario(\''+d.id+'\')" style="margin-right:4px;" title="Editar">✏️</button>' +
@@ -438,7 +475,7 @@ async function loadFuncionarios(){
                 '</tr>';
             });
         }
-        pageContent.innerHTML = '<div class="card"><div class="card-header"><h3 class="card-title">👷 Funcionários ('+snap.size+')</h3><button class="btn btn-primary btn-sm" onclick="novoFuncionario()">+ Novo Funcionário</button></div><div class="card-body"><table class="table"><thead><tr><th>Funcionário</th><th>Status</th><th>Cargo</th><th>Contato</th><th>Acesso</th><th>Admissão</th><th style="width:100px;">Ações</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>';
+        pageContent.innerHTML = '<div class="card"><div class="card-header"><h3 class="card-title">👷 Funcionários ('+snap.size+')</h3><button class="btn btn-primary btn-sm" onclick="novoFuncionario()">+ Novo Funcionário</button></div><div class="card-body"><table class="table"><thead><tr><th>Funcionário</th><th>Status</th><th>Cargo</th><th>Contato</th><th>Admissão</th><th style="width:100px;">Ações</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>';
     }catch(err){
         pageContent.innerHTML = errCard(err.message);
     }
@@ -531,6 +568,24 @@ async function buscarCEPFuncionario(){
         }
     }catch(e){}
 }
+
+async function editarFuncionario(id){
+    try{
+        var d = await db.collection('funcionarios').doc(id).get();
+        if(d.exists){
+            var dados = d.data();
+            dados.id = id;
+            novoFuncionario(dados);
+        }else{
+            alert('Funcionário não encontrado!');
+        }
+    }catch(e){
+        alert('Erro ao carregar: ' + e.message);
+    }
+}
+
+// Piscinas
+	
 	
 // Piscinas
 async function loadPiscinas(){
