@@ -416,16 +416,29 @@ async function loadFuncionarios(){
         var snap = await db.collection('funcionarios').orderBy('nome').get();
         var rows = '';
         if(snap.empty){
-            rows = '<tr><td colspan="6">Nenhum</td></tr>';
+            rows = '<tr><td colspan="7">Nenhum funcionário cadastrado</td></tr>';
         }else{
             snap.docs.forEach(function(d){
                 var f = d.data();
                 var statusClass = f.status === 'ativo' ? 'badge-success' : 'badge-danger';
-                var temAcesso = f.uid ? '<span class="badge badge-success" style="font-size:10px;">✅ Criado</span>' : '<span class="badge badge-warning" style="font-size:10px;">⚠️ Pendente</span>';
-                rows += '<tr><td>' + f.nome + '</td><td>' + (f.cargo || '-') + '</td><td>' + (f.telefone || '-') + '</td><td>' + (f.email || '-') + '</td><td>' + temAcesso + '</td><td><button class="btn-link" onclick="editarFuncionario(\'' + d.id + '\')">Editar</button><button class="btn-link" onclick="inativarFuncionario(\'' + d.id + '\')">' + (f.status === 'ativo' ? 'Inativar' : 'Ativar') + '</button></td></tr>';
+                var statusText = f.status === 'ativo' ? 'Ativo' : 'Inativo';
+                var iniciais = (f.nome || 'F').substring(0,2).toUpperCase();
+                var temAcesso = f.uid ? '<span style="color:#059669;font-size:14px;" title="Acesso criado">🔑</span>' : '<span style="color:#d97706;font-size:14px;" title="Acesso pendente">⚠️</span>';
+                rows += '<tr>' +
+                    '<td><div style="display:flex;align-items:center;gap:10px;"><div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0891b2,#22d3ee);color:white;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;">'+iniciais+'</div><div><strong>'+f.nome+'</strong><br><span style="font-size:11px;color:var(--text-tertiary);">'+ (f.cpf || 'CPF não informado') +'</span></div></div></td>' +
+                    '<td><span class="badge '+statusClass+'"><span class="badge-dot"></span>'+statusText+'</span></td>' +
+                    '<td>'+ (f.cargo || '-') +'</td>' +
+                    '<td>'+ (f.telefone || '-') +'<br><span style="font-size:11px;color:var(--text-tertiary);">'+ (f.email || '') +'</span></td>' +
+                    '<td>'+temAcesso+'</td>' +
+                    '<td>'+ (f.dataAdmissao || '-') +'</td>' +
+                    '<td>' +
+                        '<button class="btn btn-outline btn-sm" onclick="editarFuncionario(\''+d.id+'\')" style="margin-right:4px;" title="Editar">✏️</button>' +
+                        '<button class="btn btn-sm" onclick="inativarFuncionario(\''+d.id+'\')" style="background:'+(f.status==='ativo'?'#fef2f2':'#ecfdf5')+';color:'+(f.status==='ativo'?'#dc2626':'#059669')+';" title="'+(f.status==='ativo'?'Inativar':'Ativar')+'">'+(f.status==='ativo'?'🔴':'🟢')+'</button>' +
+                    '</td>' +
+                '</tr>';
             });
         }
-        pageContent.innerHTML = '<div class="card"><div class="card-header"><h3 class="card-title">Funcionários (' + snap.size + ')</h3><button class="btn btn-primary btn-sm" onclick="novoFuncionario()">+ Novo</button></div><div class="card-body"><table class="table"><thead><tr><th>Nome</th><th>Cargo</th><th>Telefone</th><th>E-mail</th><th>Acesso</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div></div>';
+        pageContent.innerHTML = '<div class="card"><div class="card-header"><h3 class="card-title">👷 Funcionários ('+snap.size+')</h3><button class="btn btn-primary btn-sm" onclick="novoFuncionario()">+ Novo Funcionário</button></div><div class="card-body"><table class="table"><thead><tr><th>Funcionário</th><th>Status</th><th>Cargo</th><th>Contato</th><th>Acesso</th><th>Admissão</th><th style="width:100px;">Ações</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>';
     }catch(err){
         pageContent.innerHTML = errCard(err.message);
     }
@@ -434,38 +447,47 @@ async function loadFuncionarios(){
 function novoFuncionario(data){
     data = data || null;
     var isEdit = !!data;
-    var body = '<form id="funcForm"><div class="form-grid">' +
-        '<div class="form-group"><label>Nome *</label><input type="text" class="form-input" name="nome" value="' + (data ? data.nome || '' : '') + '" required></div>' +
+    
+    var body = '<form id="funcForm">' +
+        '<div class="form-section"><div class="form-section-title">👤 Dados Pessoais</div><div class="form-grid">' +
+        '<div class="form-group"><label>Nome Completo *</label><input type="text" class="form-input" name="nome" value="' + (data ? data.nome || '' : '') + '" required></div>' +
         '<div class="form-group"><label>CPF *</label><input type="text" class="form-input" name="cpf" value="' + (data ? data.cpf || '' : '') + '" required></div>' +
+        '<div class="form-group"><label>RG</label><input type="text" class="form-input" name="rg" value="' + (data ? data.rg || '' : '') + '"></div>' +
+        '<div class="form-group"><label>Data de Nascimento</label><input type="date" class="form-input" name="dataNascimento" value="' + (data ? data.dataNascimento || '' : '') + '"></div>' +
         '<div class="form-group"><label>Telefone *</label><input type="text" class="form-input" name="telefone" value="' + (data ? data.telefone || '' : '') + '" required></div>' +
-        '<div class="form-group"><label>E-mail (será o login) *</label><input type="email" class="form-input" name="email" value="' + (data ? data.email || '' : '') + '" required></div>' +
-        '<div class="form-group"><label>Cargo</label><select class="form-input" name="cargo"><option value="Piscineiro"' + (data && data.cargo === 'Piscineiro' ? 'selected' : '') + '>Piscineiro</option><option value="Técnico"' + (data && data.cargo === 'Técnico' ? 'selected' : '') + '>Técnico</option><option value="Supervisor"' + (data && data.cargo === 'Supervisor' ? 'selected' : '') + '>Supervisor</option><option value="Gestor"' + (data && data.cargo === 'Gestor' ? 'selected' : '') + '>Gestor</option></select></div>' +
-        '<div class="form-group"><label>Senha de Acesso</label><input type="text" class="form-input" name="senhaAcesso" id="senhaAcesso" value="' + (data ? data.senhaAcesso || '' : '') + '" readonly placeholder="Gerada ao criar acesso" style="background:#f1f5f9;"></div>' +
-        '<div class="form-group"><label>Salário (R$)</label><input type="number" class="form-input" name="salario" value="' + (data ? data.salario || '' : '') + '" step="0.01"></div>' +
-        '<div class="form-group"><label>Comissão (%)</label><input type="number" class="form-input" name="comissao" value="' + (data ? data.comissao || '' : '') + '" step="0.1"></div>' +
-        '</div></form>';
+        '<div class="form-group"><label>E-mail</label><input type="email" class="form-input" name="email" value="' + (data ? data.email || '' : '') + '"></div>' +
+        '</div></div>' +
+        
+        '<div class="form-section"><div class="form-section-title">💼 Dados Profissionais</div><div class="form-grid">' +
+        '<div class="form-group"><label>Cargo *</label><select class="form-input" name="cargo" required><option value="Piscineiro"' + (data && data.cargo === 'Piscineiro' ? 'selected' : '') + '>Piscineiro</option><option value="Técnico"' + (data && data.cargo === 'Técnico' ? 'selected' : '') + '>Técnico</option><option value="Supervisor"' + (data && data.cargo === 'Supervisor' ? 'selected' : '') + '>Supervisor</option><option value="Gestor"' + (data && data.cargo === 'Gestor' ? 'selected' : '') + '>Gestor</option></select></div>' +
+        '<div class="form-group"><label>Data de Admissão</label><input type="date" class="form-input" name="dataAdmissao" value="' + (data ? data.dataAdmissao || '' : '') + '"></div>' +
+        '<div class="form-group"><label>Salário Base (R$)</label><input type="number" class="form-input" name="salario" value="' + (data ? data.salario || '' : '') + '" step="0.01"></div>' +
+        '<div class="form-group"><label>Comissão (%)</label><input type="number" class="form-input" name="comissao" value="' + (data ? data.comissao || '' : '') + '" step="0.1" placeholder="Ex: 10"></div>' +
+        '<div class="form-group"><label>CTPS (Carteira de Trabalho)</label><input type="text" class="form-input" name="ctps" value="' + (data ? data.ctps || '' : '') + '"></div>' +
+        '<div class="form-group"><label>CNH</label><input type="text" class="form-input" name="cnh" value="' + (data ? data.cnh || '' : '') + '"></div>' +
+        '</div></div>' +
+        
+        '<div class="form-section"><div class="form-section-title">📍 Endereço</div><div class="form-grid">' +
+        '<div class="form-group"><label>CEP</label><input type="text" class="form-input" name="cep" id="funcCepInput" value="' + (data ? data.cep || '' : '') + '" onblur="buscarCEPFuncionario()"></div>' +
+        '<div class="form-group"><label>Logradouro</label><input type="text" class="form-input" name="logradouro" id="funcLogradouroInput" value="' + (data ? data.logradouro || '' : '') + '"></div>' +
+        '<div class="form-group"><label>Número</label><input type="text" class="form-input" name="numero" value="' + (data ? data.numero || '' : '') + '"></div>' +
+        '<div class="form-group"><label>Bairro</label><input type="text" class="form-input" name="bairro" id="funcBairroInput" value="' + (data ? data.bairro || '' : '') + '"></div>' +
+        '<div class="form-group"><label>Cidade</label><input type="text" class="form-input" name="cidade" id="funcCidadeInput" value="' + (data ? data.cidade || '' : '') + '"></div>' +
+        '<div class="form-group"><label>Estado</label><input type="text" class="form-input" name="estado" id="funcEstadoInput" value="' + (data ? data.estado || '' : '') + '" maxlength="2"></div>' +
+        '</div></div>' +
+        
+        '<div class="form-section"><div class="form-section-title">📝 Observações</div>' +
+        '<div class="form-group"><textarea class="form-input" name="observacoes" rows="2" placeholder="Anotações sobre o funcionário...">' + (data ? data.observacoes || '' : '') + '</textarea></div>' +
+        '</div>' +
+        
+        '</form>';
     
     var titulo = isEdit ? 'Editar Funcionário' : 'Novo Funcionário';
     var idSalvar = data ? (data.id || '') : '';
     var footerBtns = '<button class="btn btn-outline" onclick="closeModal()">Cancelar</button>';
-    
-    if (!isEdit || !data.senhaAcesso) {
-        footerBtns += '<button class="btn btn-warning" onclick="gerarSenhaAcesso()">🔑 Gerar Senha</button>';
-    }
-    footerBtns += '<button class="btn btn-primary" onclick="salvarFuncionario(\'' + idSalvar + '\')">Salvar</button>';
-    if (!isEdit) {
-        footerBtns += '<button class="btn btn-success" onclick="criarAcessoFuncionario()" id="btnCriarAcesso">👤 Criar Acesso e Salvar</button>';
-    }
+    footerBtns += '<button class="btn btn-primary" onclick="salvarFuncionario(\'' + idSalvar + '\')">💾 ' + (isEdit ? 'Atualizar' : 'Salvar') + '</button>';
     
     openModal(titulo, body, footerBtns);
-}
-async function editarFuncionario(id){
-    var d = await db.collection('funcionarios').doc(id).get();
-    if(d.exists){
-        var dados = d.data();
-        dados.id = id;
-        novoFuncionario(dados);
-    }
 }
 
 async function inativarFuncionario(id){
@@ -492,58 +514,8 @@ async function salvarFuncionario(id){
     closeModal();
     loadFuncionarios();
 }
-
-// Gerar senha aleatória
-function gerarSenhaAcesso(){
-    var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#';
-    var senha = '';
-    for(var i=0; i<10; i++){
-        senha += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    document.getElementById('senhaAcesso').value = senha;
-}
-
-// Criar acesso do funcionário (Firebase Auth + Firestore)
-async function criarAcessoFuncionario(){
-    var form = document.getElementById('funcForm');
-    var fd = new FormData(form);
-    var dados = {};
-    fd.forEach(function(value, key){ dados[key] = value; });
-    
-    if(!dados.email || !dados.senhaAcesso || !dados.nome){
-        alert('Preencha Nome, E-mail e gere uma senha!');
-        return;
-    }
-    
-    var btn = document.getElementById('btnCriarAcesso');
-    btn.disabled = true;
-    btn.textContent = 'Criando acesso...';
-    
-    try{
-        // 1. Criar usuário no Firebase Authentication via REST API
-        var apiKey = firebaseConfig.apiKey;
-        var response = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + apiKey, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                email: dados.email,
-                password: dados.senhaAcesso,
-                returnSecureToken: true
-            })
-        });
         
-        var result = await response.json();
-        
-        if(result.error){
-            alert('Erro ao criar acesso: ' + result.error.message);
-            btn.disabled = false;
-            btn.textContent = '👤 Criar Acesso e Salvar';
-            return;
-        }
-        
-        var uid = result.localId;
-        
-        // 2. Salvar funcionário no Firestore
+        // 1. Salvar funcionário no Firestore
         var funcData = {
             nome: dados.nome,
             cpf: dados.cpf || '',
@@ -560,7 +532,7 @@ async function criarAcessoFuncionario(){
         
         var funcRef = await db.collection('funcionarios').add(funcData);
         
-        // 3. Criar documento na coleção usuarios
+        // 2. Criar documento na coleção usuarios
         await db.collection('usuarios').doc(uid).set({
             nome: dados.nome,
             email: dados.email,
@@ -619,6 +591,23 @@ async function redefinirSenhaFuncionario(id){
     }catch(e){
         alert('Erro: ' + e.message);
     }
+}
+
+async function buscarCEPFuncionario(){
+    var cepInput = document.getElementById('funcCepInput');
+    if(!cepInput) return;
+    var cep = cepInput.value.replace(/\D/g,'');
+    if(cep.length !== 8) return;
+    try{
+        var r = await fetch('https://viacep.com.br/ws/' + cep + '/json/');
+        var dados = await r.json();
+        if(!dados.erro){
+            document.getElementById('funcLogradouroInput').value = dados.logradouro || '';
+            document.getElementById('funcBairroInput').value = dados.bairro || '';
+            document.getElementById('funcCidadeInput').value = dados.localidade || '';
+            document.getElementById('funcEstadoInput').value = dados.uf || '';
+        }
+    }catch(e){}
 }
 	
 // Piscinas
