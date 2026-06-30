@@ -100,6 +100,7 @@
         @media (max-width: 768px) { .sidebar { transform: translateX(-100%); width: var(--sidebar-expanded) !important; } .sidebar.mobile-open { transform: translateX(0); box-shadow: var(--shadow-lg); } .sidebar .sidebar-logo-text, .sidebar .sidebar-logo-sub, .sidebar .sidebar-section-title, .sidebar .sidebar-section-arrow, .sidebar .sidebar-link-text, .sidebar .sidebar-link-badge, .sidebar .sidebar-user-info, .sidebar .sidebar-user-arrow { opacity: 1 !important; pointer-events: auto !important; } .main-content { margin-left: 0 !important; } .stats-grid { grid-template-columns: 1fr; } .header { padding: 0 12px; } .content-container { padding: 0 12px 12px; } .header-search { max-width: 160px; } .sidebar-toggle { display: none; } .form-grid { grid-template-columns: 1fr; } .modal { width: 98%; } .rotas-grid { grid-template-columns: 1fr; } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } } .animate-fade-in { animation: fadeIn 0.3s ease-out; }
         ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+        .loading-global { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 9999; display: flex; align-items: center; justify-content: center; } .loading-global .spinner-box { background: var(--bg-primary); padding: 20px 30px; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--text-primary); }
     </style>
 </head>
 <body>
@@ -128,7 +129,7 @@
         <div class="sidebar-logo"><div class="sidebar-logo-icon">AP</div><div><div class="sidebar-logo-text">Aqua<span>Pluss</span>Piscinas</div><div class="sidebar-logo-sub">Plataforma de Gestão</div></div><button class="sidebar-toggle" id="sidebarToggle" title="Recolher"><svg viewBox="-4.5 0 19 19"><path d="M8.4 17.269a1.026 1.026 0 0 1-.727-.302l-6.801-6.8a1.03 1.03 0 0 1 0-1.456l6.8-6.8a1.03 1.03 0 0 1 1.456 1.455L3.055 9.439l6.073 6.073A1.03 1.03 0 0 1 8.4 17.27z" fill="currentColor"/></svg></button></div>
         <nav class="sidebar-nav">
             <div class="sidebar-section"><div class="sidebar-section-header"><span class="sidebar-section-title">Principal</span><span class="sidebar-section-arrow"><svg viewBox="0 0 48 48"><path d="M13 30L25 18L37 30" stroke="currentColor" stroke-width="4" fill="none"/></svg></span></div><div class="sidebar-section-links">
-                <a href="#" class="sidebar-link" data-page="dashboard"><span class="sidebar-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span><span class="sidebar-link-text">Dashboard</span></a>
+                <a href="#" class="sidebar-link active" data-page="dashboard"><span class="sidebar-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span><span class="sidebar-link-text">Dashboard</span></a>
 		<a href="#" class="sidebar-link" data-page="rotas"><span class="sidebar-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="10" r="3"/><path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 6.9 8 11.7z"/></svg></span><span class="sidebar-link-text">Rotas</span></a>
                 <a href="#" class="sidebar-link" data-page="agenda"><span class="sidebar-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span><span class="sidebar-link-text">Agenda</span></a>
             </div></div>
@@ -154,7 +155,7 @@
         <header class="header">
             <button class="header-btn mobile-menu-btn" id="mobileMenuBtn" title="Menu" style="display:none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
             <div class="header-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Buscar..."></div>
-<div class="header-actions">     <button class="header-btn" id="themeToggle" title="Tema"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>     <button class="header-btn" id="logoutBtn" title="Sair"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button> </div> </header>
+            <div class="header-actions"> <button class="header-btn" id="themeToggle" title="Tema"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button> <button class="header-btn" id="logoutBtn" title="Sair"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button> </div> </header>
         <div class="breadcrumb"><a href="#">Home</a><span class="breadcrumb-separator">›</span><span class="breadcrumb-current" id="breadcrumbPage">Dashboard</span></div>
         <div class="content-container animate-fade-in" id="pageContent"></div>
     </main>
@@ -183,37 +184,35 @@ const sidebarUserName = document.getElementById('sidebarUserName'), sidebarUserR
 const sidebarAvatar = document.getElementById('sidebarAvatar'), modalOverlay = document.getElementById('modalOverlay');
 const modalContent = document.getElementById('modalContent');
 
-function showAlert(m,t='danger'){loginAlert.textContent=m;loginAlert.className=`alert alert-${t} show`;}
+function esc(s){return String(s||'').replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function showAlert(m,t){t=t||'danger';loginAlert.textContent=m;loginAlert.className='alert alert-'+t+' show';}
 function hideAlert(){loginAlert.className='alert';}
 function setLoading(l){loginBtn.disabled=l;loginBtn.innerHTML=l?'<span class="spinner"></span> Entrando...':'Entrar';}
-function openModal(t,b,f=''){modalContent.innerHTML=`<div class="modal-header"><h3 class="modal-title">${t}</h3><button class="modal-close" onclick="closeModal()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body">${b}</div>${f?`<div class="modal-footer">${f}</div>`:''}`;modalOverlay.classList.add('show');}
+function openModal(t,b,f){f=f||'';modalContent.innerHTML='<div class="modal-header"><h3 class="modal-title">'+t+'</h3><button class="modal-close" onclick="closeModal()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div><div class="modal-body">'+b+'</div>'+(f?'<div class="modal-footer">'+f+'</div>':'');modalOverlay.classList.add('show');}
 function closeModal(){modalOverlay.classList.remove('show');}
-modalOverlay.addEventListener('click',e=>{if(e.target===modalOverlay)closeModal();});
-function errCard(m){return `<div class="card"><div class="card-header"><h3 class="card-title">Erro</h3></div><div class="card-body-padded"><p style="color:var(--danger);">${m}</p></div></div>`;}
+modalOverlay.addEventListener('click',function(e){if(e.target===modalOverlay)closeModal();});
+function errCard(m){return '<div class="card"><div class="card-header"><h3 class="card-title">Erro</h3></div><div class="card-body-padded"><p style="color:var(--danger);">'+esc(m)+'</p></div></div>';}
+function showLoading(m){var d=document.createElement('div');d.className='loading-global';d.id='loadingGlobal';d.innerHTML='<div class="spinner-box"><span class="spinner"></span> '+(m||'Carregando...')+'</div>';document.body.appendChild(d);}
+function hideLoading(){var e=document.getElementById('loadingGlobal');if(e)e.remove();}
+function validarCPF(c){c=c.replace(/[^\d]/g,'');if(c.length!==11)return false;if(/^(\d)\1+$/.test(c))return false;var s=0,r;for(var i=1;i<=9;i++)s+=parseInt(c[i-1])*(11-i);r=(s*10)%11;if(r===10||r===11)r=0;if(r!==parseInt(c[9]))return false;s=0;for(var i=1;i<=10;i++)s+=parseInt(c[i-1])*(12-i);r=(s*10)%11;if(r===10||r===11)r=0;return r===parseInt(c[10]);}
+function mascaraTel(v){v=v.replace(/\D/g,'');v=v.substring(0,11);return v.length<=10?v.replace(/(\d{2})(\d{4})(\d{0,4})/,'($1) $2-$3'):v.replace(/(\d{2})(\d{5})(\d{0,4})/,'($1) $2-$3');}
+function mascaraCPF(v){v=v.replace(/\D/g,'');v=v.substring(0,11);return v.replace(/(\d{3})(\d{3})(\d{3})(\d{0,2})/,'$1.$2.$3-$4');}
+function mascaraCNPJ(v){v=v.replace(/\D/g,'');v=v.substring(0,14);return v.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{0,2})/,'$1.$2.$3/$4-$5');}
 
 // Login
-// Verificar se tem login salvo
-var savedEmail = localStorage.getItem('aquapluss-email');
-var savedPass = localStorage.getItem('aquapluss-pass');
-if(savedEmail){ document.addEventListener('DOMContentLoaded', function(){
-    var emailEl = document.getElementById('emailInput');
-    var passEl = document.getElementById('passwordInput');
-    var checkEl = document.getElementById('lembrarCheck');
-    if(emailEl) emailEl.value = savedEmail;
-    if(passEl) passEl.value = savedPass;
-    if(checkEl && savedEmail) checkEl.checked = true;
-});}
+var savedEmail=localStorage.getItem('aquapluss-email');
+document.addEventListener('DOMContentLoaded',function(){
+    var emailEl=document.getElementById('emailInput');
+    var checkEl=document.getElementById('lembrarCheck');
+    if(emailEl&&savedEmail)emailEl.value=savedEmail;
+    if(checkEl&&savedEmail)checkEl.checked=true;
+});
 
 function toggleVerSenha(){
-    var passInput = document.getElementById('passwordInput');
-    var toggleBtn = document.getElementById('toggleSenha');
-    if(passInput.type === 'password'){
-        passInput.type = 'text';
-        toggleBtn.textContent = '🙈';
-    }else{
-        passInput.type = 'password';
-        toggleBtn.textContent = '👁️';
-    }
+    var pi=document.getElementById('passwordInput');
+    var tb=document.getElementById('toggleSenha');
+    if(pi.type==='password'){pi.type='text';tb.textContent='🙈';}
+    else{pi.type='password';tb.textContent='👁️';}
 }
 
 loginForm.addEventListener('submit',async function(e){
@@ -222,32 +221,27 @@ loginForm.addEventListener('submit',async function(e){
     if(!email||!pw){showAlert('Preencha todos os campos.');return;}
     setLoading(true);
     try{
+        var lembrar=document.getElementById('lembrarCheck').checked;
+        await auth.setPersistence(lembrar?firebase.auth.Auth.Persistence.LOCAL:firebase.auth.Auth.Persistence.SESSION);
         var uc=await auth.signInWithEmailAndPassword(email,pw);
         var user=uc.user;
-        
-        // Salvar login se marcado
-        if(document.getElementById('lembrarCheck').checked){
-            localStorage.setItem('aquapluss-email', email);
-            localStorage.setItem('aquapluss-pass', pw);
-        }else{
-            localStorage.removeItem('aquapluss-email');
-            localStorage.removeItem('aquapluss-pass');
-        }
-        
+        if(lembrar){localStorage.setItem('aquapluss-email',email);}
+        else{localStorage.removeItem('aquapluss-email');}
         var uDoc=await db.collection('usuarios').doc(user.uid).get();
-        if(uDoc.exists){var d=uDoc.data();sidebarUserName.textContent=d.nome||'Usuário';sidebarUserRole.textContent=d.cargo||'Usuário';sidebarAvatar.textContent=(d.nome||'U').substring(0,2).toUpperCase();localStorage.setItem('aquapluss-user',JSON.stringify({uid:user.uid,email:user.email,...d}));}
-        else{await db.collection('usuarios').doc(user.uid).set({nome:email.split('@')[0],email,perfil:'admin',cargo:'Administrador',criadoEm:firebase.firestore.FieldValue.serverTimestamp()});sidebarUserName.textContent=email.split('@')[0];sidebarUserRole.textContent='Administrador';sidebarAvatar.textContent=email.substring(0,2).toUpperCase();}
+        if(uDoc.exists){var d=uDoc.data();sidebarUserName.textContent=esc(d.nome||'Usuário');sidebarUserRole.textContent=esc(d.cargo||'Usuário');sidebarAvatar.textContent=esc((d.nome||'U').substring(0,2).toUpperCase());localStorage.setItem('aquapluss-user',JSON.stringify({uid:user.uid,email:user.email,nome:d.nome,cargo:d.cargo,perfil:d.perfil}));}
+        else{await db.collection('usuarios').doc(user.uid).set({nome:email.split('@')[0],email:email,perfil:'admin',cargo:'Administrador',criadoEm:firebase.firestore.FieldValue.serverTimestamp()});sidebarUserName.textContent=esc(email.split('@')[0]);sidebarUserRole.textContent='Administrador';sidebarAvatar.textContent=esc(email.substring(0,2).toUpperCase());}
         await db.collection('usuarios').doc(user.uid).update({ultimoLogin:firebase.firestore.FieldValue.serverTimestamp()});
         showApp();
     }catch(err){var m='Erro ao fazer login.';if(err.code==='auth/user-not-found')m='Usuário não encontrado.';else if(err.code==='auth/wrong-password')m='Senha incorreta.';else if(err.code==='auth/too-many-requests')m='Muitas tentativas. Aguarde um momento.';showAlert(m);}
     setLoading(false);
 });
-logoutBtn.addEventListener('click',async()=>{await auth.signOut();localStorage.removeItem('aquapluss-user');showLogin();});
+logoutBtn.addEventListener('click',async()=>{await auth.signOut();localStorage.removeItem('aquapluss-user');localStorage.removeItem('aquapluss-email');showLogin();});
 function showApp(){loginScreen.style.display='none';appScreen.style.display='flex';appScreen.classList.add('show');loadPage('dashboard');}
 function showLogin(){appScreen.style.display='none';appScreen.classList.remove('show');loginScreen.style.display='flex';emailInput.value='';passwordInput.value='';hideAlert();}
 
 function loadPage(page){
-    const titles={dashboard:'Dashboard',clientes:'Clientes',funcionarios:'Funcionários',piscinas:'Piscinas','estoque-empresa':'Estoque/Empresa','estoque-clientes':'Estoque/Clientes',financeiro:'Financeiro',contratos:'Contratos',perfis:'Perfis de Acesso',agenda:'Agenda',rotas:'Rotas',atendimentos:'Atendimentos'};
+    if(!auth.currentUser){pageContent.innerHTML='<p style="padding:40px;">Faça login para continuar.</p>';return;}
+    var titles={dashboard:'Dashboard',clientes:'Clientes',funcionarios:'Funcionários',piscinas:'Piscinas','estoque-empresa':'Estoque/Empresa','estoque-clientes':'Estoque/Clientes',financeiro:'Financeiro',contratos:'Contratos',perfis:'Perfis de Acesso',agenda:'Agenda',rotas:'Rotas',atendimentos:'Atendimentos'};
     breadcrumbPage.textContent=titles[page]||page;
     switch(page){
         case 'dashboard':loadDashboard();break; case 'clientes':loadClientes();break;
@@ -268,28 +262,19 @@ async function loadDashboard(){
         var piscinasSnap=await db.collection('piscinas').where('status','==','ativa').get();
         var estoqueSnap=await db.collection('estoque').get();
         var vencidasSnap=await db.collection('faturas').where('status','==','pendente').where('vencimento','<',hoje).get();
-        
         var totalClientes=clientesSnap.size;
         var totalPiscinas=piscinasSnap.size;
         var totalVencidas=vencidasSnap.size;
-        
         var baixo=0;
-        estoqueSnap.docs.forEach(function(d){
-            var e=d.data();
-            if((e.quantidade||0)<=(e.quantidadeMinima||5)){baixo++;}
-        });
-        
+        estoqueSnap.docs.forEach(function(d){var e=d.data();if((e.quantidade||0)<=(e.quantidadeMinima||5)){baixo++;}});
         var html='<div class="stats-grid">';
         html+='<div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Clientes Ativos</span><div class="stat-card-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div><div class="stat-card-value">'+totalClientes+'</div></div>';
         html+='<div class="stat-card clickable" onclick="loadPage(\'financeiro\')"><div class="stat-card-header"><span class="stat-card-label">Faturas Vencidas</span><div class="stat-card-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg></div></div><div class="stat-card-value">'+totalVencidas+'</div><span class="stat-card-change negative">Clique para ver</span></div>';
         html+='<div class="stat-card clickable" onclick="loadPage(\'estoque-empresa\')"><div class="stat-card-header"><span class="stat-card-label">Estoque Baixo</span><div class="stat-card-icon amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg></div></div><div class="stat-card-value">'+baixo+'</div></div>';
         html+='<div class="stat-card clickable" onclick="loadPage(\'piscinas\')"><div class="stat-card-header"><span class="stat-card-label">Piscinas Ativas</span><div class="stat-card-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h2a4 4 0 0 0 4-4V6a4 4 0 0 1 8 0v2a4 4 0 0 0 4 4h2"/></svg></div></div><div class="stat-card-value">'+totalPiscinas+'</div></div>';
         html+='</div>';
-        
         pageContent.innerHTML=html;
-    }catch(err){
-        pageContent.innerHTML=errCard(err.message);
-    }
+    }catch(err){pageContent.innerHTML=errCard(err.message);}
 }
 
 // Clientes
@@ -298,763 +283,256 @@ async function loadClientes(){
     try{
         var snap=await db.collection('clientes').orderBy('nome').get();
         var rows='';
-        if(snap.empty){
-            rows='<tr><td colspan="5">Nenhum</td></tr>';
-        }else{
-            snap.docs.forEach(function(d){
-                var c=d.data();
-                var statusClass=c.status==='ativo'?'badge-success':(c.status==='inativo'?'badge-danger':'badge-warning');
-                rows+='<tr><td><strong>'+c.nome+'</strong><br><span style="font-size:11px;">'+(c.cpfCnpj||'')+'</span></td><td>'+(c.telefone||'-')+'</td><td>R$ '+(Number(c.plano)||0).toFixed(2)+'</td><td><span class="badge '+statusClass+'">'+c.status+'</span></td><td><button class="btn-link" onclick="editarCliente(\''+d.id+'\')">Editar</button><button class="btn-link" onclick="inativarCliente(\''+d.id+'\')">'+(c.status==='ativo'?'Inativar':'Ativar')+'</button></td></tr>';
-            });
-        }
+        if(snap.empty){rows='<tr><td colspan="5">Nenhum</td></tr>';}
+        else{snap.docs.forEach(function(d){var c=d.data();var sc=c.status==='ativo'?'badge-success':(c.status==='inativo'?'badge-danger':'badge-warning');rows+='<tr><td><strong>'+esc(c.nome)+'</strong><br><span style="font-size:11px;">'+esc(c.cpfCnpj||'')+'</span></td><td>'+esc(c.telefone||'-')+'</td><td>R$ '+(Number(c.plano)||0).toFixed(2)+'</td><td><span class="badge '+sc+'">'+esc(c.status)+'</span></td><td><button class="btn-link" onclick="editarCliente(\''+d.id+'\')">Editar</button><button class="btn-link" onclick="inativarCliente(\''+d.id+'\')">'+(c.status==='ativo'?'Inativar':'Ativar')+'</button></td></tr>';});}
         pageContent.innerHTML='<div class="card"><div class="card-header"><h3 class="card-title">Clientes ('+snap.size+')</h3><button class="btn btn-primary btn-sm" onclick="novoCliente()">+ Novo</button></div><div class="card-body"><table class="table"><thead><tr><th>Nome/CPF</th><th>Telefone</th><th>Plano</th><th>Status</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div></div>';
-    }catch(err){
-        pageContent.innerHTML=errCard(err.message);
-    }
+    }catch(err){pageContent.innerHTML=errCard(err.message);}
 }
 
 async function novoCliente(data){
-    data = data || null;
-    var isEdit = !!data;
-    var funcOpts = '<option value="">Selecione...</option>';
-    try{
-        var fSnap = await db.collection('funcionarios').where('status','==','ativo').get();
-        fSnap.docs.forEach(function(d){
-            var selected = (data && data.funcionarioId === d.id) ? 'selected' : '';
-            funcOpts += '<option value="' + d.id + '" ' + selected + '>' + d.data().nome + '</option>';
-        });
-    }catch(e){}
-    
-    var diasSemana = data ? (data.diasSemana || []) : [];
-    var diasLabels = ['Seg','Ter','Qua','Qui','Sex','Sáb'];
-    var diasTags = '';
-    for(var i=0; i<diasLabels.length; i++){
-        var dia = diasLabels[i];
-        var ativo = diasSemana.includes(dia) ? ' active' : '';
-        diasTags += '<span class="tag' + ativo + '" onclick="this.classList.toggle(\'active\')" data-dia="' + dia + '">' + dia + '</span>';
-    }
-    
-    var plano = data ? (data.plano || '') : '';
-    var diaVenc = data ? (data.diaVencimento || '') : '';
-    var sel5 = (diaVenc == 5) ? 'selected' : '';
-    var sel10 = (diaVenc == 10) ? 'selected' : '';
-    var sel15 = (diaVenc == 15) ? 'selected' : '';
-    var sel20 = (diaVenc == 20) ? 'selected' : '';
-    var sel25 = (diaVenc == 25) ? 'selected' : '';
-    var sel30 = (diaVenc == 30) ? 'selected' : '';
-    var fp = data ? (data.formaPagamento || '') : '';
-    var selPIX = (fp == 'PIX') ? 'selected' : '';
-    var selBoleto = (fp == 'Boleto') ? 'selected' : '';
-    var selCartao = (fp == 'Cartão') ? 'selected' : '';
-    var selDinheiro = (fp == 'Dinheiro') ? 'selected' : '';
-    
-    var body = '<form id="clienteForm">' +
-        '<div class="form-section"><div class="form-section-title">Dados Pessoais</div><div class="form-grid">' +
-        '<div class="form-group"><label>Nome *</label><input type="text" class="form-input" name="nome" value="' + (data ? data.nome || '' : '') + '" required></div>' +
-        '<div class="form-group"><label>CPF/CNPJ</label><input type="text" class="form-input" name="cpfCnpj" value="' + (data ? data.cpfCnpj || '' : '') + '"></div>' +
-        '<div class="form-group"><label>Telefone *</label><input type="text" class="form-input" name="telefone" value="' + (data ? data.telefone || '' : '') + '" required></div>' +
-        '<div class="form-group"><label>E-mail</label><input type="email" class="form-input" name="email" value="' + (data ? data.email || '' : '') + '"></div>' +
-        '</div></div>' +
-        '<div class="form-section"><div class="form-section-title">Plano e Pagamento</div><div class="form-grid">' +
-        '<div class="form-group"><label>Valor (R$) *</label><input type="number" class="form-input" name="plano" value="' + plano + '" step="0.01" required></div>' +
-        '<div class="form-group"><label>Dia do Vencimento *</label><select class="form-input" name="diaVencimento"><option value="">Selecione...</option><option value="5" ' + sel5 + '>Dia 5</option><option value="10" ' + sel10 + '>Dia 10</option><option value="15" ' + sel15 + '>Dia 15</option><option value="20" ' + sel20 + '>Dia 20</option><option value="25" ' + sel25 + '>Dia 25</option><option value="30" ' + sel30 + '>Dia 30</option></select></div>' +
-        '<div class="form-group"><label>Forma de Pagamento *</label><select class="form-input" name="formaPagamento"><option value="">Selecione...</option><option value="PIX" ' + selPIX + '>PIX</option><option value="Boleto" ' + selBoleto + '>Boleto</option><option value="Cartão" ' + selCartao + '>Cartão</option><option value="Dinheiro" ' + selDinheiro + '>Dinheiro</option></select></div>' +
-        '<div class="form-group"><label>Funcionário</label><select class="form-input" name="funcionarioId">' + funcOpts + '</select></div>' +
-        '</div><div class="form-group"><label>Dias da Semana</label><div class="tag-group" id="diasTags">' + diasTags + '</div></div></div>' +
-        '<div class="form-section"><div class="form-section-title">Endereço</div><div class="form-grid">' +
-        '<div class="form-group"><label>CEP</label><input type="text" class="form-input" name="cep" id="cepInput" value="' + (data ? data.cep || '' : '') + '" onblur="buscarCEP()"></div>' +
-        '<div class="form-group"><label>Logradouro</label><input type="text" class="form-input" name="logradouro" id="logradouroInput" value="' + (data ? data.logradouro || '' : '') + '"></div>' +
-        '<div class="form-group"><label>Número</label><input type="text" class="form-input" name="numero" value="' + (data ? data.numero || '' : '') + '"></div>' +
-        '<div class="form-group"><label>Bairro</label><input type="text" class="form-input" name="bairro" id="bairroInput" value="' + (data ? data.bairro || '' : '') + '"></div>' +
-        '<div class="form-group"><label>Cidade</label><input type="text" class="form-input" name="cidade" id="cidadeInput" value="' + (data ? data.cidade || '' : '') + '"></div>' +
-        '<div class="form-group"><label>Estado</label><input type="text" class="form-input" name="estado" id="estadoInput" value="' + (data ? data.estado || '' : '') + '" maxlength="2"></div>' +
-        '<div class="form-group"><label>GPS</label><input type="text" class="form-input" name="gps" value="' + (data ? data.gps || '' : '') + '"></div>' +
-        '</div></div>' +
+    data=data||null;
+    var isEdit=!!data;
+    var fo='<option value="">Selecione...</option>';
+    try{var fSnap=await db.collection('funcionarios').where('status','==','ativo').get();fSnap.docs.forEach(function(d){var sel=(data&&data.funcionarioId===d.id)?'selected':'';fo+='<option value="'+d.id+'" '+sel+'>'+esc(d.data().nome)+'</option>';});}catch(e){}
+    var ds=data?(data.diasSemana||[]):[];
+    var dl=['Seg','Ter','Qua','Qui','Sex','Sáb'];
+    var dt='';
+    for(var i=0;i<dl.length;i++){var dia=dl[i];var at=ds.includes(dia)?' active':'';dt+='<span class="tag'+at+'" onclick="this.classList.toggle(\'active\')" data-dia="'+dia+'">'+dia+'</span>';}
+    var plano=data?(data.plano||''):'';
+    var dv=data?(data.diaVencimento||''):'';
+    var sel5=(dv==5)?'selected':'',sel10=(dv==10)?'selected':'',sel15=(dv==15)?'selected':'',sel20=(dv==20)?'selected':'',sel25=(dv==25)?'selected':'',sel30=(dv==30)?'selected':'';
+    var fp=data?(data.formaPagamento||''):'';
+    var selP=(fp=='PIX')?'selected':'',selB=(fp=='Boleto')?'selected':'',selC=(fp=='Cartão')?'selected':'',selD=(fp=='Dinheiro')?'selected':'';
+    var body='<form id="clienteForm">'+
+        '<div class="form-section"><div class="form-section-title">Dados Pessoais</div><div class="form-grid">'+
+        '<div class="form-group"><label>Nome *</label><input type="text" class="form-input" name="nome" value="'+esc(data?data.nome||'':'')+'" required></div>'+
+        '<div class="form-group"><label>CPF/CNPJ</label><input type="text" class="form-input" name="cpfCnpj" id="cpfCnpjInput" value="'+esc(data?data.cpfCnpj||'':'')+'" oninput="mascararCpfCnpj(this)"></div>'+
+        '<div class="form-group"><label>Telefone *</label><input type="text" class="form-input" name="telefone" value="'+esc(data?data.telefone||'':'')+'" oninput="this.value=mascaraTel(this.value)" required></div>'+
+        '<div class="form-group"><label>E-mail</label><input type="email" class="form-input" name="email" value="'+esc(data?data.email||'':'')+'"></div>'+
+        '</div></div>'+
+        '<div class="form-section"><div class="form-section-title">Plano e Pagamento</div><div class="form-grid">'+
+        '<div class="form-group"><label>Valor (R$) *</label><input type="number" class="form-input" name="plano" value="'+plano+'" step="0.01" min="0" required></div>'+
+        '<div class="form-group"><label>Dia do Vencimento *</label><select class="form-input" name="diaVencimento"><option value="">Selecione...</option><option value="5" '+sel5+'>Dia 5</option><option value="10" '+sel10+'>Dia 10</option><option value="15" '+sel15+'>Dia 15</option><option value="20" '+sel20+'>Dia 20</option><option value="25" '+sel25+'>Dia 25</option><option value="30" '+sel30+'>Dia 30</option></select></div>'+
+        '<div class="form-group"><label>Forma de Pagamento *</label><select class="form-input" name="formaPagamento"><option value="">Selecione...</option><option value="PIX" '+selP+'>PIX</option><option value="Boleto" '+selB+'>Boleto</option><option value="Cartão" '+selC+'>Cartão</option><option value="Dinheiro" '+selD+'>Dinheiro</option></select></div>'+
+        '<div class="form-group"><label>Funcionário</label><select class="form-input" name="funcionarioId">'+fo+'</select></div>'+
+        '</div><div class="form-group"><label>Dias da Semana</label><div class="tag-group" id="diasTags">'+dt+'</div></div></div>'+
+        '<div class="form-section"><div class="form-section-title">Endereço</div><div class="form-grid">'+
+        '<div class="form-group"><label>CEP</label><input type="text" class="form-input" name="cep" id="cepInput" value="'+esc(data?data.cep||'':'')+'" onblur="buscarCEP()"></div>'+
+        '<div class="form-group"><label>Logradouro</label><input type="text" class="form-input" name="logradouro" id="logradouroInput" value="'+esc(data?data.logradouro||'':'')+'"></div>'+
+        '<div class="form-group"><label>Número</label><input type="text" class="form-input" name="numero" value="'+esc(data?data.numero||'':'')+'"></div>'+
+        '<div class="form-group"><label>Bairro</label><input type="text" class="form-input" name="bairro" id="bairroInput" value="'+esc(data?data.bairro||'':'')+'"></div>'+
+        '<div class="form-group"><label>Cidade</label><input type="text" class="form-input" name="cidade" id="cidadeInput" value="'+esc(data?data.cidade||'':'')+'"></div>'+
+        '<div class="form-group"><label>Estado</label><input type="text" class="form-input" name="estado" id="estadoInput" value="'+esc(data?data.estado||'':'')+'" maxlength="2"></div>'+
+        '<div class="form-group"><label>GPS</label><input type="text" class="form-input" name="gps" value="'+esc(data?data.gps||'':'')+'"></div>'+
+        '</div></div>'+
         '</form>';
-    
-    var titulo = isEdit ? 'Editar Cliente' : 'Novo Cliente';
-    var idSalvar = data ? (data.id || '') : '';
-    openModal(titulo, body, '<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarCliente(\'' + idSalvar + '\')">Salvar</button>');
+    var titulo=isEdit?'Editar Cliente':'Novo Cliente';
+    var idSalvar=data?(data.id||''):'';
+    openModal(titulo,body,'<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarCliente(\''+idSalvar+'\')">Salvar</button>');
 }
 
-async function editarCliente(id){
-    var d = await db.collection('clientes').doc(id).get();
-    if(d.exists){
-        novoCliente({id: id, nome: d.data().nome, cpfCnpj: d.data().cpfCnpj, telefone: d.data().telefone, email: d.data().email, plano: d.data().plano, diaVencimento: d.data().diaVencimento, formaPagamento: d.data().formaPagamento, funcionarioId: d.data().funcionarioId, diasSemana: d.data().diasSemana, cep: d.data().cep, logradouro: d.data().logradouro, numero: d.data().numero, bairro: d.data().bairro, cidade: d.data().cidade, estado: d.data().estado, gps: d.data().gps, status: d.data().status});
-    }
+function mascararCpfCnpj(input){
+    var v=input.value.replace(/\D/g,'');
+    if(v.length<=11){input.value=mascaraCPF(v);}
+    else{input.value=mascaraCNPJ(v);}
 }
 
-async function inativarCliente(id){
-    var d = await db.collection('clientes').doc(id).get();
-    var c = d.data();
-    var ns = c.status === 'ativo' ? 'inativo' : 'ativo';
-    var titulo = (ns === 'inativo' ? 'Inativar' : 'Reativar') + ': ' + c.nome;
-    var body = '<div class="form-group"><label>Motivo</label><textarea class="form-input" id="motivoInativacao" rows="3"></textarea></div>';
-    openModal(titulo, body, '<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="confirmarInativacao(\'' + id + '\',\'' + ns + '\')">Confirmar</button>');
-}
+async function editarCliente(id){try{var d=await db.collection('clientes').doc(id).get();if(d.exists){novoCliente({id:id,nome:d.data().nome,cpfCnpj:d.data().cpfCnpj,telefone:d.data().telefone,email:d.data().email,plano:d.data().plano,diaVencimento:d.data().diaVencimento,formaPagamento:d.data().formaPagamento,funcionarioId:d.data().funcionarioId,diasSemana:d.data().diasSemana,cep:d.data().cep,logradouro:d.data().logradouro,numero:d.data().numero,bairro:d.data().bairro,cidade:d.data().cidade,estado:d.data().estado,gps:d.data().gps,status:d.data().status});}else{alert('Cliente não encontrado!');}}catch(e){alert('Erro ao carregar: '+e.message);}}
 
-async function confirmarInativacao(id, status){
-    var m = document.getElementById('motivoInativacao');
-    var motivo = m ? m.value : '';
-    await db.collection('clientes').doc(id).update({
-        status: status,
-        motivoInativacao: motivo,
-        atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    closeModal();
-    loadClientes();
-}
+async function inativarCliente(id){try{var d=await db.collection('clientes').doc(id).get();var c=d.data();var ns=c.status==='ativo'?'inativo':'ativo';var titulo=(ns==='inativo'?'Inativar':'Reativar')+': '+esc(c.nome);var body='<div class="form-group"><label>Motivo</label><textarea class="form-input" id="motivoInativacao" rows="3"></textarea></div>';openModal(titulo,body,'<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="confirmarInativacao(\''+id+'\',\''+ns+'\')">Confirmar</button>');}catch(e){alert('Erro: '+e.message);}}
 
-async function buscarCEP(){
-    var cepInput = document.getElementById('cepInput');
-    if(!cepInput) return;
-    var cep = cepInput.value.replace(/\D/g,'');
-    if(cep.length !== 8) return;
-    try{
-        var r = await fetch('https://viacep.com.br/ws/' + cep + '/json/');
-        var dados = await r.json();
-        if(!dados.erro){
-            document.getElementById('logradouroInput').value = dados.logradouro || '';
-            document.getElementById('bairroInput').value = dados.bairro || '';
-            document.getElementById('cidadeInput').value = dados.localidade || '';
-            document.getElementById('estadoInput').value = dados.uf || '';
-        }
-    }catch(e){}
-}
+async function confirmarInativacao(id,status){try{var m=document.getElementById('motivoInativacao');var motivo=m?m.value:'';await db.collection('clientes').doc(id).update({status:status,motivoInativacao:motivo,atualizadoEm:firebase.firestore.FieldValue.serverTimestamp()});closeModal();loadClientes();}catch(e){alert('Erro ao salvar: '+e.message);}}
+
+async function buscarCEP(){var ci=document.getElementById('cepInput');if(!ci)return;var cep=ci.value.replace(/\D/g,'');if(cep.length!==8)return;try{var r=await fetch('https://viacep.com.br/ws/'+cep+'/json/');var dados=await r.json();if(!dados.erro){document.getElementById('logradouroInput').value=dados.logradouro||'';document.getElementById('bairroInput').value=dados.bairro||'';document.getElementById('cidadeInput').value=dados.localidade||'';document.getElementById('estadoInput').value=dados.uf||'';}}catch(e){}}
 
 async function salvarCliente(id){
-    var form = document.getElementById('clienteForm');
-    var fd = new FormData(form);
-    var data = {};
-    fd.forEach(function(value, key){ data[key] = value; });
-    data.plano = Number(data.plano) || 0;
-    data.diaVencimento = Number(data.diaVencimento) || 10;
-    var dias = [];
-    var tags = document.querySelectorAll('#diasTags .tag.active');
-    for(var i=0; i<tags.length; i++){
-        dias.push(tags[i].getAttribute('data-dia'));
-    }
-    data.diasSemana = dias;
-    data.atualizadoEm = firebase.firestore.FieldValue.serverTimestamp();
-    if(id){
-        await db.collection('clientes').doc(id).update(data);
-    }else{
-        data.status = 'ativo';
-        data.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
-        await db.collection('clientes').add(data);
-    }
-    closeModal();
-    loadClientes();
+    try{
+        var form=document.getElementById('clienteForm');
+        var fd=new FormData(form);
+        var data={};
+        fd.forEach(function(value,key){data[key]=value;});
+        data.plano=parseFloat(data.plano)||0;
+        data.diaVencimento=parseInt(data.diaVencimento)||10;
+        if(!data.nome||data.plano<=0){alert('Preencha nome e plano corretamente.');return;}
+        var cpfCnpjLimpo=data.cpfCnpj?data.cpfCnpj.replace(/\D/g,''):'';
+        if(cpfCnpjLimpo.length===11){if(!validarCPF(cpfCnpjLimpo)){alert('CPF inválido!');return;}}
+        var dias=[];
+        var tags=document.querySelectorAll('#diasTags .tag.active');
+        for(var i=0;i<tags.length;i++){dias.push(tags[i].getAttribute('data-dia'));}
+        data.diasSemana=dias;
+        data.atualizadoEm=firebase.firestore.FieldValue.serverTimestamp();
+        if(id){await db.collection('clientes').doc(id).update(data);}
+        else{data.status='ativo';data.criadoEm=firebase.firestore.FieldValue.serverTimestamp();await db.collection('clientes').add(data);}
+        closeModal();loadClientes();
+    }catch(e){alert('Erro ao salvar: '+e.message);}
 }
+
 // Funcionários
 async function loadFuncionarios(){
     pageContent.innerHTML='<p style="padding:40px;">Carregando...</p>';
     try{
-        var snap = await db.collection('funcionarios').orderBy('nome').get();
-        var rows = '';
-        if(snap.empty){
-            rows = '<tr><td colspan="7">Nenhum funcionário cadastrado</td></tr>';
-        }else{
-            snap.docs.forEach(function(d){
-                var f = d.data();
-                var statusClass = f.status === 'ativo' ? 'badge-success' : 'badge-danger';
-                var statusText = f.status === 'ativo' ? 'Ativo' : 'Inativo';
-                var iniciais = (f.nome || 'F').substring(0,2).toUpperCase();
-                var temAcesso = f.uid ? '<span style="color:#059669;font-size:14px;" title="Acesso criado">🔑</span>' : '<span style="color:#d97706;font-size:14px;" title="Acesso pendente">⚠️</span>';
-                rows += '<tr>' +
-                    '<td><div style="display:flex;align-items:center;gap:10px;"><div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0891b2,#22d3ee);color:white;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;">'+iniciais+'</div><div><strong>'+f.nome+'</strong><br><span style="font-size:11px;color:var(--text-tertiary);">'+ (f.cpf || 'CPF não informado') +'</span></div></div></td>' +
-                    '<td><span class="badge '+statusClass+'"><span class="badge-dot"></span>'+statusText+'</span></td>' +
-                    '<td>'+ (f.cargo || '-') +'</td>' +
-                    '<td>'+ (f.telefone || '-') +'<br><span style="font-size:11px;color:var(--text-tertiary);">'+ (f.email || '') +'</span></td>' +
-                    '<td>'+ (f.dataAdmissao || '-') +'</td>' +
-                    '<td>' +
-                        '<button class="btn btn-outline btn-sm" onclick="editarFuncionario(\''+d.id+'\')" style="margin-right:4px;" title="Editar">✏️</button>' +
-                        '<button class="btn btn-sm" onclick="inativarFuncionario(\''+d.id+'\')" style="background:'+(f.status==='ativo'?'#fef2f2':'#ecfdf5')+';color:'+(f.status==='ativo'?'#dc2626':'#059669')+';" title="'+(f.status==='ativo'?'Inativar':'Ativar')+'">'+(f.status==='ativo'?'🔴':'🟢')+'</button>' +
-                    '</td>' +
-                '</tr>';
-            });
-        }
-        pageContent.innerHTML = '<div class="card"><div class="card-header"><h3 class="card-title">👷 Funcionários ('+snap.size+')</h3><button class="btn btn-primary btn-sm" onclick="novoFuncionario()">+ Novo Funcionário</button></div><div class="card-body"><table class="table"><thead><tr><th>Funcionário</th><th>Status</th><th>Cargo</th><th>Contato</th><th>Admissão</th><th style="width:100px;">Ações</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>';
-    }catch(err){
-        pageContent.innerHTML = errCard(err.message);
-    }
+        var snap=await db.collection('funcionarios').orderBy('nome').get();
+        var rows='';
+        if(snap.empty){rows='<tr><td colspan="7">Nenhum funcionário cadastrado</td></tr>';}
+        else{snap.docs.forEach(function(d){var f=d.data();var sc=f.status==='ativo'?'badge-success':'badge-danger';var st=f.status==='ativo'?'Ativo':'Inativo';var ini=(f.nome||'F').substring(0,2).toUpperCase();var ta=f.uid?'<span style="color:#059669;font-size:14px;" title="Acesso criado">🔑</span>':'<span style="color:#d97706;font-size:14px;" title="Acesso pendente">⚠️</span>';rows+='<tr><td><div style="display:flex;align-items:center;gap:10px;"><div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0891b2,#22d3ee);color:white;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;">'+esc(ini)+'</div><div><strong>'+esc(f.nome)+'</strong><br><span style="font-size:11px;color:var(--text-tertiary);">'+esc(f.cpf||'CPF não informado')+'</span></div></div></td><td><span class="badge '+sc+'"><span class="badge-dot"></span>'+esc(st)+'</span></td><td>'+esc(f.cargo||'-')+'</td><td>'+esc(f.telefone||'-')+'<br><span style="font-size:11px;color:var(--text-tertiary);">'+esc(f.email||'')+'</span></td><td>'+esc(f.dataAdmissao||'-')+'</td><td><button class="btn btn-outline btn-sm" onclick="editarFuncionario(\''+d.id+'\')" style="margin-right:4px;" title="Editar">✏️</button><button class="btn btn-sm" onclick="inativarFuncionario(\''+d.id+'\')" style="background:'+(f.status==='ativo'?'#fef2f2':'#ecfdf5')+';color:'+(f.status==='ativo'?'#dc2626':'#059669')+';" title="'+(f.status==='ativo'?'Inativar':'Ativar')+'">'+(f.status==='ativo'?'🔴':'🟢')+'</button></td></tr>';});}
+        pageContent.innerHTML='<div class="card"><div class="card-header"><h3 class="card-title">👷 Funcionários ('+snap.size+')</h3><button class="btn btn-primary btn-sm" onclick="novoFuncionario()">+ Novo Funcionário</button></div><div class="card-body"><table class="table"><thead><tr><th>Funcionário</th><th>Status</th><th>Cargo</th><th>Contato</th><th>Admissão</th><th style="width:100px;">Ações</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>';
+    }catch(err){pageContent.innerHTML=errCard(err.message);}
 }
 
-function novoFuncionario(data){
-    data = data || null;
-    var isEdit = !!data;
-    
-    var body = '<form id="funcForm">' +
-        '<div class="form-section"><div class="form-section-title">👤 Dados Pessoais</div><div class="form-grid">' +
-        '<div class="form-group"><label>Nome Completo *</label><input type="text" class="form-input" name="nome" value="' + (data ? data.nome || '' : '') + '" required></div>' +
-        '<div class="form-group"><label>CPF *</label><input type="text" class="form-input" name="cpf" value="' + (data ? data.cpf || '' : '') + '" required></div>' +
-        '<div class="form-group"><label>RG</label><input type="text" class="form-input" name="rg" value="' + (data ? data.rg || '' : '') + '"></div>' +
-        '<div class="form-group"><label>Data de Nascimento</label><input type="date" class="form-input" name="dataNascimento" value="' + (data ? data.dataNascimento || '' : '') + '"></div>' +
-        '<div class="form-group"><label>Telefone *</label><input type="text" class="form-input" name="telefone" value="' + (data ? data.telefone || '' : '') + '" required></div>' +
-        '<div class="form-group"><label>E-mail</label><input type="email" class="form-input" name="email" value="' + (data ? data.email || '' : '') + '"></div>' +
-        '</div></div>' +
-        
-        '<div class="form-section"><div class="form-section-title">💼 Dados Profissionais</div><div class="form-grid">' +
-        '<div class="form-group"><label>Cargo *</label><select class="form-input" name="cargo" required><option value="Piscineiro"' + (data && data.cargo === 'Piscineiro' ? 'selected' : '') + '>Piscineiro</option><option value="Técnico"' + (data && data.cargo === 'Técnico' ? 'selected' : '') + '>Técnico</option><option value="Supervisor"' + (data && data.cargo === 'Supervisor' ? 'selected' : '') + '>Supervisor</option><option value="Gestor"' + (data && data.cargo === 'Gestor' ? 'selected' : '') + '>Gestor</option></select></div>' +
-        '<div class="form-group"><label>Data de Admissão</label><input type="date" class="form-input" name="dataAdmissao" value="' + (data ? data.dataAdmissao || '' : '') + '"></div>' +
-        '<div class="form-group"><label>Salário Base (R$)</label><input type="number" class="form-input" name="salario" value="' + (data ? data.salario || '' : '') + '" step="0.01"></div>' +
-        '<div class="form-group"><label>Comissão (%)</label><input type="number" class="form-input" name="comissao" value="' + (data ? data.comissao || '' : '') + '" step="0.1" placeholder="Ex: 10"></div>' +
-        '<div class="form-group"><label>CTPS (Carteira de Trabalho)</label><input type="text" class="form-input" name="ctps" value="' + (data ? data.ctps || '' : '') + '"></div>' +
-        '<div class="form-group"><label>CNH</label><input type="text" class="form-input" name="cnh" value="' + (data ? data.cnh || '' : '') + '"></div>' +
-        '</div></div>' +
-        
-        '<div class="form-section"><div class="form-section-title">📍 Endereço</div><div class="form-grid">' +
-        '<div class="form-group"><label>CEP</label><input type="text" class="form-input" name="cep" id="funcCepInput" value="' + (data ? data.cep || '' : '') + '" onblur="buscarCEPFuncionario()"></div>' +
-        '<div class="form-group"><label>Logradouro</label><input type="text" class="form-input" name="logradouro" id="funcLogradouroInput" value="' + (data ? data.logradouro || '' : '') + '"></div>' +
-        '<div class="form-group"><label>Número</label><input type="text" class="form-input" name="numero" value="' + (data ? data.numero || '' : '') + '"></div>' +
-        '<div class="form-group"><label>Bairro</label><input type="text" class="form-input" name="bairro" id="funcBairroInput" value="' + (data ? data.bairro || '' : '') + '"></div>' +
-        '<div class="form-group"><label>Cidade</label><input type="text" class="form-input" name="cidade" id="funcCidadeInput" value="' + (data ? data.cidade || '' : '') + '"></div>' +
-        '<div class="form-group"><label>Estado</label><input type="text" class="form-input" name="estado" id="funcEstadoInput" value="' + (data ? data.estado || '' : '') + '" maxlength="2"></div>' +
-        '</div></div>' +
-        
-        '<div class="form-section"><div class="form-section-title">📝 Observações</div>' +
-        '<div class="form-group"><textarea class="form-input" name="observacoes" rows="2" placeholder="Anotações sobre o funcionário...">' + (data ? data.observacoes || '' : '') + '</textarea></div>' +
-        '</div>' +
-        
-        '</form>';
-    
-    var titulo = isEdit ? 'Editar Funcionário' : 'Novo Funcionário';
-    var idSalvar = data ? (data.id || '') : '';
-    var footerBtns = '<button class="btn btn-outline" onclick="closeModal()">Cancelar</button>';
-    footerBtns += '<button class="btn btn-primary" onclick="salvarFuncionario(\'' + idSalvar + '\')">💾 ' + (isEdit ? 'Atualizar' : 'Salvar') + '</button>';
-    
-    openModal(titulo, body, footerBtns);
-}
+function novoFuncionario(data){data=data||null;var isEdit=!!data;var body='<form id="funcForm"><div class="form-section"><div class="form-section-title">👤 Dados Pessoais</div><div class="form-grid"><div class="form-group"><label>Nome Completo *</label><input type="text" class="form-input" name="nome" value="'+esc(data?data.nome||'':'')+'" required></div><div class="form-group"><label>CPF *</label><input type="text" class="form-input" name="cpf" value="'+esc(data?data.cpf||'':'')+'" oninput="this.value=mascaraCPF(this.value)" required></div><div class="form-group"><label>RG</label><input type="text" class="form-input" name="rg" value="'+esc(data?data.rg||'':'')+'"></div><div class="form-group"><label>Data de Nascimento</label><input type="date" class="form-input" name="dataNascimento" value="'+esc(data?data.dataNascimento||'':'')+'"></div><div class="form-group"><label>Telefone *</label><input type="text" class="form-input" name="telefone" value="'+esc(data?data.telefone||'':'')+'" oninput="this.value=mascaraTel(this.value)" required></div><div class="form-group"><label>E-mail</label><input type="email" class="form-input" name="email" value="'+esc(data?data.email||'':'')+'"></div></div></div><div class="form-section"><div class="form-section-title">💼 Dados Profissionais</div><div class="form-grid"><div class="form-group"><label>Cargo *</label><select class="form-input" name="cargo" required><option value="Piscineiro"'+(data&&data.cargo==='Piscineiro'?'selected':'')+'>Piscineiro</option><option value="Técnico"'+(data&&data.cargo==='Técnico'?'selected':'')+'>Técnico</option><option value="Supervisor"'+(data&&data.cargo==='Supervisor'?'selected':'')+'>Supervisor</option><option value="Gestor"'+(data&&data.cargo==='Gestor'?'selected':'')+'>Gestor</option></select></div><div class="form-group"><label>Data de Admissão</label><input type="date" class="form-input" name="dataAdmissao" value="'+esc(data?data.dataAdmissao||'':'')+'"></div><div class="form-group"><label>Salário Base (R$)</label><input type="number" class="form-input" name="salario" value="'+(data?data.salario||'':'')+'" step="0.01"></div><div class="form-group"><label>Comissão (%)</label><input type="number" class="form-input" name="comissao" value="'+(data?data.comissao||'':'')+'" step="0.1" placeholder="Ex: 10"></div><div class="form-group"><label>CTPS (Carteira de Trabalho)</label><input type="text" class="form-input" name="ctps" value="'+esc(data?data.ctps||'':'')+'"></div><div class="form-group"><label>CNH</label><input type="text" class="form-input" name="cnh" value="'+esc(data?data.cnh||'':'')+'"></div></div></div><div class="form-section"><div class="form-section-title">📍 Endereço</div><div class="form-grid"><div class="form-group"><label>CEP</label><input type="text" class="form-input" name="cep" id="funcCepInput" value="'+esc(data?data.cep||'':'')+'" onblur="buscarCEPFuncionario()"></div><div class="form-group"><label>Logradouro</label><input type="text" class="form-input" name="logradouro" id="funcLogradouroInput" value="'+esc(data?data.logradouro||'':'')+'"></div><div class="form-group"><label>Número</label><input type="text" class="form-input" name="numero" value="'+esc(data?data.numero||'':'')+'"></div><div class="form-group"><label>Bairro</label><input type="text" class="form-input" name="bairro" id="funcBairroInput" value="'+esc(data?data.bairro||'':'')+'"></div><div class="form-group"><label>Cidade</label><input type="text" class="form-input" name="cidade" id="funcCidadeInput" value="'+esc(data?data.cidade||'':'')+'"></div><div class="form-group"><label>Estado</label><input type="text" class="form-input" name="estado" id="funcEstadoInput" value="'+esc(data?data.estado||'':'')+'" maxlength="2"></div></div></div><div class="form-section"><div class="form-section-title">📝 Observações</div><div class="form-group"><textarea class="form-input" name="observacoes" rows="2" placeholder="Anotações sobre o funcionário...">'+esc(data?data.observacoes||'':'')+'</textarea></div></div></form>';var titulo=isEdit?'Editar Funcionário':'Novo Funcionário';var idSalvar=data?(data.id||''):'';var fb='<button class="btn btn-outline" onclick="closeModal()">Cancelar</button>';fb+='<button class="btn btn-primary" onclick="salvarFuncionario(\''+idSalvar+'\')">💾 '+(isEdit?'Atualizar':'Salvar')+'</button>';openModal(titulo,body,fb);}
 
-async function inativarFuncionario(id){
-    var d = await db.collection('funcionarios').doc(id).get();
-    var f = d.data();
-    var ns = f.status === 'ativo' ? 'inativo' : 'ativo';
-    await db.collection('funcionarios').doc(id).update({status: ns});
-    loadFuncionarios();
-}
+async function inativarFuncionario(id){try{var d=await db.collection('funcionarios').doc(id).get();var f=d.data();var ns=f.status==='ativo'?'inativo':'ativo';await db.collection('funcionarios').doc(id).update({status:ns});loadFuncionarios();}catch(e){alert('Erro: '+e.message);}}
 
-async function salvarFuncionario(id){
-    var f = document.getElementById('funcForm');
-    var fd = new FormData(f);
-    var data = {};
-    fd.forEach(function(value, key){ data[key] = value; });
-    data.atualizadoEm = firebase.firestore.FieldValue.serverTimestamp();
-    if(id){
-        await db.collection('funcionarios').doc(id).update(data);
-    }else{
-        data.status = 'ativo';
-        data.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
-        await db.collection('funcionarios').add(data);
-    }
-    closeModal();
-    loadFuncionarios();
-}
-     
-async function buscarCEPFuncionario(){
-    var cepInput = document.getElementById('funcCepInput');
-    if(!cepInput) return;
-    var cep = cepInput.value.replace(/\D/g,'');
-    if(cep.length !== 8) return;
-    try{
-        var r = await fetch('https://viacep.com.br/ws/' + cep + '/json/');
-        var dados = await r.json();
-        if(!dados.erro){
-            document.getElementById('funcLogradouroInput').value = dados.logradouro || '';
-            document.getElementById('funcBairroInput').value = dados.bairro || '';
-            document.getElementById('funcCidadeInput').value = dados.localidade || '';
-            document.getElementById('funcEstadoInput').value = dados.uf || '';
-        }
-    }catch(e){}
-}
+async function salvarFuncionario(id){try{var f=document.getElementById('funcForm');var fd=new FormData(f);var data={};fd.forEach(function(value,key){data[key]=value;});data.atualizadoEm=firebase.firestore.FieldValue.serverTimestamp();if(id){await db.collection('funcionarios').doc(id).update(data);}else{data.status='ativo';data.criadoEm=firebase.firestore.FieldValue.serverTimestamp();await db.collection('funcionarios').add(data);}closeModal();loadFuncionarios();}catch(e){alert('Erro ao salvar: '+e.message);}}
 
-async function editarFuncionario(id){
-    try{
-        var d = await db.collection('funcionarios').doc(id).get();
-        if(d.exists){
-            var dados = d.data();
-            dados.id = id;
-            novoFuncionario(dados);
-        }else{
-            alert('Funcionário não encontrado!');
-        }
-    }catch(e){
-        alert('Erro ao carregar: ' + e.message);
-    }
-}
+async function buscarCEPFuncionario(){var ci=document.getElementById('funcCepInput');if(!ci)return;var cep=ci.value.replace(/\D/g,'');if(cep.length!==8)return;try{var r=await fetch('https://viacep.com.br/ws/'+cep+'/json/');var dados=await r.json();if(!dados.erro){document.getElementById('funcLogradouroInput').value=dados.logradouro||'';document.getElementById('funcBairroInput').value=dados.bairro||'';document.getElementById('funcCidadeInput').value=dados.localidade||'';document.getElementById('funcEstadoInput').value=dados.uf||'';}}catch(e){}}
 
-// Piscinas
-	
-	
+async function editarFuncionario(id){try{var d=await db.collection('funcionarios').doc(id).get();if(d.exists){var dados=d.data();dados.id=id;novoFuncionario(dados);}else{alert('Funcionário não encontrado!');}}catch(e){alert('Erro ao carregar: '+e.message);}}
+
 // Piscinas
 async function loadPiscinas(){
     pageContent.innerHTML='<p style="padding:40px;">Carregando...</p>';
     try{
-        const clientesAtivosSnap = await db.collection('clientes').where('status','==','ativo').get();
-        const clientesAtivosIds = new Set();
-        clientesAtivosSnap.forEach(function(d){ clientesAtivosIds.add(d.id); });
-        
-        const snap = await db.collection('piscinas').get();
-        const piscinasAtivas = snap.docs.filter(function(d){
-            var p = d.data();
-            return clientesAtivosIds.has(p.clienteId);
-        });
-        
-        var rows = '';
-        if(piscinasAtivas.length === 0){
-            rows = '<tr><td colspan="6" style="text-align:center;padding:40px;">Nenhuma piscina ativa</td></tr>';
-        } else {
-            piscinasAtivas.forEach(function(d){
-                var p = d.data();
-                var statusClass = p.status === 'critica' ? 'badge-danger' : (p.status === 'ativa' ? 'badge-success' : 'badge-warning');
-                rows += '<tr><td><strong>' + (p.codigo || 'PSC-XXXX') + '</strong></td><td>' + (p.clienteNome || '-') + '</td><td>' + (p.tamanho || '-') + 'm²</td><td>' + (p.volume || '-') + 'L</td><td><span class="badge ' + statusClass + '"><span class="badge-dot"></span>' + (p.status || 'pendente') + '</span></td><td><button class="btn-link" onclick="editarPiscina(\'' + d.id + '\')">Editar</button><button class="btn-link btn-danger" onclick="excluirPiscina(\'' + d.id + '\')">Excluir</button></td></tr>';
-            });
-        }
-        
-        pageContent.innerHTML = '<div class="card"><div class="card-header"><h3 class="card-title">Piscinas Ativas (' + piscinasAtivas.length + ')</h3><button class="btn btn-primary btn-sm" onclick="novaPiscina()">+ Nova</button></div><div class="card-body"><table class="table"><thead><tr><th>Codigo</th><th>Cliente</th><th>Tamanho</th><th>Volume</th><th>Status</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div></div>';
-    }catch(err){
-        pageContent.innerHTML = errCard(err.message);
-    }
+        var cas=await db.collection('clientes').where('status','==','ativo').get();
+        var cai=new Set();cas.forEach(function(d){cai.add(d.id);});
+        var snap=await db.collection('piscinas').get();
+        var pa=snap.docs.filter(function(d){var p=d.data();return cai.has(p.clienteId);});
+        var rows='';
+        if(pa.length===0){rows='<tr><td colspan="6" style="text-align:center;padding:40px;">Nenhuma piscina ativa</td></tr>';}
+        else{pa.forEach(function(d){var p=d.data();var sc=p.status==='critica'?'badge-danger':(p.status==='ativa'?'badge-success':'badge-warning');rows+='<tr><td><strong>'+esc(p.codigo||'PSC-XXXX')+'</strong></td><td>'+esc(p.clienteNome||'-')+'</td><td>'+esc(p.tamanho||'-')+'m²</td><td>'+esc(p.volume||'-')+'L</td><td><span class="badge '+sc+'"><span class="badge-dot"></span>'+esc(p.status||'pendente')+'</span></td><td><button class="btn-link" onclick="editarPiscina(\''+d.id+'\')">Editar</button><button class="btn-link btn-danger" onclick="excluirPiscina(\''+d.id+'\')">Excluir</button></td></tr>';});}
+        pageContent.innerHTML='<div class="card"><div class="card-header"><h3 class="card-title">Piscinas Ativas ('+pa.length+')</h3><button class="btn btn-primary btn-sm" onclick="novaPiscina()">+ Nova</button></div><div class="card-body"><table class="table"><thead><tr><th>Código</th><th>Cliente</th><th>Tamanho</th><th>Volume</th><th>Status</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div></div>';
+    }catch(err){pageContent.innerHTML=errCard(err.message);}
 }
 
-async function novaPiscina(data){
-    data = data || null;
-    var isEdit = !!data;
-    
-    var co = '<option value="">Selecione...</option>';
-    try{
-        var cSnap = await db.collection('clientes').where('status','==','ativo').orderBy('nome').get();
-        cSnap.forEach(function(d){
-            var selected = (data && data.clienteId === d.id) ? 'selected' : '';
-            co += '<option value="' + d.id + '" ' + selected + '>' + d.data().nome + '</option>';
-        });
-    }catch(e){}
-    
-    var tamanho = data ? (data.tamanho || '') : '';
-    var volume = data ? (data.volume || '') : '';
-    var materialAzulejo = (data && data.material === 'azulejo') ? 'selected' : '';
-    var materialVinil = (data && data.material === 'vinil') ? 'selected' : '';
-    var materialFibra = (data && data.material === 'fibra') ? 'selected' : '';
-    var materialConcreto = (data && data.material === 'concreto') ? 'selected' : '';
-    var statusAtiva = (data && data.status === 'ativa') ? 'selected' : '';
-    var statusCritica = (data && data.status === 'critica') ? 'selected' : '';
-    var statusInativa = (data && data.status === 'inativa') ? 'selected' : '';
-    
-    var body = '<form id="piscinaForm">' +
-        '<div class="form-group"><label>Cliente *</label><select class="form-input" name="clienteId" required>' + co + '</select></div>' +
-        '<div class="form-grid">' +
-        '<div class="form-group"><label>Tamanho (m²) *</label><input type="number" class="form-input" name="tamanho" value="' + tamanho + '" step="0.1" required></div>' +
-        '<div class="form-group"><label>Volume (L) *</label><input type="number" class="form-input" name="volume" value="' + volume + '" required></div>' +
-        '<div class="form-group"><label>Material</label><select class="form-input" name="material"><option value="azulejo" ' + materialAzulejo + '>Azulejo</option><option value="vinil" ' + materialVinil + '>Vinil</option><option value="fibra" ' + materialFibra + '>Fibra</option><option value="concreto" ' + materialConcreto + '>Concreto</option></select></div>' +
-        '<div class="form-group"><label>Status</label><select class="form-input" name="status"><option value="ativa" ' + statusAtiva + '>Ativa</option><option value="critica" ' + statusCritica + '>Critica</option><option value="inativa" ' + statusInativa + '>Inativa</option></select></div>' +
-        '</div></form>';
-    
-    var titulo = isEdit ? 'Editar Piscina' : 'Nova Piscina';
-    var idSalvar = data ? (data.id || '') : '';
-    openModal(titulo, body, '<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarPiscina(\'' + idSalvar + '\')">Salvar</button>');
-}
+async function novaPiscina(data){data=data||null;var isEdit=!!data;var co='<option value="">Selecione...</option>';try{var cSnap=await db.collection('clientes').where('status','==','ativo').orderBy('nome').get();cSnap.forEach(function(d){var sel=(data&&data.clienteId===d.id)?'selected':'';co+='<option value="'+d.id+'" '+sel+'>'+esc(d.data().nome)+'</option>';});}catch(e){}var tam=data?(data.tamanho||''):'';var vol=data?(data.volume||''):'';var mA=(data&&data.material==='azulejo')?'selected':'';var mV=(data&&data.material==='vinil')?'selected':'';var mF=(data&&data.material==='fibra')?'selected':'';var mC=(data&&data.material==='concreto')?'selected':'';var sA=(data&&data.status==='ativa')?'selected':'';var sCr=(data&&data.status==='critica')?'selected':'';var sI=(data&&data.status==='inativa')?'selected':'';var body='<form id="piscinaForm"><div class="form-group"><label>Cliente *</label><select class="form-input" name="clienteId" required>'+co+'</select></div><div class="form-grid"><div class="form-group"><label>Tamanho (m²) *</label><input type="number" class="form-input" name="tamanho" value="'+tam+'" step="0.1" required></div><div class="form-group"><label>Volume (L) *</label><input type="number" class="form-input" name="volume" value="'+vol+'" required></div><div class="form-group"><label>Material</label><select class="form-input" name="material"><option value="azulejo" '+mA+'>Azulejo</option><option value="vinil" '+mV+'>Vinil</option><option value="fibra" '+mF+'>Fibra</option><option value="concreto" '+mC+'>Concreto</option></select></div><div class="form-group"><label>Status</label><select class="form-input" name="status"><option value="ativa" '+sA+'>Ativa</option><option value="critica" '+sCr+'>Crítica</option><option value="inativa" '+sI+'>Inativa</option></select></div></div></form>';var titulo=isEdit?'Editar Piscina':'Nova Piscina';var idSalvar=data?(data.id||''):'';openModal(titulo,body,'<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarPiscina(\''+idSalvar+'\')">Salvar</button>');}
 
-async function editarPiscina(id){
-    try {
-        var d = await db.collection('piscinas').doc(id).get();
-        if(d.exists){
-            var dados = d.data();
-            dados.id = id;
-            novaPiscina(dados);
-        } else {
-            alert('Piscina nao encontrada!');
-        }
-    } catch(e) {
-        alert('Erro: ' + e.message);
-    }
-}
+async function editarPiscina(id){try{var d=await db.collection('piscinas').doc(id).get();if(d.exists){var dados=d.data();dados.id=id;novaPiscina(dados);}else{alert('Piscina não encontrada!');}}catch(e){alert('Erro: '+e.message);}}
 
-async function excluirPiscina(id){
-    if(confirm('Excluir esta piscina?')){
-        await db.collection('piscinas').doc(id).delete();
-        loadPiscinas();
-    }
-}
+async function excluirPiscina(id){try{if(confirm('Excluir esta piscina?')){await db.collection('piscinas').doc(id).delete();loadPiscinas();}}catch(e){alert('Erro ao excluir: '+e.message);}}
 
 async function salvarPiscina(id){
-    var form = document.getElementById('piscinaForm');
-    var fd = new FormData(form);
-    var data = {};
-    fd.forEach(function(value, key){ data[key] = value; });
-    data.atualizadoEm = firebase.firestore.FieldValue.serverTimestamp();
-    
-    if (!id) {
-        var cDoc = await db.collection('config').doc('piscina_counter').get();
-        var n = 1;
-        if (cDoc.exists) {
-            n = (cDoc.data().ultimo || 0) + 1;
-            await db.collection('config').doc('piscina_counter').update({ ultimo: n });
-        } else {
-            await db.collection('config').doc('piscina_counter').set({ ultimo: 1 });
-        }
-        data.codigo = 'PSC-' + String(n).padStart(4, '0');
-        data.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
-    }
-    
-    if (data.clienteId) {
-        try {
-            var clienteDoc = await db.collection('clientes').doc(data.clienteId).get();
-            if (clienteDoc.exists) data.clienteNome = clienteDoc.data().nome;
-        } catch(e) {}
-    }
-    
-    try {
-        if (id) {
-            await db.collection('piscinas').doc(id).update(data);
-        } else {
-            await db.collection('piscinas').add(data);
-        }
-        closeModal();
-        loadPiscinas();
-    } catch(error) {
-        alert('Erro ao salvar: ' + error.message);
-    }
-}
-// Estoque Empresa
-async function loadEstoqueEmpresa(){
-    pageContent.innerHTML='<p style="padding:40px;">Carregando...</p>';
     try{
-        const snap=await db.collection('estoque').orderBy('nome').get();
-        const rows=snap.empty?'<tr><td colspan="7">Nenhum</td></tr>':snap.docs.map(d=>{const e=d.data();const q=e.quantidade||0,min=e.quantidadeMinima||5;const s=q<=0?'danger':q<=min?'warning':'success';const t=q<=0?'Esgotado':q<=min?'Baixo':'OK';return`<tr><td>${e.nome}</td><td>${e.marca||'-'}</td><td>${e.tipo||'-'}</td><td>${q} ${e.unidade||'un'}</td><td><span class="badge badge-${s}">${t}</span></td><td><button class="btn-link" onclick="editarProduto('${d.id}')">Editar</button><button class="btn-link" onclick="movimentarEstoque('${d.id}')">Mov.</button></td></tr>`;}).join('');
-        pageContent.innerHTML=`<div class="card"><div class="card-header"><h3 class="card-title">Estoque Empresa (${snap.size})</h3><button class="btn btn-primary btn-sm" onclick="novoProduto()">+ Novo</button></div><div class="card-body"><table class="table"><thead><tr><th>Produto</th><th>Marca</th><th>Tipo</th><th>Qtd</th><th>Status</th><th></th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
-    }catch(err){pageContent.innerHTML=errCard(err.message);}
+        var form=document.getElementById('piscinaForm');var fd=new FormData(form);var data={};fd.forEach(function(value,key){data[key]=value;});
+        data.atualizadoEm=firebase.firestore.FieldValue.serverTimestamp();
+        if(!id){
+            var counterRef=db.collection('config').doc('piscina_counter');
+            await db.runTransaction(async function(transaction){
+                var cDoc=await transaction.get(counterRef);
+                var n=(cDoc.exists?cDoc.data().ultimo||0:0)+1;
+                if(cDoc.exists){transaction.update(counterRef,{ultimo:n});}
+                else{transaction.set(counterRef,{ultimo:1});}
+                data.codigo='PSC-'+String(n).padStart(4,'0');
+            });
+            data.criadoEm=firebase.firestore.FieldValue.serverTimestamp();
+        }
+        if(data.clienteId){try{var clienteDoc=await db.collection('clientes').doc(data.clienteId).get();if(clienteDoc.exists)data.clienteNome=clienteDoc.data().nome;}catch(e){}}
+        if(id){await db.collection('piscinas').doc(id).update(data);}
+        else{await db.collection('piscinas').add(data);}
+        closeModal();loadPiscinas();
+    }catch(error){alert('Erro ao salvar: '+error.message);}
 }
-function novoProduto(data=null){const unidades=['un','g','kg','L','mL','Lata','Saco','Galão','Frasco','Bombona'];const body=`<form id="produtoForm"><div class="form-grid"><div class="form-group"><label>Nome *</label><input type="text" class="form-input" name="nome" value="${data?.nome||''}" required></div><div class="form-group"><label>Marca</label><input type="text" class="form-input" name="marca" value="${data?.marca||''}"></div><div class="form-group"><label>Tipo</label><select class="form-input" name="tipo"><option value="quimico">Químico</option><option value="equipamento">Equipamento</option></select></div><div class="form-group"><label>Qtd *</label><input type="number" class="form-input" name="quantidade" value="${data?.quantidade||0}" required></div><div class="form-group"><label>Qtd Mínima</label><input type="number" class="form-input" name="quantidadeMinima" value="${data?.quantidadeMinima||5}"></div><div class="form-group"><label>Unidade</label><select class="form-input" name="unidade">${unidades.map(u=>`<option value="${u}">${u}</option>`).join('')}</select></div></div></form>`;openModal(data?'Editar':'Novo Produto',body,`<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarProduto('${data?.id||''}')">Salvar</button>${data?`<button class="btn btn-danger" onclick="excluirProduto('${data.id}')">Excluir</button>`:''}`);}
-async function editarProduto(id){const d=await db.collection('estoque').doc(id).get();if(d.exists)novoProduto({id,...d.data()});}
-async function excluirProduto(id){if(confirm('Excluir?')){await db.collection('estoque').doc(id).delete();closeModal();loadEstoqueEmpresa();}}
-async function salvarProduto(id){const f=document.getElementById('produtoForm');const fd=new FormData(f);const data=Object.fromEntries(fd.entries());data.quantidade=parseInt(data.quantidade)||0;data.quantidadeMinima=parseInt(data.quantidadeMinima)||5;data.atualizadoEm=firebase.firestore.FieldValue.serverTimestamp();if(id){await db.collection('estoque').doc(id).update(data);}else{data.criadoEm=firebase.firestore.FieldValue.serverTimestamp();await db.collection('estoque').add(data);}closeModal();loadEstoqueEmpresa();}
-function movimentarEstoque(id){const body=`<form id="movForm"><input type="hidden" name="pid" value="${id}"><div class="form-grid"><div class="form-group"><label>Tipo</label><select class="form-input" name="tipo" required><option value="entrada">Entrada</option><option value="saida">Saída</option></select></div><div class="form-group"><label>Qtd *</label><input type="number" class="form-input" name="quantidade" required min="1"></div></div></form>`;openModal('Movimentar',body,`<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarMovimentacao()">Registrar</button>`);}
-async function salvarMovimentacao(){const f=document.getElementById('movForm');const fd=new FormData(f);const d=Object.fromEntries(fd.entries());const ref=db.collection('estoque').doc(d.pid);const doc=await ref.get();if(!doc.exists){alert('Não encontrado!');return;}const atual=doc.data().quantidade||0;const qtd=parseInt(d.quantidade);const novo=d.tipo==='entrada'?atual+qtd:atual-qtd;await db.collection('movimentacoes_estoque').add({produtoId:d.pid,produtoNome:doc.data().nome,tipo:d.tipo,quantidade:qtd,quantidadeAnterior:atual,quantidadeNova:novo,data:firebase.firestore.FieldValue.serverTimestamp(),usuario:auth.currentUser?.email||'sistema'});await ref.update({quantidade:novo,atualizadoEm:firebase.firestore.FieldValue.serverTimestamp()});closeModal();loadEstoqueEmpresa();}
+
+// Estoque Empresa
+async function loadEstoqueEmpresa(){pageContent.innerHTML='<p style="padding:40px;">Carregando...</p>';try{var snap=await db.collection('estoque').orderBy('nome').get();var rows=snap.empty?'<tr><td colspan="7">Nenhum</td></tr>':snap.docs.map(function(d){var e=d.data();var q=e.quantidade||0,min=e.quantidadeMinima||5;var s=q<=0?'danger':q<=min?'warning':'success';var t=q<=0?'Esgotado':q<=min?'Baixo':'OK';return'<tr><td>'+esc(e.nome)+'</td><td>'+esc(e.marca||'-')+'</td><td>'+esc(e.tipo||'-')+'</td><td>'+q+' '+esc(e.unidade||'un')+'</td><td><span class="badge badge-'+s+'">'+t+'</span></td><td><button class="btn-link" onclick="editarProduto(\''+d.id+'\')">Editar</button><button class="btn-link" onclick="movimentarEstoque(\''+d.id+'\')">Mov.</button></td></tr>';}).join('');pageContent.innerHTML='<div class="card"><div class="card-header"><h3 class="card-title">Estoque Empresa ('+snap.size+')</h3><button class="btn btn-primary btn-sm" onclick="novoProduto()">+ Novo</button></div><div class="card-body"><table class="table"><thead><tr><th>Produto</th><th>Marca</th><th>Tipo</th><th>Qtd</th><th>Status</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div></div>';}catch(err){pageContent.innerHTML=errCard(err.message);}}
+function novoProduto(data){data=data||null;var unidades=['un','g','kg','L','mL','Lata','Saco','Galão','Frasco','Bombona'];var body='<form id="produtoForm"><div class="form-grid"><div class="form-group"><label>Nome *</label><input type="text" class="form-input" name="nome" value="'+esc(data?data.nome||'':'')+'" required></div><div class="form-group"><label>Marca</label><input type="text" class="form-input" name="marca" value="'+esc(data?data.marca||'':'')+'"></div><div class="form-group"><label>Tipo</label><select class="form-input" name="tipo"><option value="quimico">Químico</option><option value="equipamento">Equipamento</option></select></div><div class="form-group"><label>Qtd *</label><input type="number" class="form-input" name="quantidade" value="'+(data?data.quantidade||0:'')+'" required></div><div class="form-group"><label>Qtd Mínima</label><input type="number" class="form-input" name="quantidadeMinima" value="'+(data?data.quantidadeMinima||5:'')+'"></div><div class="form-group"><label>Unidade</label><select class="form-input" name="unidade">'+unidades.map(function(u){return'<option value="'+u+'">'+u+'</option>';}).join('')+'</select></div></div></form>';openModal(data?'Editar':'Novo Produto',body,'<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarProduto(\''+(data?data.id||'':'')+'\')">Salvar</button>'+(data?'<button class="btn btn-danger" onclick="excluirProduto(\''+data.id+'\')">Excluir</button>':''));}
+async function editarProduto(id){try{var d=await db.collection('estoque').doc(id).get();if(d.exists)novoProduto(Object.assign({id:id},d.data()));else alert('Produto não encontrado!');}catch(e){alert('Erro: '+e.message);}}
+async function excluirProduto(id){try{if(confirm('Excluir?')){await db.collection('estoque').doc(id).delete();closeModal();loadEstoqueEmpresa();}}catch(e){alert('Erro ao excluir: '+e.message);}}
+async function salvarProduto(id){try{var f=document.getElementById('produtoForm');var fd=new FormData(f);var data={};fd.forEach(function(v,k){data[k]=v;});data.quantidade=parseInt(data.quantidade)||0;data.quantidadeMinima=parseInt(data.quantidadeMinima)||5;data.atualizadoEm=firebase.firestore.FieldValue.serverTimestamp();if(id){await db.collection('estoque').doc(id).update(data);}else{data.criadoEm=firebase.firestore.FieldValue.serverTimestamp();await db.collection('estoque').add(data);}closeModal();loadEstoqueEmpresa();}catch(e){alert('Erro ao salvar: '+e.message);}}
+function movimentarEstoque(id){var body='<form id="movForm"><input type="hidden" name="pid" value="'+id+'"><div class="form-grid"><div class="form-group"><label>Tipo</label><select class="form-input" name="tipo" required><option value="entrada">Entrada</option><option value="saida">Saída</option></select></div><div class="form-group"><label>Qtd *</label><input type="number" class="form-input" name="quantidade" required min="1"></div></div></form>';openModal('Movimentar',body,'<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarMovimentacao()">Registrar</button>');}
+async function salvarMovimentacao(){try{var f=document.getElementById('movForm');var fd=new FormData(f);var d={};fd.forEach(function(v,k){d[k]=v;});var ref=db.collection('estoque').doc(d.pid);var doc=await ref.get();if(!doc.exists){alert('Não encontrado!');return;}var atual=doc.data().quantidade||0;var qtd=parseInt(d.quantidade);var novo=d.tipo==='entrada'?atual+qtd:atual-qtd;await db.collection('movimentacoes_estoque').add({produtoId:d.pid,produtoNome:doc.data().nome,tipo:d.tipo,quantidade:qtd,quantidadeAnterior:atual,quantidadeNova:novo,data:firebase.firestore.FieldValue.serverTimestamp(),usuario:auth.currentUser?auth.currentUser.email:'sistema'});await ref.update({quantidade:novo,atualizadoEm:firebase.firestore.FieldValue.serverTimestamp()});closeModal();loadEstoqueEmpresa();}catch(e){alert('Erro: '+e.message);}}
 
 // Estoque Clientes
-async function loadEstoqueClientes(){
+async function loadEstoqueClientes(){pageContent.innerHTML='<p style="padding:40px;">Carregando...</p>';try{var pSnap=await db.collection('piscinas').where('status','==','ativa').get();if(pSnap.empty){pageContent.innerHTML='<div class="card"><div class="card-body-padded">Nenhuma piscina ativa.</div></div>';return;}var html='<div style="display:flex;flex-direction:column;gap:16px;">';for(var pi=0;pi<pSnap.docs.length;pi++){var pDoc=pSnap.docs[pi];var p=pDoc.data();var eSnap=await db.collection('piscinas').doc(pDoc.id).collection('estoque').get();var eRows=eSnap.empty?'<tr><td colspan="5">Sem estoque</td></tr>':eSnap.docs.map(function(d){var e=d.data();var q=e.quantidade||0,min=e.quantidadeMinima||3;var s=q<=0?'danger':q<=min?'warning':'success';var t=q<=0?'Esgotado':q<=min?'Baixo':'OK';return'<tr><td>'+esc(e.nome)+'</td><td>'+esc(e.marca||'-')+'</td><td>'+q+' '+esc(e.unidade||'un')+'</td><td><span class="badge badge-'+s+'">'+t+'</span></td><td><button class="btn-link" onclick="editarProdutoCliente(\''+pDoc.id+'\',\''+d.id+'\')">Editar</button><button class="btn-link" onclick="movimentarEstoqueCliente(\''+pDoc.id+'\',\''+d.id+'\')">Mov.</button></td></tr>';}).join('');html+='<div class="card"><div class="card-header"><h3 class="card-title">'+esc(p.codigo)+' - '+esc(p.clienteNome||'N/D')+'</h3><button class="btn btn-primary btn-sm" onclick="novoProdutoCliente(\''+pDoc.id+'\')">+ Produto</button></div><div class="card-body"><table class="table"><thead><tr><th>Produto</th><th>Marca</th><th>Qtd</th><th>Status</th><th></th></tr></thead><tbody>'+eRows+'</tbody></table></div></div>';}html+='</div>';pageContent.innerHTML=html;}catch(err){pageContent.innerHTML=errCard(err.message);}}
+function novoProdutoCliente(pid,data){data=data||null;var unidades=['un','g','kg','L','mL','Lata','Saco','Galão'];var body='<form id="prodClienteForm"><input type="hidden" name="pid" value="'+pid+'"><div class="form-grid"><div class="form-group"><label>Nome *</label><input type="text" class="form-input" name="nome" value="'+esc(data?data.nome||'':'')+'" required></div><div class="form-group"><label>Marca</label><input type="text" class="form-input" name="marca" value="'+esc(data?data.marca||'':'')+'"></div><div class="form-group"><label>Qtd *</label><input type="number" class="form-input" name="quantidade" value="'+(data?data.quantidade||0:'')+'" required></div><div class="form-group"><label>Qtd Mín</label><input type="number" class="form-input" name="quantidadeMinima" value="'+(data?data.quantidadeMinima||3:'')+'"></div><div class="form-group"><label>Unidade</label><select class="form-input" name="unidade">'+unidades.map(function(u){return'<option value="'+u+'">'+u+'</option>';}).join('')+'</select></div></div></form>';openModal(data?'Editar':'Novo Produto',body,'<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarProdutoCliente(\''+(data?data.id||'':'')+'\')">Salvar</button>'+(data?'<button class="btn btn-danger" onclick="excluirProdutoCliente(\''+pid+'\',\''+data.id+'\')">Excluir</button>':''));}
+async function editarProdutoCliente(pid,eid){try{var d=await db.collection('piscinas').doc(pid).collection('estoque').doc(eid).get();if(d.exists)novoProdutoCliente(pid,Object.assign({id:eid},d.data()));else alert('Produto não encontrado!');}catch(e){alert('Erro: '+e.message);}}
+async function excluirProdutoCliente(pid,eid){try{if(confirm('Excluir?')){await db.collection('piscinas').doc(pid).collection('estoque').doc(eid).delete();closeModal();loadEstoqueClientes();}}catch(e){alert('Erro ao excluir: '+e.message);}}
+async function salvarProdutoCliente(id){try{var f=document.getElementById('prodClienteForm');var fd=new FormData(f);var data={};fd.forEach(function(v,k){data[k]=v;});var pid=data.pid;delete data.pid;data.quantidade=parseInt(data.quantidade)||0;data.quantidadeMinima=parseInt(data.quantidadeMinima)||3;data.atualizadoEm=firebase.firestore.FieldValue.serverTimestamp();if(id){await db.collection('piscinas').doc(pid).collection('estoque').doc(id).update(data);}else{data.criadoEm=firebase.firestore.FieldValue.serverTimestamp();await db.collection('piscinas').doc(pid).collection('estoque').add(data);}closeModal();loadEstoqueClientes();}catch(e){alert('Erro ao salvar: '+e.message);}}
+function movimentarEstoqueCliente(pid,eid){var body='<form id="movClienteForm"><input type="hidden" name="pid" value="'+pid+'"><input type="hidden" name="eid" value="'+eid+'"><div class="form-grid"><div class="form-group"><label>Tipo</label><select class="form-input" name="tipo" required><option value="entrada">Entrada</option><option value="saida">Saída</option></select></div><div class="form-group"><label>Qtd *</label><input type="number" class="form-input" name="quantidade" required min="1"></div></div></form>';openModal('Movimentar',body,'<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarMovCliente()">Registrar</button>');}
+async function salvarMovCliente(){try{var f=document.getElementById('movClienteForm');var fd=new FormData(f);var d={};fd.forEach(function(v,k){d[k]=v;});var ref=db.collection('piscinas').doc(d.pid).collection('estoque').doc(d.eid);var doc=await ref.get();if(!doc.exists){alert('Não encontrado!');return;}var atual=doc.data().quantidade||0;var qtd=parseInt(d.quantidade);var novo=d.tipo==='entrada'?atual+qtd:atual-qtd;await ref.update({quantidade:novo,atualizadoEm:firebase.firestore.FieldValue.serverTimestamp()});closeModal();loadEstoqueClientes();}catch(e){alert('Erro: '+e.message);}}
+
+// Financeiro
+async function loadFinanceiro(mesOffset){
+    if(typeof mesOffset==='undefined')mesOffset=0;
     pageContent.innerHTML='<p style="padding:40px;">Carregando...</p>';
     try{
-        const pSnap=await db.collection('piscinas').where('status','==','ativa').get();
-        if(pSnap.empty){pageContent.innerHTML='<div class="card"><div class="card-body-padded">Nenhuma piscina ativa.</div></div>';return;}
-        let html='<div style="display:flex;flex-direction:column;gap:16px;">';
-        for(const pDoc of pSnap.docs){const p=pDoc.data();const eSnap=await db.collection('piscinas').doc(pDoc.id).collection('estoque').get();const eRows=eSnap.empty?'<tr><td colspan="5">Sem estoque</td></tr>':eSnap.docs.map(d=>{const e=d.data();const q=e.quantidade||0,min=e.quantidadeMinima||3;const s=q<=0?'danger':q<=min?'warning':'success';const t=q<=0?'Esgotado':q<=min?'Baixo':'OK';return`<tr><td>${e.nome}</td><td>${e.marca||'-'}</td><td>${q} ${e.unidade||'un'}</td><td><span class="badge badge-${s}">${t}</span></td><td><button class="btn-link" onclick="editarProdutoCliente('${pDoc.id}','${d.id}')">Editar</button><button class="btn-link" onclick="movimentarEstoqueCliente('${pDoc.id}','${d.id}')">Mov.</button></td></tr>`;}).join('');html+=`<div class="card"><div class="card-header"><h3 class="card-title">${p.codigo} - ${p.clienteNome||'N/D'}</h3><button class="btn btn-primary btn-sm" onclick="novoProdutoCliente('${pDoc.id}')">+ Produto</button></div><div class="card-body"><table class="table"><thead><tr><th>Produto</th><th>Marca</th><th>Qtd</th><th>Status</th><th></th></tr></thead><tbody>${eRows}</tbody></table></div></div>`;}
-        html+='</div>';pageContent.innerHTML=html;
-    }catch(err){pageContent.innerHTML=errCard(err.message);}
-}
-function novoProdutoCliente(pid,data=null){const unidades=['un','g','kg','L','mL','Lata','Saco','Galão'];const body=`<form id="prodClienteForm"><input type="hidden" name="pid" value="${pid}"><div class="form-grid"><div class="form-group"><label>Nome *</label><input type="text" class="form-input" name="nome" value="${data?.nome||''}" required></div><div class="form-group"><label>Marca</label><input type="text" class="form-input" name="marca" value="${data?.marca||''}"></div><div class="form-group"><label>Qtd *</label><input type="number" class="form-input" name="quantidade" value="${data?.quantidade||0}" required></div><div class="form-group"><label>Qtd Mín</label><input type="number" class="form-input" name="quantidadeMinima" value="${data?.quantidadeMinima||3}"></div><div class="form-group"><label>Unidade</label><select class="form-input" name="unidade">${unidades.map(u=>`<option value="${u}">${u}</option>`).join('')}</select></div></div></form>`;openModal(data?'Editar':'Novo Produto',body,`<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarProdutoCliente('${data?.id||''}')">Salvar</button>${data?`<button class="btn btn-danger" onclick="excluirProdutoCliente('${pid}','${data.id}')">Excluir</button>`:''}`);}
-async function editarProdutoCliente(pid,eid){const d=await db.collection('piscinas').doc(pid).collection('estoque').doc(eid).get();if(d.exists)novoProdutoCliente(pid,{id:eid,...d.data()});}
-async function excluirProdutoCliente(pid,eid){if(confirm('Excluir?')){await db.collection('piscinas').doc(pid).collection('estoque').doc(eid).delete();closeModal();loadEstoqueClientes();}}
-async function salvarProdutoCliente(id){const f=document.getElementById('prodClienteForm');const fd=new FormData(f);const data=Object.fromEntries(fd.entries());const pid=data.pid;delete data.pid;data.quantidade=parseInt(data.quantidade)||0;data.quantidadeMinima=parseInt(data.quantidadeMinima)||3;data.atualizadoEm=firebase.firestore.FieldValue.serverTimestamp();if(id){await db.collection('piscinas').doc(pid).collection('estoque').doc(id).update(data);}else{data.criadoEm=firebase.firestore.FieldValue.serverTimestamp();await db.collection('piscinas').doc(pid).collection('estoque').add(data);}closeModal();loadEstoqueClientes();}
-function movimentarEstoqueCliente(pid,eid){const body=`<form id="movClienteForm"><input type="hidden" name="pid" value="${pid}"><input type="hidden" name="eid" value="${eid}"><div class="form-grid"><div class="form-group"><label>Tipo</label><select class="form-input" name="tipo" required><option value="entrada">Entrada</option><option value="saida">Saída</option></select></div><div class="form-group"><label>Qtd *</label><input type="number" class="form-input" name="quantidade" required min="1"></div></div></form>`;openModal('Movimentar',body,`<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarMovCliente()">Registrar</button>`);}
-async function salvarMovCliente(){const f=document.getElementById('movClienteForm');const fd=new FormData(f);const d=Object.fromEntries(fd.entries());const ref=db.collection('piscinas').doc(d.pid).collection('estoque').doc(d.eid);const doc=await ref.get();if(!doc.exists){alert('Não encontrado!');return;}const atual=doc.data().quantidade||0;const qtd=parseInt(d.quantidade);const novo=d.tipo==='entrada'?atual+qtd:atual-qtd;await ref.update({quantidade:novo,atualizadoEm:firebase.firestore.FieldValue.serverTimestamp()});closeModal();loadEstoqueClientes();}
-
-// // Gerar faturas automáticas para todos os clientes ativos
-async function gerarFaturasAutomaticas(){
-    const hoje=new Date();
-    const mesAtual=hoje.getMonth();
-    const anoAtual=hoje.getFullYear();
-    
-    const clientesSnap=await db.collection('clientes').where('status','==','ativo').get();
-    
-    for(const clienteDoc of clientesSnap.docs){
-        const c=clienteDoc.data();
-        const diaVenc=c.diaVencimento||10;
-        const valor=c.plano||0;
-        if(valor<=0)continue;
-        
-        // Verificar se já existe fatura para este mês
-        const vencimentoStr=`${anoAtual}-${String(mesAtual+1).padStart(2,'0')}-${String(diaVenc).padStart(2,'0')}`;
-        const existente=await db.collection('faturas')
-            .where('clienteId','==',clienteDoc.id)
-            .where('vencimento','==',vencimentoStr)
-            .get();
-        
-        if(existente.empty){
-            await db.collection('faturas').add({
-                clienteId:clienteDoc.id,
-                clienteNome:c.nome,
-                valor:valor,
-                vencimento:vencimentoStr,
-                metodo:c.formaPagamento||'PIX',
-                status:'pendente',
-                criadoEm:firebase.firestore.FieldValue.serverTimestamp()
-            });
-        }
-    }
-}
-    // Financeiro
-async function loadFinanceiro(mesOffset){
-    if(typeof mesOffset === 'undefined') mesOffset = 0;
-    pageContent.innerHTML='<p style="padding:40px;">Carregando...</p>';
-    
-    // Gerar faturas automaticas
-    try {
-        const hoje2 = new Date();
-        const mesAtual2 = hoje2.getMonth();
-        const anoAtual2 = hoje2.getFullYear();
-        const clientesSnap2 = await db.collection('clientes').where('status','==','ativo').get();
-        for(const clienteDoc of clientesSnap2.docs){
-            const c = clienteDoc.data();
-            const diaVenc = c.diaVencimento || 10;
-            const valor = c.plano || 0;
-            if(valor <= 0) continue;
-            const vencStr = anoAtual2 + '-' + String(mesAtual2+1).padStart(2,'0') + '-' + String(diaVenc).padStart(2,'0');
-            const existente = await db.collection('faturas').where('clienteId','==',clienteDoc.id).where('vencimento','==',vencStr).get();
-            if(existente.empty){
-                await db.collection('faturas').add({
-                    clienteId: clienteDoc.id,
-                    clienteNome: c.nome,
-                    valor: valor,
-                    vencimento: vencStr,
-                    metodo: c.formaPagamento || 'PIX',
-                    status: 'pendente',
-                    criadoEm: firebase.firestore.FieldValue.serverTimestamp()
-                });
+        var hoje2=new Date();
+        var mesAtual2=hoje2.getMonth();
+        var anoAtual2=hoje2.getFullYear();
+        if(mesOffset===0){
+            var cs2=await db.collection('clientes').where('status','==','ativo').get();
+            for(var ci=0;ci<cs2.docs.length;ci++){
+                var cd=cs2.docs[ci];
+                var c=cd.data();
+                var dv=c.diaVencimento||10;
+                var vl=c.plano||0;
+                if(vl<=0)continue;
+                var vs=anoAtual2+'-'+String(mesAtual2+1).padStart(2,'0')+'-'+String(dv).padStart(2,'0');
+                var ex=await db.collection('faturas').where('clienteId','==',cd.id).where('vencimento','==',vs).get();
+                if(ex.empty){
+                    await db.collection('faturas').add({clienteId:cd.id,clienteNome:c.nome,valor:vl,vencimento:vs,metodo:c.formaPagamento||'PIX',status:'pendente',criadoEm:firebase.firestore.FieldValue.serverTimestamp()});
+                }
             }
         }
-    } catch(e) {}
-    
-    try{
-        var hoje = new Date();
-        var mesRef = new Date(hoje.getFullYear(), hoje.getMonth() + mesOffset, 1);
-        var mes = mesRef.getMonth();
-        var ano = mesRef.getFullYear();
-        var meses = ['Janeiro','Fevereiro','Marco','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-        
-        var inicioMes = ano + '-' + String(mes+1).padStart(2,'0') + '-01';
-        var ultimoDia = new Date(ano, mes+1, 0).getDate();
-        var fimMes = ano + '-' + String(mes+1).padStart(2,'0') + '-' + String(ultimoDia).padStart(2,'0');
-        
-        var faturasSnap = await db.collection('faturas').where('vencimento','>=',inicioMes).where('vencimento','<=',fimMes).orderBy('vencimento','desc').get();
-        var receitasSnap = await db.collection('faturas').where('status','==','pago').where('vencimento','>=',inicioMes).where('vencimento','<=',fimMes).get();
-        var despesasSnap = await db.collection('despesas').where('data','>=',inicioMes).where('data','<=',fimMes).get();
-        var vencidasSnap = await db.collection('faturas').where('status','==','pendente').where('vencimento','<',new Date().toISOString().split('T')[0]).get();
-        
-        var totalReceitas = 0;
-        receitasSnap.forEach(function(d){ totalReceitas += Number(d.data().valor) || 0; });
-        var totalDespesas = 0;
-        despesasSnap.forEach(function(d){ totalDespesas += Number(d.data().valor) || 0; });
-        
-        var fRows = '';
-        if(faturasSnap.empty){
-            fRows = '<tr><td colspan="7" style="text-align:center;padding:40px;">Nenhuma fatura neste mes</td></tr>';
-        } else {
-            faturasSnap.docs.forEach(function(d){
-                var f = d.data();
-                var venc = new Date(f.vencimento + 'T00:00:00');
-                var vencido = venc < new Date() && f.status === 'pendente';
-                var statusClass = f.status === 'pago' ? 'badge-success' : (vencido ? 'badge-danger' : 'badge-warning');
-                var statusText = f.status === 'pago' ? 'Pago' : (vencido ? 'Vencido' : 'Pendente');
-                var acao = f.status === 'pago' ? (f.dataPagamento || '-') : '<button class="btn-link" onclick="darBaixa(\'' + d.id + '\')">Dar Baixa</button>';
-                fRows += '<tr><td><strong>' + (f.clienteNome || 'N/D') + '</strong></td><td>R$ ' + (Number(f.valor) || 0).toFixed(2) + '</td><td>' + (f.vencimento || '-') + '</td><td>' + (f.metodo || '-') + '</td><td><span class="badge ' + statusClass + '"><span class="badge-dot"></span>' + statusText + '</span></td><td>' + acao + '</td></tr>';
-            });
-        }
-        
-        var dRows = '';
-        if(despesasSnap.empty){
-            dRows = '<tr><td colspan="4" style="text-align:center;padding:40px;">Nenhuma despesa</td></tr>';
-        } else {
-            despesasSnap.docs.forEach(function(d){
-                var de = d.data();
-                dRows += '<tr><td>' + (de.descricao || '-') + '</td><td>' + (de.data || '-') + '</td><td style="color:var(--danger);">- R$ ' + (Number(de.valor) || 0).toFixed(2) + '</td><td><button class="btn-link btn-danger" onclick="excluirDespesa(\'' + d.id + '\')">Excluir</button></td></tr>';
-            });
-        }
-        
-        var mesAnterior = meses[(mes-1+12)%12];
-        var mesProximo = meses[(mes+1)%12];
-        var saldo = totalReceitas - totalDespesas;
-        var saldoCor = saldo >= 0 ? 'var(--success)' : 'var(--danger)';
-        
-        pageContent.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;"><button class="btn btn-outline btn-sm" onclick="loadFinanceiro(' + (mesOffset-1) + ')">&#8592; ' + mesAnterior + '</button><h3 style="font-weight:600;">' + meses[mes] + ' ' + ano + '</h3><button class="btn btn-outline btn-sm" onclick="loadFinanceiro(' + (mesOffset+1) + ')">' + mesProximo + ' &#8594;</button></div>' +
-            '<div class="stats-grid">' +
-            '<div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Receitas do Mes</span><div class="stat-card-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></div></div><div class="stat-card-value">R$ ' + totalReceitas.toFixed(2) + '</div></div>' +
-            '<div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Despesas do Mes</span><div class="stat-card-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div></div><div class="stat-card-value">R$ ' + totalDespesas.toFixed(2) + '</div></div>' +
-            '<div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Saldo do Mes</span><div class="stat-card-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/></svg></div></div><div class="stat-card-value" style="color:' + saldoCor + ';">R$ ' + saldo.toFixed(2) + '</div></div>' +
-            '<div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Vencidas (Total)</span><div class="stat-card-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg></div></div><div class="stat-card-value">' + vencidasSnap.size + '</div></div>' +
-            '</div>' +
-            '<div class="content-grid">' +
-            '<div class="card"><div class="card-header"><h3 class="card-title">Faturas de ' + meses[mes] + '</h3><button class="btn btn-primary btn-sm" onclick="novaFatura()">+ Nova</button></div><div class="card-body"><table class="table"><thead><tr><th>Cliente</th><th>Valor</th><th>Venc.</th><th>Metodo</th><th>Status</th><th>Acao</th></tr></thead><tbody>' + fRows + '</tbody></table></div></div>' +
-            '<div>' +
-            '<div class="card" style="margin-bottom:14px;"><div class="card-header"><h3 class="card-title">Despesas</h3></div><div class="card-body-padded"><table class="table"><thead><tr><th>Descricao</th><th>Data</th><th>Valor</th><th></th></tr></thead><tbody>' + dRows + '</tbody></table></div></div>' +
-            '<div class="card"><div class="card-header"><h3 class="card-title">+ Despesa</h3></div><div class="card-body-padded"><form id="despesaForm"><div class="form-grid"><div class="form-group"><label>Descricao</label><input type="text" class="form-input" name="descricao" required></div><div class="form-group"><label>Valor (R$)</label><input type="number" class="form-input" name="valor" step="0.01" required></div></div><button type="button" class="btn btn-primary btn-sm" onclick="salvarDespesa()">Adicionar</button></form></div></div>' +
-            '</div></div>';
-    }catch(err){
-        pageContent.innerHTML = '<div class="card"><div class="card-header"><h3 class="card-title">Erro</h3></div><div class="card-body-padded"><p style="color:var(--danger);">' + err.message + '</p></div></div>';
-    }
-}
-
-async function novaFatura(data){
-    data = data || null;
-    var co = '<option value="">Selecione...</option>';
-    try{
-        var s = await db.collection('clientes').where('status','==','ativo').orderBy('nome').get();
-        s.forEach(function(d){
-            co += '<option value="' + d.id + '" ' + (data && data.clienteId === d.id ? 'selected' : '') + '>' + d.data().nome + ' - R$ ' + (Number(d.data().plano) || 0).toFixed(2) + '</option>';
-        });
     }catch(e){}
-    var body = '<form id="faturaForm"><div class="form-group"><label>Cliente *</label><select class="form-input" name="clienteId" required onchange="preencherValorFatura()">' + co + '</select></div><div class="form-grid"><div class="form-group"><label>Valor (R$) *</label><input type="number" class="form-input" name="valor" id="faturaValor" value="' + (data ? data.valor || '' : '') + '" step="0.01" required></div><div class="form-group"><label>Vencimento *</label><input type="date" class="form-input" name="vencimento" value="' + (data ? data.vencimento || '' : '') + '" required></div><div class="form-group"><label>Metodo *</label><select class="form-input" name="metodo" required><option value="PIX">PIX</option><option value="Boleto">Boleto</option><option value="Cartao">Cartao</option><option value="Dinheiro">Dinheiro</option></select></div><div class="form-group"><label>Link Boleto</label><input type="text" class="form-input" name="linkBoleto" value="' + (data ? data.linkBoleto || '' : '') + '" placeholder="https://..."></div></div></form>';
-    openModal(data ? 'Editar Fatura' : 'Nova Fatura', body, '<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarFatura(\'' + (data ? data.id || '' : '') + '\')">Salvar</button>');
+    try{
+        var hoje=new Date();
+        var mesRef=new Date(hoje.getFullYear(),hoje.getMonth()+mesOffset,1);
+        var mes=mesRef.getMonth();
+        var ano=mesRef.getFullYear();
+        var meses=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+        var inicioMes=ano+'-'+String(mes+1).padStart(2,'0')+'-01';
+        var ultimoDia=new Date(ano,mes+1,0).getDate();
+        var fimMes=ano+'-'+String(mes+1).padStart(2,'0')+'-'+String(ultimoDia).padStart(2,'0');
+        var faturasSnap=await db.collection('faturas').where('vencimento','>=',inicioMes).where('vencimento','<=',fimMes).orderBy('vencimento','desc').get();
+        var receitasSnap=await db.collection('faturas').where('status','==','pago').where('vencimento','>=',inicioMes).where('vencimento','<=',fimMes).get();
+        var despesasSnap=await db.collection('despesas').where('data','>=',inicioMes).where('data','<=',fimMes).get();
+        var vencidasSnap=await db.collection('faturas').where('status','==','pendente').where('vencimento','<',hoje.toISOString().split('T')[0]).get();
+        var totalReceitas=0;receitasSnap.forEach(function(d){totalReceitas+=Number(d.data().valor)||0;});
+        var totalDespesas=0;despesasSnap.forEach(function(d){totalDespesas+=Number(d.data().valor)||0;});
+        var fRows='';
+        if(faturasSnap.empty){fRows='<tr><td colspan="7" style="text-align:center;padding:40px;">Nenhuma fatura neste mês</td></tr>';}
+        else{faturasSnap.docs.forEach(function(d){var f=d.data();var venc=new Date(f.vencimento+'T00:00:00');var vencido=venc<hoje&&f.status==='pendente';var sc=f.status==='pago'?'badge-success':(vencido?'badge-danger':'badge-warning');var st=f.status==='pago'?'Pago':(vencido?'Vencido':'Pendente');var acao=f.status==='pago'?(f.dataPagamento||'-'):'<button class="btn-link" onclick="darBaixa(\''+d.id+'\')">Dar Baixa</button> <button class="btn-link" onclick="editarFatura(\''+d.id+'\')">Editar</button>';fRows+='<tr><td><strong>'+esc(f.clienteNome||'N/D')+'</strong></td><td>R$ '+(Number(f.valor)||0).toFixed(2)+'</td><td>'+esc(f.vencimento||'-')+'</td><td>'+esc(f.metodo||'-')+'</td><td><span class="badge '+sc+'"><span class="badge-dot"></span>'+st+'</span></td><td>'+acao+'</td></tr>';});}
+        var dRows='';
+        if(despesasSnap.empty){dRows='<tr><td colspan="4" style="text-align:center;padding:40px;">Nenhuma despesa</td></tr>';}
+        else{despesasSnap.docs.forEach(function(d){var de=d.data();dRows+='<tr><td>'+esc(de.descricao||'-')+'</td><td>'+esc(de.data||'-')+'</td><td style="color:var(--danger);">- R$ '+(Number(de.valor)||0).toFixed(2)+'</td><td><button class="btn-link btn-danger" onclick="excluirDespesa(\''+d.id+'\')">Excluir</button></td></tr>';});}
+        var ma=meses[(mes-1+12)%12];
+        var mp=meses[(mes+1)%12];
+        var saldo=totalReceitas-totalDespesas;
+        var saldoCor=saldo>=0?'var(--success)':'var(--danger)';
+        pageContent.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;"><button class="btn btn-outline btn-sm" onclick="loadFinanceiro('+(mesOffset-1)+')">&#8592; '+ma+'</button><h3 style="font-weight:600;">'+meses[mes]+' '+ano+'</h3><button class="btn btn-outline btn-sm" onclick="loadFinanceiro('+(mesOffset+1)+')">'+mp+' &#8594;</button></div><div class="stats-grid"><div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Receitas do Mês</span><div class="stat-card-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg></div></div><div class="stat-card-value">R$ '+totalReceitas.toFixed(2)+'</div></div><div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Despesas do Mês</span><div class="stat-card-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div></div><div class="stat-card-value">R$ '+totalDespesas.toFixed(2)+'</div></div><div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Saldo do Mês</span><div class="stat-card-icon blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/></svg></div></div><div class="stat-card-value" style="color:'+saldoCor+';">R$ '+saldo.toFixed(2)+'</div></div><div class="stat-card"><div class="stat-card-header"><span class="stat-card-label">Vencidas (Total)</span><div class="stat-card-icon red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg></div></div><div class="stat-card-value">'+vencidasSnap.size+'</div></div></div><div class="content-grid"><div class="card"><div class="card-header"><h3 class="card-title">Faturas de '+meses[mes]+'</h3><button class="btn btn-primary btn-sm" onclick="novaFatura()">+ Nova</button></div><div class="card-body"><table class="table"><thead><tr><th>Cliente</th><th>Valor</th><th>Venc.</th><th>Método</th><th>Status</th><th>Ação</th></tr></thead><tbody>'+fRows+'</tbody></table></div></div><div><div class="card" style="margin-bottom:14px;"><div class="card-header"><h3 class="card-title">Despesas</h3></div><div class="card-body-padded"><table class="table"><thead><tr><th>Descrição</th><th>Data</th><th>Valor</th><th></th></tr></thead><tbody>'+dRows+'</tbody></table></div></div><div class="card"><div class="card-header"><h3 class="card-title">+ Despesa</h3></div><div class="card-body-padded"><form id="despesaForm"><div class="form-grid"><div class="form-group"><label>Descrição</label><input type="text" class="form-input" name="descricao" required></div><div class="form-group"><label>Valor (R$)</label><input type="number" class="form-input" name="valor" step="0.01" required></div></div><button type="button" class="btn btn-primary btn-sm" onclick="salvarDespesa()">Adicionar</button></form></div></div></div></div>';
+    }catch(err){pageContent.innerHTML='<div class="card"><div class="card-header"><h3 class="card-title">Erro</h3></div><div class="card-body-padded"><p style="color:var(--danger);">'+esc(err.message)+'</p></div></div>';}
 }
 
-async function preencherValorFatura(){
-    var sel = document.querySelector('[name="clienteId"]');
-    if(!sel || !sel.value) return;
-    var d = await db.collection('clientes').doc(sel.value).get();
-    if(d.exists){
-        document.getElementById('faturaValor').value = Number(d.data().plano) || 0;
-    }
-}
+async function novaFatura(data){data=data||null;var co='<option value="">Selecione...</option>';try{var s=await db.collection('clientes').where('status','==','ativo').orderBy('nome').get();s.forEach(function(d){co+='<option value="'+d.id+'" '+(data&&data.clienteId===d.id?'selected':'')+'>'+esc(d.data().nome)+' - R$ '+(Number(d.data().plano)||0).toFixed(2)+'</option>';});}catch(e){}var body='<form id="faturaForm"><div class="form-group"><label>Cliente *</label><select class="form-input" name="clienteId" required onchange="preencherValorFatura()">'+co+'</select></div><div class="form-grid"><div class="form-group"><label>Valor (R$) *</label><input type="number" class="form-input" name="valor" id="faturaValor" value="'+(data?data.valor||'':'')+'" step="0.01" required></div><div class="form-group"><label>Vencimento *</label><input type="date" class="form-input" name="vencimento" value="'+(data?data.vencimento||'':'')+'" required></div><div class="form-group"><label>Método *</label><select class="form-input" name="metodo" required><option value="PIX">PIX</option><option value="Boleto">Boleto</option><option value="Cartão">Cartão</option><option value="Dinheiro">Dinheiro</option></select></div><div class="form-group"><label>Link Boleto</label><input type="text" class="form-input" name="linkBoleto" value="'+esc(data?data.linkBoleto||'':'')+'" placeholder="https://..."></div></div></form>';openModal(data?'Editar Fatura':'Nova Fatura',body,'<button class="btn btn-outline" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="salvarFatura(\''+(data?data.id||'':'')+'\')">Salvar</button>');}
+
+async function editarFatura(id){try{var d=await db.collection('faturas').doc(id).get();if(d.exists){var dados=d.data();dados.id=id;novaFatura(dados);}else{alert('Fatura não encontrada!');}}catch(e){alert('Erro: '+e.message);}}
+
+async function preencherValorFatura(){var sel=document.querySelector('[name="clienteId"]');if(!sel||!sel.value)return;var d=await db.collection('clientes').doc(sel.value).get();if(d.exists){document.getElementById('faturaValor').value=Number(d.data().plano)||0;}}
 
 async function salvarFatura(id){
-    var f = document.getElementById('faturaForm');
-    var fd = new FormData(f);
-    var data = {};
-    fd.forEach(function(v,k){ data[k] = v; });
-    data.valor = Number(data.valor) || 0;
-    data.status = 'pendente';
-    data.atualizadoEm = firebase.firestore.FieldValue.serverTimestamp();
-    if(data.clienteId){
-        try{
-            var cDoc = await db.collection('clientes').doc(data.clienteId).get();
-            if(cDoc.exists) data.clienteNome = cDoc.data().nome;
-        }catch(e){}
-    }
-    if(id){
-        await db.collection('faturas').doc(id).update(data);
-    } else {
-        data.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
-        await db.collection('faturas').add(data);
-    }
-    if(data.metodo === 'PIX'){
-        var pixCode = '00020126580014br.gov.bcb.pix0136' + (data.clienteNome || 'cliente').replace(/\s/g,'') + '@aquapluss520400005303986540' + data.valor.toFixed(2) + '5802BR5925AquaPluss Piscinas6009SAO PAULO62070503***';
-        openModal('PIX Gerado', '<div class="pix-box"><p>Valor: <strong>R$ ' + data.valor.toFixed(2) + '</strong></p><p>Cliente: <strong>' + (data.clienteNome || 'N/D') + '</strong></p><p style="margin-top:12px;">Codigo PIX:</p><div class="pix-code" id="pixCode">' + pixCode + '</div><span class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById(\'pixCode\').textContent);alert(\'Copiado!\')">Copiar codigo</span></div>', '<button class="btn btn-primary" onclick="closeModal()">OK</button>');
-    }
-    if(data.metodo === 'Boleto' && data.linkBoleto){
-        openModal('Boleto', '<p>Link do boleto:</p><a href="' + data.linkBoleto + '" target="_blank" style="color:var(--brand);">' + data.linkBoleto + '</a><p style="margin-top:12px;">Cliente: ' + data.clienteNome + '</p><p>Valor: R$ ' + data.valor.toFixed(2) + '</p>', '<button class="btn btn-primary" onclick="closeModal()">OK</button>');
-    }
-    closeModal();
-    loadFinanceiro();
+    try{
+        var f=document.getElementById('faturaForm');var fd=new FormData(f);var data={};fd.forEach(function(v,k){data[k]=v;});
+        data.valor=Number(data.valor)||0;data.status='pendente';data.atualizadoEm=firebase.firestore.FieldValue.serverTimestamp();
+        if(data.clienteId){try{var cDoc=await db.collection('clientes').doc(data.clienteId).get();if(cDoc.exists)data.clienteNome=cDoc.data().nome;}catch(e){}}
+        if(id){await db.collection('faturas').doc(id).update(data);}
+        else{data.criadoEm=firebase.firestore.FieldValue.serverTimestamp();await db.collection('faturas').add(data);}
+        closeModal();loadFinanceiro();
+    }catch(e){alert('Erro ao salvar fatura: '+e.message);}
 }
 
-async function darBaixa(id){
-    if(confirm('Confirmar pagamento?')){
-        await db.collection('faturas').doc(id).update({
-            status: 'pago',
-            dataPagamento: new Date().toISOString().split('T')[0],
-            atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        loadFinanceiro();
-    }
-}
+async function darBaixa(id){try{if(confirm('Confirmar pagamento?')){await db.collection('faturas').doc(id).update({status:'pago',dataPagamento:new Date().toISOString().split('T')[0],atualizadoEm:firebase.firestore.FieldValue.serverTimestamp()});loadFinanceiro();}}catch(e){alert('Erro: '+e.message);}}
 
-async function salvarDespesa(){
-    var f = document.getElementById('despesaForm');
-    var fd = new FormData(f);
-    var data = {};
-    fd.forEach(function(v,k){ data[k] = v; });
-    data.valor = Number(data.valor) || 0;
-    data.data = new Date().toISOString().split('T')[0];
-    data.criadoEm = firebase.firestore.FieldValue.serverTimestamp();
-    await db.collection('despesas').add(data);
-    loadFinanceiro();
-}
+async function salvarDespesa(){try{var f=document.getElementById('despesaForm');var fd=new FormData(f);var data={};fd.forEach(function(v,k){data[k]=v;});data.valor=Number(data.valor)||0;data.data=new Date().toISOString().split('T')[0];data.criadoEm=firebase.firestore.FieldValue.serverTimestamp();await db.collection('despesas').add(data);loadFinanceiro();}catch(e){alert('Erro ao salvar despesa: '+e.message);}}
 
-async function excluirDespesa(id){
-    if(confirm('Excluir despesa?')){
-        await db.collection('despesas').doc(id).delete();
-        loadFinanceiro();
-    }
-}
+async function excluirDespesa(id){try{if(confirm('Excluir despesa?')){await db.collection('despesas').doc(id).delete();loadFinanceiro();}}catch(e){alert('Erro ao excluir: '+e.message);}}
 
 // Atendimentos
-async function loadAtendimentos(){
-    pageContent.innerHTML='<p style="padding:40px;">Carregando atendimentos...</p>';
-    try{
-        var hoje = new Date().toISOString().split('T')[0];
-        var snap = await db.collection('atendimentos').where('data','==',hoje).orderBy('horaInicio','desc').get();
-        
-        var rows = '';
-        if(snap.empty){
-            rows = '<tr><td colspan="8" style="text-align:center;padding:40px;">Nenhum atendimento hoje</td></tr>';
-        } else {
-            snap.docs.forEach(function(d){
-                var a = d.data();
-                var statusClass = a.status === 'concluido' ? 'badge-success' : (a.status === 'em_andamento' ? 'badge-info' : 'badge-warning');
-                var statusText = a.status === 'concluido' ? 'Concluido' : (a.status === 'em_andamento' ? 'Em Andamento' : 'Pendente');
-                var duracao = a.duracao || '-';
-                rows += '<tr><td><strong>' + (a.clienteNome || 'N/D') + '</strong></td><td>' + (a.piscineiroNome || '-') + '</td><td>' + (a.horaInicio || '-') + '</td><td>' + (a.horaFim || '-') + '</td><td>' + duracao + ' min</td><td><span class="badge ' + statusClass + '"><span class="badge-dot"></span>' + statusText + '</span></td><td>' + (a.procedimentos || '-') + '</td><td><button class="btn-link" onclick="verAtendimento(\'' + d.id + '\')">Ver</button></td></tr>';
-            });
-        }
-        
-        pageContent.innerHTML = '<div class="card"><div class="card-header"><h3 class="card-title">Atendimentos de Hoje (' + new Date().toLocaleDateString('pt-BR') + ')</h3></div><div class="card-body"><table class="table"><thead><tr><th>Cliente</th><th>Piscineiro</th><th>Inicio</th><th>Fim</th><th>Duracao</th><th>Status</th><th>Procedimentos</th><th></th></tr></thead><tbody>' + rows + '</tbody></table></div></div>';
-    }catch(err){
-        pageContent.innerHTML = errCard(err.message);
-    }
-}
-
-async function verAtendimento(id){
-    try{
-        var d = await db.collection('atendimentos').doc(id).get();
-        if(!d.exists){ alert('Atendimento nao encontrado!'); return; }
-        var a = d.data();
-        var html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">' +
-            '<div><strong>Cliente:</strong> ' + (a.clienteNome || '-') + '</div>' +
-            '<div><strong>Piscineiro:</strong> ' + (a.piscineiroNome || '-') + '</div>' +
-            '<div><strong>Data:</strong> ' + (a.data || '-') + '</div>' +
-            '<div><strong>Inicio:</strong> ' + (a.horaInicio || '-') + '</div>' +
-            '<div><strong>Fim:</strong> ' + (a.horaFim || '-') + '</div>' +
-            '<div><strong>Duracao:</strong> ' + (a.duracao || '-') + ' min</div>' +
-            '<div><strong>Status:</strong> ' + (a.status || '-') + '</div>' +
-            '<div><strong>Procedimentos:</strong> ' + (a.procedimentos || '-') + '</div>' +
-            '<div><strong>Produtos:</strong> ' + (a.produtos || 'Nenhum') + '</div>' +
-            '<div><strong>Observacoes:</strong> ' + (a.observacoes || '-') + '</div>' +
-            '<div><strong>Assinatura:</strong> ' + (a.assinatura ? 'Sim' : 'Nao') + '</div>' +
-            '<div><strong>GPS:</strong> ' + (a.gps || '-') + '</div>' +
-            '</div>';
-        openModal('Atendimento', html, '<button class="btn btn-primary" onclick="closeModal()">Fechar</button>');
-    }catch(e){ alert('Erro: ' + e.message); }
-}
+async function loadAtendimentos(){pageContent.innerHTML='<p style="padding:40px;">Carregando atendimentos...</p>';try{var hoje=new Date().toISOString().split('T')[0];var snap=await db.collection('atendimentos').where('data','==',hoje).orderBy('horaInicio','desc').get();var rows='';if(snap.empty){rows='<tr><td colspan="8" style="text-align:center;padding:40px;">Nenhum atendimento hoje</td></tr>';}else{snap.docs.forEach(function(d){var a=d.data();var sc=a.status==='concluido'?'badge-success':(a.status==='em_andamento'?'badge-info':'badge-warning');var st=a.status==='concluido'?'Concluído':(a.status==='em_andamento'?'Em Andamento':'Pendente');var dur=a.duracao||'-';rows+='<tr><td><strong>'+esc(a.clienteNome||'N/D')+'</strong></td><td>'+esc(a.piscineiroNome||'-')+'</td><td>'+esc(a.horaInicio||'-')+'</td><td>'+esc(a.horaFim||'-')+'</td><td>'+dur+' min</td><td><span class="badge '+sc+'"><span class="badge-dot"></span>'+st+'</span></td><td>'+esc(a.procedimentos||'-')+'</td><td><button class="btn-link" onclick="verAtendimento(\''+d.id+'\')">Ver</button></td></tr>';});}pageContent.innerHTML='<div class="card"><div class="card-header"><h3 class="card-title">Atendimentos de Hoje ('+new Date().toLocaleDateString('pt-BR')+')</h3></div><div class="card-body"><table class="table"><thead><tr><th>Cliente</th><th>Piscineiro</th><th>Início</th><th>Fim</th><th>Duração</th><th>Status</th><th>Procedimentos</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div></div>';}catch(err){pageContent.innerHTML=errCard(err.message);}}
+async function verAtendimento(id){try{var d=await db.collection('atendimentos').doc(id).get();if(!d.exists){alert('Atendimento não encontrado!');return;}var a=d.data();var html='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div><strong>Cliente:</strong> '+esc(a.clienteNome||'-')+'</div><div><strong>Piscineiro:</strong> '+esc(a.piscineiroNome||'-')+'</div><div><strong>Data:</strong> '+esc(a.data||'-')+'</div><div><strong>Início:</strong> '+esc(a.horaInicio||'-')+'</div><div><strong>Fim:</strong> '+esc(a.horaFim||'-')+'</div><div><strong>Duração:</strong> '+esc(a.duracao||'-')+' min</div><div><strong>Status:</strong> '+esc(a.status||'-')+'</div><div><strong>Procedimentos:</strong> '+esc(a.procedimentos||'-')+'</div><div><strong>Produtos:</strong> '+esc(a.produtos||'Nenhum')+'</div><div><strong>Observações:</strong> '+esc(a.observacoes||'-')+'</div><div><strong>Assinatura:</strong> '+(a.assinatura?'Sim':'Não')+'</div><div><strong>GPS:</strong> '+esc(a.gps||'-')+'</div></div>';openModal('Atendimento',html,'<button class="btn btn-primary" onclick="closeModal()">Fechar</button>');}catch(e){alert('Erro: '+e.message);}}
 
 // Agenda
-function loadAgenda(){const hoje=new Date();renderCalendario(hoje.getMonth(),hoje.getFullYear());}
-function renderCalendario(mes,ano){
-    var meses=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-    var diasSemana=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-    var primeiroDia=new Date(ano,mes,1).getDay();
-    var ultimoDia=new Date(ano,mes+1,0).getDate();
-    var ultimoDiaAnterior=new Date(ano,mes,0).getDate();
-    var hoje=new Date();
-    
-    var html='<div class="calendar-nav">';
-    html+='<button onclick="renderCalendario('+(mes-1)+','+ano+')">← Anterior</button>';
-    html+='<span class="month-year">'+meses[mes]+' '+ano+'</span>';
-    html+='<button onclick="renderCalendario('+(mes+1)+','+ano+')">Próximo →</button>';
-    html+='</div>';
-    html+='<div class="calendar-grid">';
-    
-    for(var d=0;d<diasSemana.length;d++){
-        html+='<div class="calendar-day-header">'+diasSemana[d]+'</div>';
-    }
-    
-    for(var i=primeiroDia-1;i>=0;i--){
-        html+='<div class="calendar-day other-month">'+(ultimoDiaAnterior-i)+'</div>';
-    }
-    
-    for(var dia=1;dia<=ultimoDia;dia++){
-        var isHoje=(dia===hoje.getDate()&&mes===hoje.getMonth()&&ano===hoje.getFullYear());
-        html+='<div class="calendar-day'+(isHoje?' today':'')+'">'+dia+'</div>';
-    }
-    
-    var total=primeiroDia+ultimoDia;
-    var restante=total%7===0?0:7-(total%7);
-    for(var r=1;r<=restante;r++){
-        html+='<div class="calendar-day other-month">'+r+'</div>';
-    }
-    
-    html+='</div>';
-    pageContent.innerHTML='<div class="card"><div class="card-header"><h3 class="card-title">Agenda</h3></div><div class="card-body-padded">'+html+'</div></div>';
-}
+function loadAgenda(){var hoje=new Date();renderCalendario(hoje.getMonth(),hoje.getFullYear());}
+function renderCalendario(mes,ano){var meses=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];var ds=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];var pd=new Date(ano,mes,1).getDay();var ud=new Date(ano,mes+1,0).getDate();var uda=new Date(ano,mes,0).getDate();var hoje=new Date();var html='<div class="calendar-nav">';html+='<button onclick="renderCalendario('+(mes-1)+','+ano+')">← Anterior</button>';html+='<span class="month-year">'+meses[mes]+' '+ano+'</span>';html+='<button onclick="renderCalendario('+(mes+1)+','+ano+')">Próximo →</button>';html+='</div>';html+='<div class="calendar-grid">';for(var d=0;d<ds.length;d++){html+='<div class="calendar-day-header">'+ds[d]+'</div>';}for(var i=pd-1;i>=0;i--){html+='<div class="calendar-day other-month">'+(uda-i)+'</div>';}for(var dia=1;dia<=ud;dia++){var ih=(dia===hoje.getDate()&&mes===hoje.getMonth()&&ano===hoje.getFullYear());html+='<div class="calendar-day'+(ih?' today':'')+'">'+dia+'</div>';}var total=pd+ud;var rest=total%7===0?0:7-(total%7);for(var r=1;r<=rest;r++){html+='<div class="calendar-day other-month">'+r+'</div>';}html+='</div>';pageContent.innerHTML='<div class="card"><div class="card-header"><h3 class="card-title">Agenda</h3></div><div class="card-body-padded">'+html+'</div></div>';}
 
 // Rotas
 async function loadRotas(){
@@ -1064,74 +542,48 @@ async function loadRotas(){
         var ds=hoje.getDay();
         var seg=new Date(hoje);
         seg.setDate(hoje.getDate()-(ds===0?6:ds-1));
-        var diasLabels=['Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
-        var diasAbrev=['Seg','Ter','Qua','Qui','Sex','Sáb'];
-        var clientesSnap=await db.collection('clientes').where('status','==','ativo').get();
-        var vencidasSnap=await db.collection('faturas').where('status','==','pendente').where('vencimento','<',new Date().toISOString().split('T')[0]).get();
-        var inadimplentes=new Set();
-        vencidasSnap.docs.forEach(function(d){inadimplentes.add(d.data().clienteId);});
-        
+        var dl=['Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+        var da=['Seg','Ter','Qua','Qui','Sex','Sáb'];
+        var cs=await db.collection('clientes').where('status','==','ativo').get();
+        var vs=await db.collection('faturas').where('status','==','pendente').where('vencimento','<',hoje.toISOString().split('T')[0]).get();
+        var ina=new Set();
+        vs.docs.forEach(function(d){ina.add(d.data().clienteId);});
         var html='<div class="rotas-grid">';
         for(var i=0;i<6;i++){
-            var dataDia=new Date(seg);
-            dataDia.setDate(seg.getDate()+i);
-            var diaAbrev=diasAbrev[i];
-            var hojeStr=new Date().toISOString().split('T')[0];
-            var dataStr=dataDia.toISOString().split('T')[0];
-            var isHoje=dataStr===hojeStr;
-            
-            var clientesDia=[];
-            clientesSnap.docs.forEach(function(d){
-                if(inadimplentes.has(d.id))return;
-                var dias=d.data().diasSemana||[];
-                if(dias.includes(diaAbrev))clientesDia.push(d);
-            });
-            
+            var dd=new Date(seg);
+            dd.setDate(seg.getDate()+i);
+            var diaA=da[i];
+            var hs=hoje.toISOString().split('T')[0];
+            var ds2=dd.toISOString().split('T')[0];
+            var ih=(ds2===hs);
+            var cd=[];
+            if(!cs.empty){cs.docs.forEach(function(d){if(ina.has(d.id))return;var dias=d.data().diasSemana||[];if(dias.includes(diaA))cd.push(d);});}
             var ch='';
-            if(clientesDia.length===0){
-                ch='<div class="rota-empty">Nenhum</div>';
-            }else{
-                clientesDia.forEach(function(d){
-                    var c=d.data();
-                    ch+='<div class="rota-cliente"><span><strong>'+c.nome+'</strong><br><span style="font-size:11px;">'+(c.logradouro||'')+' '+(c.numero||'')+'</span></span></div>';
-                });
-            }
-            
-            html+='<div class="rota-dia"><div class="rota-dia-header'+(isHoje?' hoje':'')+'">'+diasLabels[i]+' - '+dataStr.split('-').reverse().join('/')+'<span>'+clientesDia.length+'</span></div><div class="rota-dia-body">'+ch+'</div></div>';
+            if(cd.length===0){ch='<div class="rota-empty">Nenhum</div>';}
+            else{cd.forEach(function(d){var c=d.data();ch+='<div class="rota-cliente"><span><strong>'+esc(c.nome)+'</strong><br><span style="font-size:11px;">'+esc(c.logradouro||'')+' '+esc(c.numero||'')+'</span></span></div>';});}
+            html+='<div class="rota-dia"><div class="rota-dia-header'+(ih?' hoje':'')+'">'+dl[i]+' - '+ds2.split('-').reverse().join('/')+'<span>'+cd.length+'</span></div><div class="rota-dia-body">'+ch+'</div></div>';
         }
         html+='</div>';
         pageContent.innerHTML=html;
-    }catch(err){
-        pageContent.innerHTML=errCard(err.message);
-    }
+    }catch(err){pageContent.innerHTML=errCard(err.message);}
 }
 
 // Event Listeners
-document.querySelectorAll('.sidebar-link').forEach(l=>{l.addEventListener('click',function(e){e.preventDefault();document.querySelectorAll('.sidebar-link').forEach(x=>x.classList.remove('active'));this.classList.add('active');const p=this.getAttribute('data-page');if(p)loadPage(p);if(window.innerWidth<=768)document.getElementById('sidebar').classList.remove('mobile-open');});});
-document.getElementById('sidebarToggle').addEventListener('click',()=>{const s=document.getElementById('sidebar');const m=document.getElementById('mainContent');const c=s.classList.toggle('collapsed');m.style.marginLeft=c?'68px':'252px';localStorage.setItem('aquapluss-sidebar-collapsed',c);});
-document.querySelectorAll('.sidebar-section-header').forEach(h=>{h.addEventListener('click',()=>h.closest('.sidebar-section').classList.toggle('collapsed-section'));});
-document.getElementById('themeToggle').addEventListener('click',()=>{const t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',t);localStorage.setItem('aquapluss-theme',t);});
-document.getElementById('mobileMenuBtn').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('mobile-open'));
+document.querySelectorAll('.sidebar-link').forEach(function(l){l.addEventListener('click',function(e){e.preventDefault();document.querySelectorAll('.sidebar-link').forEach(function(x){x.classList.remove('active');});this.classList.add('active');var p=this.getAttribute('data-page');if(p)loadPage(p);if(window.innerWidth<=768)document.getElementById('sidebar').classList.remove('mobile-open');});});
+document.getElementById('sidebarToggle').addEventListener('click',function(){var s=document.getElementById('sidebar');var m=document.getElementById('mainContent');var c=s.classList.toggle('collapsed');m.style.marginLeft=c?'68px':'252px';localStorage.setItem('aquapluss-sidebar-collapsed',c);});
+document.querySelectorAll('.sidebar-section-header').forEach(function(h){h.addEventListener('click',function(){h.closest('.sidebar-section').classList.toggle('collapsed-section');});});
+document.getElementById('themeToggle').addEventListener('click',function(){var t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',t);localStorage.setItem('aquapluss-theme',t);});
+document.getElementById('mobileMenuBtn').addEventListener('click',function(){document.getElementById('sidebar').classList.toggle('mobile-open');});
 
 auth.onAuthStateChanged(function(user){
     if(user){
-        console.log('✅ Usuário autenticado:', user.email);
         var saved=localStorage.getItem('aquapluss-user');
-        if(saved){
-            var d=JSON.parse(saved);
-            sidebarUserName.textContent=d.nome||user.email.split('@')[0];
-            sidebarUserRole.textContent=d.cargo||'Usuário';
-            sidebarAvatar.textContent=(d.nome||user.email).substring(0,2).toUpperCase();
-        }
+        if(saved){var d=JSON.parse(saved);sidebarUserName.textContent=esc(d.nome||user.email.split('@')[0]);sidebarUserRole.textContent=esc(d.cargo||'Usuário');sidebarAvatar.textContent=esc((d.nome||user.email).substring(0,2).toUpperCase());}
         showApp();
-    }else{
-        console.log('ℹ️ Nenhum usuário autenticado');
-        showLogin();
-    }
+    }else{showLogin();}
 });
 if(localStorage.getItem('aquapluss-theme')==='dark')document.documentElement.setAttribute('data-theme','dark');
 if(localStorage.getItem('aquapluss-sidebar-collapsed')==='true'){document.getElementById('sidebar').classList.add('collapsed');document.getElementById('mainContent').style.marginLeft='68px';}
-console.log('🚀 AquaPlussPiscinas v2.0');
 </script>
 </body>
 </html>
